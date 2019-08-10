@@ -5,7 +5,7 @@ import os
 import glob
 import importlib
 
-class DynamicLoader:
+class MLPluginLoader:
     def __init__(self):
         self._modules = {}
 
@@ -35,4 +35,4 @@ class DynamicLoader:
         return self._modules
 
 if __name__ == '__main__':
-    d = DynamicLoader()
+    d = MLPluginLoader()

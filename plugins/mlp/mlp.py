@@ -8,7 +8,7 @@ import os
 
 sys.path.append('..' + os.path.sep +  '..')
 
-from iface import MLPluginIFace
+from core  import MLPluginBase
 from core  import MLTrainer
 from core  import MLNetwork
 
@@ -33,12 +33,13 @@ class MLLoader:
     def load(self):
         raise NotImplementedError
 
-class Plugin(MLLoader, MLPluginIFace):
+class Plugin(MLLoader, MLPluginBase):
     def __init__(self):
         """
         If libMLP is installed in a non common path, please
         add it to the LD_LIBRARY_PATH before using
         """
+        MLPluginBase.__init__(self)
         MLLoader.__init__(self, 'libMLP.so')
 
         self._funcnames = enum(   'INIT',
@@ -78,7 +79,6 @@ class Plugin(MLLoader, MLPluginIFace):
                         ['mlp_network_get_output_length',   ctypes.c_uint,                  [ctypes.POINTER(MLPNetwork)]]]
 
         self._funcs = {}
-        self._metadata = None
 
         self.load()
 
@@ -95,22 +95,15 @@ class Plugin(MLLoader, MLPluginIFace):
         # Call plugin init method
         if self._funcs[self._funcnames.INIT] is not None:
            self._funcs[self._funcnames.INIT]()
+           self._activated = True
 
         # Get all metadata
         if  self._funcs[self._funcnames.METADATA] is not None:
-            self._metadata = self._funcs[self._funcnames.METADATA]().contents
-
-    def mlGetPluginName(self):
-        return self._metadata.name
-
-    def mlGetPluginAuthor(self):
-        return self._metadata.author
-
-    def mlGetPluginDescription(self):
-        return self._metadata.description
-
-    def mlGetPluginVersion(self):
-        return self._metadata.version
+            metadata = self._funcs[self._funcnames.METADATA]().contents
+            self._name      = metadata.name
+            self._version   = metadata.version
+            self._author    = metadata.author
+            self._description = metadata.description
 
     def mlGetTrainer(self, net, data):
         internal = self._funcs[self._funcnames.TRAINER_NEW](net, data)

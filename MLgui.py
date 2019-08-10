@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from optparse import OptionParser
-from core     import DynamicLoader
+from core     import MLPluginLoader
 import os
 import sys
 
@@ -29,7 +29,7 @@ def main():
         os.path.exists(options.data)    and \
         os.path.exists(options.settings):
 
-        loader = DynamicLoader()
+        loader = MLPluginLoader()
         plugin = loader.getPluginByName('mlp')
 
         trainer = None
