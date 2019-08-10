@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 
 class MLPluginIFace:
+    def mlPluginInit(self):
+        raise NotImplementedError
+
     def mlGetTrainer(self, net, data):
         raise NotImplementedError
 

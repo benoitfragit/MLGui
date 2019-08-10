@@ -4,4 +4,5 @@
 import ctypes
 
 class MLPTrainer(ctypes.Structure):
+    _fields_ = []
     pass

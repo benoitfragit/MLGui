@@ -40,7 +40,8 @@ class Plugin(MLLoader, MLPluginIFace):
         """
         MLLoader.__init__(self, 'libMLP.so')
 
-        self._funcnames = enum('TRAINER_NEW',
+        self._funcnames = enum(   'INIT',
+                                  'TRAINER_NEW',
                                   'TRAINER_DELETE',
                                   'TRAINER_CONFIGURE',
                                   'TRAINER_IS_RUNNING',
@@ -55,9 +56,10 @@ class Plugin(MLLoader, MLPluginIFace):
                                   'NETWORK_GET_OUTPUT',
                                   'NETWORK_GET_OUTPUT_LENGTH')
 
-        self._number_of_functions = (self._funcnames.NETWORK_GET_OUTPUT_LENGTH - self._funcnames.TRAINER_NEW + 1)
+        self._number_of_functions = (self._funcnames.NETWORK_GET_OUTPUT_LENGTH - self._funcnames.INIT + 1)
 
-        self._api = [   ['mlp_trainer_new',                 ctypes.POINTER(MLPTrainer),     [ctypes.c_char_p, ctypes.c_char_p]],
+        self._api = [   ['mlp_init',                        None,                           []],
+                        ['mlp_trainer_new',                 ctypes.POINTER(MLPTrainer),     [ctypes.c_char_p, ctypes.c_char_p]],
                         ['mlp_trainer_delete',              None,                           [ctypes.POINTER(MLPTrainer)]],
                         ['mlp_trainer_configure',           None,                           [ctypes.POINTER(MLPTrainer), ctypes.c_char_p]],
                         ['mlp_trainer_is_running',          ctypes.c_ubyte,                 [ctypes.POINTER(MLPTrainer)]],
@@ -90,6 +92,9 @@ class Plugin(MLLoader, MLPluginIFace):
     def mlGetName(cls):
         return 'MLP'
 
+    def mlPluginInit(self):
+        self._funcs[self._funcnames.INIT]()
+
     def mlGetTrainer(self, net, data):
         internal = self._funcs[self._funcnames.TRAINER_NEW](net, data)
         trainer = MLTrainer(self, internal)
@@ -102,7 +107,7 @@ class Plugin(MLLoader, MLPluginIFace):
         self._funcs[self._funcnames.TRAINER_CONFIGURE](trainer, path)
 
     def mlIsTrainerRunning(self, trainer):
-        self._funcs[self._funcnames.TRAINER_IS_RUNNING](trainer)
+        return self._funcs[self._funcnames.TRAINER_IS_RUNNING](trainer)
 
     def mlGetTrainerProgress(self, trainer):
         return self._funcs[self._funcnames.TRAINER_GET_PROGRESS](trainer)
