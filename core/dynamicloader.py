@@ -21,10 +21,9 @@ class DynamicLoader:
                     dir = dir + '.' + dirname
 
                     module  = importlib.import_module(dir, package=base)
-                    name    = module.Plugin.mlGetName()
 
-                    if name not in self._modules.keys():
-                        self._modules[name] = module
+                    if dirname not in self._modules.keys():
+                        self._modules[dirname] = module
 
     def getPluginByName(self, name):
         ret = None

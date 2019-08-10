@@ -14,6 +14,7 @@ from core  import MLNetwork
 
 from mlptrainer import MLPTrainer
 from mlpnetwork import MLPNetwork
+from mlpmetada  import MLPMetaData
 
 def enum(*args):
     values = dict(zip(args, range(len(args))))
@@ -41,6 +42,7 @@ class Plugin(MLLoader, MLPluginIFace):
         MLLoader.__init__(self, 'libMLP.so')
 
         self._funcnames = enum(   'INIT',
+                                  'METADATA',
                                   'TRAINER_NEW',
                                   'TRAINER_DELETE',
                                   'TRAINER_CONFIGURE',
@@ -58,7 +60,8 @@ class Plugin(MLLoader, MLPluginIFace):
 
         self._number_of_functions = (self._funcnames.NETWORK_GET_OUTPUT_LENGTH - self._funcnames.INIT + 1)
 
-        self._api = [   ['mlp_init',                        None,                           []],
+        self._api = [   ['mlp_plugin_init',                 None,                           []],
+                        ['mlp_plugin_metadata',             ctypes.POINTER(MLPMetaData),    []],
                         ['mlp_trainer_new',                 ctypes.POINTER(MLPTrainer),     [ctypes.c_char_p, ctypes.c_char_p]],
                         ['mlp_trainer_delete',              None,                           [ctypes.POINTER(MLPTrainer)]],
                         ['mlp_trainer_configure',           None,                           [ctypes.POINTER(MLPTrainer), ctypes.c_char_p]],
@@ -75,6 +78,7 @@ class Plugin(MLLoader, MLPluginIFace):
                         ['mlp_network_get_output_length',   ctypes.c_uint,                  [ctypes.POINTER(MLPNetwork)]]]
 
         self._funcs = {}
+        self._metadata = None
 
         self.load()
 
@@ -88,12 +92,25 @@ class Plugin(MLLoader, MLPluginIFace):
             else:
                 print >> sys.stderr, 'Method:' + self._api[i][0] + ' hasn t been loaded'
 
-    @classmethod
-    def mlGetName(cls):
-        return 'MLP'
+        # Call plugin init method
+        if self._funcs[self._funcnames.INIT] is not None:
+           self._funcs[self._funcnames.INIT]()
 
-    def mlPluginInit(self):
-        self._funcs[self._funcnames.INIT]()
+        # Get all metadata
+        if  self._funcs[self._funcnames.METADATA] is not None:
+            self._metadata = self._funcs[self._funcnames.METADATA]().contents
+
+    def mlGetPluginName(self):
+        return self._metadata.name
+
+    def mlGetPluginAuthor(self):
+        return self._metadata.author
+
+    def mlGetPluginDescription(self):
+        return self._metadata.description
+
+    def mlGetPluginVersion(self):
+        return self._metadata.version
 
     def mlGetTrainer(self, net, data):
         internal = self._funcs[self._funcnames.TRAINER_NEW](net, data)

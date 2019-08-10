@@ -30,11 +30,18 @@ def main():
         os.path.exists(options.settings):
 
         loader = DynamicLoader()
-        plugin = loader.getPluginByName('MLP')
+        plugin = loader.getPluginByName('mlp')
 
         trainer = None
         if plugin is not None:
-            plugin.mlPluginInit()
+            print >>sys.stdout, "name:%(name)s\n \
+                                 author:%(author)s\n \
+                                 version:%(version)s\n \
+                                 description:%(description)s" \
+                                 % {'name'  :plugin.mlGetPluginName(),    \
+                                    'author':plugin.mlGetPluginAuthor(),  \
+                                    'version':plugin.mlGetPluginVersion(), \
+                                    'description':plugin.mlGetPluginDescription()}
             trainer = plugin.mlGetTrainer(options.net, options.data)
 
         if trainer is not None:
@@ -42,12 +49,14 @@ def main():
 
             try:
                 running = True
+
                 while running:
                     trainer.mlTrainerRun()
-                    progress = trainer.mlGetTrainerProgress()
-                    error    = trainer.mlGetTrainerError()
-                    print >>sys.stdout, 'Progress:%(prog)f, Error:%(err)f' % {'prog':progress, 'err':error}
                     running = trainer.mlIsTrainerRunning()
+
+                progress = trainer.mlGetTrainerProgress()
+                error    = trainer.mlGetTrainerError()
+                print >>sys.stdout, 'Progress:%(prog)f, Error:%(err)f' % {'prog':progress, 'err':error}
             finally:
                 pass
 
