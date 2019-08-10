@@ -48,12 +48,8 @@ def main():
             trainer.mlConfigureTrainer(options.settings)
 
             try:
-                running = True
-
-                while running:
-                    trainer.mlTrainerRun()
-                    running = trainer.mlIsTrainerRunning()
-
+                trainer.start()
+                trainer.join()
                 progress = trainer.mlGetTrainerProgress()
                 error    = trainer.mlGetTrainerError()
                 print >>sys.stdout, 'Progress:%(prog)f, Error:%(err)f' % {'prog':progress, 'err':error}

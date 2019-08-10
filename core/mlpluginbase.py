@@ -5,7 +5,7 @@ from iface import MLPluginActivableIFace
 from iface import MLPluginMetaDataIFace
 from iface import MLPluginIFace
 
-class MLPluginBase(MLPluginIFace, \
+class MLPluginBase( MLPluginIFace, \
                     MLPluginActivableIFace, \
                     MLPluginMetaDataIFace):
     def __init__(self):
