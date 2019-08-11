@@ -40,12 +40,14 @@ def main():
         os.path.exists(options.data)    and \
         os.path.exists(options.settings):
 
-        loader  = MLPluginLoader()
-
         manager = MLProcessManager()
+        loader  = MLPluginLoader(manager)
+
+        window.mlRegisterAllPlugins(loader)
+
         app.aboutToQuit.connect(manager.mlKillAll)
 
-        plugin  = loader.getPluginByName('mlp')
+        plugin  = loader.mlGetPluginByName('mlp')
 
         trainer = None
         if plugin is not None:

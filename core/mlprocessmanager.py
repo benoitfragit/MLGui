@@ -48,10 +48,29 @@ class MLProcessManager:
         self._resume    = {}
         self._quit      = {}
 
-    def mlKillAll(self):
-        for uuid in self._processes.keys():
+    def mlKillWithId(self, uuid):
+        if uuid in self._processes.keys():
+            self._lock[uuid].acquire()
+            self._quit[uuid].set()
             self._processes[uuid].terminate()
             self._processes[uuid].join()
+            self._lock[uuid].release()
+
+    def mlKillAll(self):
+        for uuid in self._processes.keys():
+            self.mlKillWithId(uuid)
+
+    def mlPauseProcess(self, uuid):
+        if uuid in self._processes.keys():
+            self._lock[uuid].acquire()
+            self._pause[uuid].set()
+            self._lock[uuid].release()
+
+    def mlResumeProcess(self, uuid):
+        if uuid in self._processes.keys():
+            self._lock[uuid].acquire()
+            self._resume[uuid].set()
+            self._lock[uuid].release()
 
     def mlNewProcess(self, p):
         uuid = p.mlGetUniqId()

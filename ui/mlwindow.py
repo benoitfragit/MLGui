@@ -23,7 +23,7 @@ class MLWindow(QMainWindow):
         """
         manageMenu = mainMenu.addMenu('&Manage')
         trainerMenu = manageMenu.addMenu('&Trainer')
-        newTrainerMenu = trainerMenu.addMenu('&New trainer')
+        self._newTrainerMenu = trainerMenu.addMenu('&New trainer')
         displayTrainers = QAction('&Display', self)
         trainerMenu.addAction(displayTrainers)
         networkMenu = manageMenu.addMenu('&Network')
@@ -44,3 +44,22 @@ class MLWindow(QMainWindow):
         helpMenu = mainMenu.addMenu('&Help')
         help = QAction('&Help', self)
         helpMenu.addAction(help)
+
+
+    def mlAddPlugin(self, plugin):
+        if plugin is not None:
+            """
+            Populate the new trainer menu
+            """
+
+            action = QAction('Create new ' + plugin.mlGetPluginName() + ' trainer', self)
+            action.triggered.connect(plugin.mlGetTrainerLoaderUI().show)
+            self._newTrainerMenu.addAction(action)
+
+
+
+    def mlRegisterAllPlugins(self, loader):
+        plugins = loader.mlGetAllPlugins()
+        if plugins is not None:
+            for name in plugins.keys():
+                self.mlAddPlugin(plugins[name])

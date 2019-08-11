@@ -12,9 +12,11 @@ from core  import MLPluginBase
 from core  import MLTrainer
 from core  import MLNetwork
 
-from mlptrainer import MLPTrainer
-from mlpnetwork import MLPNetwork
-from mlpmetada  import MLPMetaData
+from exchange import MLPTrainer
+from exchange import MLPNetwork
+from exchange import MLPMetaData
+
+from ui import MLPTrainerLoaderUI
 
 def enum(*args):
     values = dict(zip(args, range(len(args))))
@@ -34,12 +36,12 @@ class MLLoader:
         raise NotImplementedError
 
 class Plugin(MLLoader, MLPluginBase):
-    def __init__(self):
+    def __init__(self, args):
         """
         If libMLP is installed in a non common path, please
         add it to the LD_LIBRARY_PATH before using
         """
-        MLPluginBase.__init__(self)
+        MLPluginBase.__init__(self, args)
         MLLoader.__init__(self, 'libMLP.so')
 
         self._funcnames = enum(   'INIT',
@@ -104,6 +106,8 @@ class Plugin(MLLoader, MLPluginBase):
             self._version   = metadata.version
             self._author    = metadata.author
             self._description = metadata.description
+
+        self._trainerloaderui = MLPTrainerLoaderUI(self)
 
     def mlGetTrainer(self, net, data, username):
         internal = self._funcs[self._funcnames.TRAINER_NEW](net, data)
