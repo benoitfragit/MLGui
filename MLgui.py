@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from PyQt5    import QtWidgets
+from PyQt5    import QtCore
 from optparse import OptionParser
 from core     import MLPluginLoader
+from core     import MLProcessManager
 import os
 import sys
 
 def main():
+    app = QtWidgets.QApplication(sys.argv)
+
     parser = OptionParser()
     parser.add_option('-n','--network',
                       action='store',
@@ -29,8 +34,9 @@ def main():
         os.path.exists(options.data)    and \
         os.path.exists(options.settings):
 
-        loader = MLPluginLoader()
-        plugin = loader.getPluginByName('mlp')
+        loader  = MLPluginLoader()
+        manager = MLProcessManager()
+        plugin  = loader.getPluginByName('mlp')
 
         trainer = None
         if plugin is not None:
@@ -48,15 +54,13 @@ def main():
             trainer.mlConfigureTrainer(options.settings)
 
             try:
-                trainer.start()
-                trainer.join()
-                progress = trainer.mlGetTrainerProgress()
-                error    = trainer.mlGetTrainerError()
-                print >>sys.stdout, 'Progress:%(prog)f, Error:%(err)f' % {'prog':progress, 'err':error}
+                manager.mlNewProcess(trainer)
             finally:
                 pass
 
             trainer.mlDeleteTrainer()
+
+    sys.exit(app.exec_())
 
 
 if __name__ == '__main__':

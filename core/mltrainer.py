@@ -3,13 +3,16 @@
 
 from multiprocessing import Process
 from iface import MLTrainerIFace
+import uuid
 
-class MLTrainer(MLTrainerIFace, Process):
+class MLTrainer(MLTrainerIFace):
     def __init__(self, plugin, internal):
-        Process.__init__(self)
         self._internal  = internal
         self._plugin    = plugin
-        self._running   = False
+        self._uuid      = uuid.uuid4()
+
+    def mlGetUniqId(self):
+        return self._uuid
 
     def mlDeleteTrainer(self):
         self._plugin.mlDeleteTrainer(self._internal)
@@ -28,9 +31,3 @@ class MLTrainer(MLTrainerIFace, Process):
 
     def mlGetTrainerError(self):
         return self._plugin.mlGetTrainerError(self._internal)
-
-    def run(self):
-        self._running = True
-        while (self._running):
-            self.mlTrainerRun()
-            self._running = self.mlIsTrainerRunning()
