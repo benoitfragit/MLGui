@@ -2,15 +2,21 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5    import QtWidgets
-from PyQt5    import QtCore
 from optparse import OptionParser
 from core     import MLPluginLoader
 from core     import MLProcessManager
+from ui       import MLWindow
 import os
 import sys
+import signal
 
 def main():
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtWidgets.QApplication.instance()
+    if not app:
+        app = QtWidgets.QApplication(sys.argv)
+
+    window = MLWindow()
+
 
     parser = OptionParser()
     parser.add_option('-n','--network',
@@ -35,7 +41,10 @@ def main():
         os.path.exists(options.settings):
 
         loader  = MLPluginLoader()
+
         manager = MLProcessManager()
+        app.aboutToQuit.connect(manager.mlKillAll)
+
         plugin  = loader.getPluginByName('mlp')
 
         trainer = None
@@ -48,7 +57,7 @@ def main():
                                     'author':plugin.mlGetPluginAuthor(),  \
                                     'version':plugin.mlGetPluginVersion(), \
                                     'description':plugin.mlGetPluginDescription()}
-            trainer = plugin.mlGetTrainer(options.net, options.data)
+            trainer = plugin.mlGetTrainer(options.net, options.data, 'Network')
 
         if trainer is not None:
             trainer.mlConfigureTrainer(options.settings)
@@ -60,6 +69,7 @@ def main():
 
             trainer.mlDeleteTrainer()
 
+    window.show()
     sys.exit(app.exec_())
 
 

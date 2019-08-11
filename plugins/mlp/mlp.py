@@ -105,9 +105,9 @@ class Plugin(MLLoader, MLPluginBase):
             self._author    = metadata.author
             self._description = metadata.description
 
-    def mlGetTrainer(self, net, data):
+    def mlGetTrainer(self, net, data, username):
         internal = self._funcs[self._funcnames.TRAINER_NEW](net, data)
-        trainer = MLTrainer(self, internal)
+        trainer = MLTrainer(self, internal, username)
         return trainer
 
     def mlDeleteTrainer(self, trainer):

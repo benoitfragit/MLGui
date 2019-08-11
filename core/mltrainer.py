@@ -6,13 +6,17 @@ from iface import MLTrainerIFace
 import uuid
 
 class MLTrainer(MLTrainerIFace):
-    def __init__(self, plugin, internal):
+    def __init__(self, plugin, internal, username):
         self._internal  = internal
         self._plugin    = plugin
         self._uuid      = uuid.uuid4()
+        self._username  = username
 
     def mlGetUniqId(self):
         return self._uuid
+
+    def mlGetUserName(self):
+        return self._username
 
     def mlDeleteTrainer(self):
         self._plugin.mlDeleteTrainer(self._internal)

@@ -5,22 +5,34 @@ from multiprocessing import Queue
 from multiprocessing import Manager
 from multiprocessing import Process
 from multiprocessing import Lock
+from multiprocessing import Event
 
 import sys
 
-def mlRun(p, lock, queue, shared):
+def mlRun(p, lock, shared, pause, resume, quit):
     lock.acquire()
     if p is not None:
         if 'running' not in shared.keys():
             shared['running']   = True
             shared['progress']  = p.mlGetTrainerProgress()
             shared['error']     = p.mlGetTrainerError()
+            shared['pause']     = False
+            shared['stopped']   = False
 
         while (shared['running']):
-            p.mlTrainerRun()
-            shared['running'] = p.mlIsTrainerRunning()
-            shared['progress']  = p.mlGetTrainerProgress()
-            shared['error']     = p.mlGetTrainerError()
+            if pause.set():
+                shared['pause'] = True
+            elif resume.set():
+                shared['pause'] = False
+
+            if quit.set():
+                shared['stopped'] = True
+                shared['running'] = False
+            elif shared['pause'] is not True:
+                p.mlTrainerRun()
+                shared['running']   = p.mlIsTrainerRunning()
+                shared['progress']  = p.mlGetTrainerProgress()
+                shared['error']     = p.mlGetTrainerError()
 
         print >>sys.stdout, 'Progress:%(prog)f, Error:%(err)f' % {'prog':shared['progress'], 'err':shared['error']}
 
@@ -31,16 +43,29 @@ class MLProcessManager:
         self._processes = {}
         self._manager   = Manager()
         self._shared    = {}
-        self._queue     = {}
         self._lock      = {}
+        self._pause     = {}
+        self._resume    = {}
+        self._quit      = {}
+
+    def mlKillAll(self):
+        for uuid in self._processes.keys():
+            self._processes[uuid].terminate()
+            self._processes[uuid].join()
 
     def mlNewProcess(self, p):
         uuid = p.mlGetUniqId()
         if uuid not in self._processes.keys():
-            self._queue[uuid]       = Queue()
             self._lock[uuid]        = Lock()
             self._shared[uuid]      = self._manager.dict()
+            self._pause[uuid]       = Event()
+            self._resume[uuid]      = Event()
+            self._quit[uuid]        = Event()
 
-            self._processes[uuid]   = Process(target=mlRun, args=(p, self._lock[uuid], self._queue[uuid], self._shared[uuid]))
+            self._processes[uuid]   = Process(target=mlRun, args=(p, self._lock[uuid], \
+                                                                     self._shared[uuid],\
+                                                                     self._pause[uuid],\
+                                                                     self._resume[uuid],\
+                                                                     self._quit[uuid]))
 
             self._processes[uuid].start()
