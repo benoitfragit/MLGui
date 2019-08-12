@@ -31,14 +31,14 @@ class MLPTrainerLoaderUI(QWidget):
         button3.setIcon(QIcon.fromTheme('system-search'))
         cancel  = QPushButton('Cancel')
         cancel.setIcon(QIcon.fromTheme('edit-undo'))
-        validate= QPushButton('Apply')
-        validate.setIcon(QIcon.fromTheme('system-run'))
+        self._validate= QPushButton('Apply')
+        self._validate.setIcon(QIcon.fromTheme('system-run'))
 
         button1.clicked.connect(self.mlOpenNetworkFile)
         button2.clicked.connect(self.mlOpenTrainerFile)
         button3.clicked.connect(self.mlOpenDataFile)
         cancel.clicked.connect(self.mlCancel)
-        validate.clicked.connect(self.mlValidate)
+        self._validate.clicked.connect(self.mlValidate)
 
         hbox0   = QHBoxLayout()
         hbox1   = QHBoxLayout()
@@ -61,7 +61,7 @@ class MLPTrainerLoaderUI(QWidget):
         hbox3.addWidget(button3)
         hbox4.addStretch(1)
         hbox4.addWidget(cancel)
-        hbox4.addWidget(validate)
+        hbox4.addWidget(self._validate)
 
         vbox.addLayout(hbox0)
         vbox.addLayout(hbox1)
@@ -70,6 +70,18 @@ class MLPTrainerLoaderUI(QWidget):
         vbox.addLayout(hbox4)
 
         self.setLayout(vbox)
+
+    def mlGetValidateButton(self):
+        return self._validate
+
+    def mlGetNetworkFilePath(self):
+        return self._network_filepath
+
+    def mlGetDataFilePath(self):
+        return self._data_filepath
+
+    def mlGetTrainerFilePath(self):
+        return self._trainer_filepath
 
     def mlOpenNetworkFile(self):
         options = QFileDialog.Options()

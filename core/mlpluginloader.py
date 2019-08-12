@@ -7,7 +7,7 @@ import importlib
 
 
 class MLPluginLoader:
-    def __init__(self, args):
+    def __init__(self):
         self._plugins = {}
 
         plugin_directories = os.getenv('MLGUI_PLUGIN_DIRS')
@@ -24,12 +24,14 @@ class MLPluginLoader:
                     module  = importlib.import_module(dir, package=base)
 
                     if dirname not in self._plugins.keys():
-                        self._plugins[dirname] = module.Plugin(args)
+                        self._plugins[dirname] = module.MLPlugin()
 
     def mlGetPluginByName(self, name):
         ret = None
         if name in self._plugins.keys():
             ret = self._plugins[name]
+        else:
+            print >>sys.stderr, "No plugin with name: "+ name
         return ret
 
     def mlGetAllPlugins(self):

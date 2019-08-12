@@ -1,1 +1,1 @@
-from mlp import Plugin
+from mlp import MLPlugin

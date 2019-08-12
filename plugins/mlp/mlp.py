@@ -35,13 +35,13 @@ class MLLoader:
     def load(self):
         raise NotImplementedError
 
-class Plugin(MLLoader, MLPluginBase):
-    def __init__(self, args):
+class MLPlugin(MLLoader, MLPluginBase):
+    def __init__(self):
         """
         If libMLP is installed in a non common path, please
         add it to the LD_LIBRARY_PATH before using
         """
-        MLPluginBase.__init__(self, args)
+        MLPluginBase.__init__(self)
         MLLoader.__init__(self, 'libMLP.so')
 
         self._funcnames = enum(   'INIT',

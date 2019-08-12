@@ -6,15 +6,11 @@ from iface import MLPluginMetaDataIFace
 from iface import MLPluginIFace
 from iface import MLPluginUIProviderIFace
 
-from mltrainermanager import MLTrainerManager
-
 class MLPluginBase( MLPluginIFace, \
                     MLPluginActivableIFace, \
                     MLPluginMetaDataIFace, \
-                    MLPluginUIProviderIFace, \
-                    MLTrainerManager):
-    def __init__(self, args):
-        MLTrainerManager.__init__(self, args)
+                    MLPluginUIProviderIFace):
+    def __init__(self):
         self._activated = False
         self._name = None
         self._version = None
