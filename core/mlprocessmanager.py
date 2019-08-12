@@ -50,11 +50,9 @@ class MLProcessManager:
 
     def mlKillWithId(self, uuid):
         if uuid in self._processes.keys():
-            self._lock[uuid].acquire()
             self._quit[uuid].set()
             self._processes[uuid].terminate()
             self._processes[uuid].join()
-            self._lock[uuid].release()
 
     def mlKillAll(self):
         for uuid in self._processes.keys():
