@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QLabel
+
+from PyQt5.QtCore    import Qt
+
+from mltrainerviewer import MLTrainerViewer
 import os
 
 class MLWindow(QMainWindow):
@@ -48,6 +54,17 @@ class MLWindow(QMainWindow):
         help = QAction('&Help', self)
         helpMenu.addAction(help)
 
+        """
+        Build the trainer viewer
+        """
+        self._trainerviewer = MLTrainerViewer(self._trainermanager, 'ML Trainer Manager', self)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self._trainerviewer)
+
+        """
+        Build the central widget
+        """
+        self.setCentralWidget(QLabel())
+
         self.mlRegisterAllPlugins(pluginloader)
 
     def mlAddPlugin(self, plugin):
@@ -60,6 +77,7 @@ class MLWindow(QMainWindow):
             loadUI = plugin.mlGetTrainerLoaderUI()
             validate = loadUI.mlGetValidateButton()
             validate.clicked.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
+            validate.clicked.connect(self._trainerviewer.mlOnTrainerManagerListChanged)
             action.triggered.connect(loadUI.show)
             self._newTrainerMenu.addAction(action)
 
@@ -69,6 +87,7 @@ class MLWindow(QMainWindow):
             network_filepath = loadUI.mlGetNetworkFilePath()
             data_filepath = loadUI.mlGetDataFilePath()
             trainer_filepath = loadUI.mlGetTrainerFilePath()
+            trainer_name = loadUI.mlGetTrainerName()
 
             if  os.path.exists(network_filepath) and \
                 os.path.isfile(network_filepath) and \
@@ -76,7 +95,7 @@ class MLWindow(QMainWindow):
                 os.path.isfile(data_filepath)    and \
                 os.path.exists(trainer_filepath) and \
                 os.path.isfile(trainer_filepath):
-                    trainer = plugin.mlGetTrainer(network_filepath, data_filepath, 'Network')
+                    trainer = plugin.mlGetTrainer(network_filepath, data_filepath, trainer_name)
                     if trainer is not None:
                         trainer.mlConfigureTrainer(trainer_filepath)
                         self._trainermanager.mlAddTrainer(trainer)

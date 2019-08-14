@@ -14,6 +14,9 @@ class MLTrainerManager(MLProcessManager):
             if uuid not in self._trainers.keys():
                 self._trainers[uuid] = trainer
 
+    def mlGetAllTrainers(self):
+        return self._trainers
+
     def mlStartTrainerWithId(self, uuid):
         if uuid in self._trainers.keys():
             self.mlNewProcess(self._trainers[uuid])
