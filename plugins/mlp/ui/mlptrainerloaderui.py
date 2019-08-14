@@ -1,26 +1,28 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets    import QWidget, QLineEdit, QLabel, QPushButton, QHBoxLayout, QVBoxLayout, QFileDialog
+from ui import MLTrainerLoaderBaseUI
+
+from PyQt5.QtWidgets    import QLineEdit
+from PyQt5.QtWidgets    import QLabel
+from PyQt5.QtWidgets    import QPushButton
+from PyQt5.QtWidgets    import QHBoxLayout
+from PyQt5.QtWidgets    import QVBoxLayout
+from PyQt5.QtWidgets    import QFileDialog
 from PyQt5.QtGui        import QIcon
 
-class MLPTrainerLoaderUI(QWidget):
+class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
     def __init__(self, plugin):
-        QWidget.__init__(self)
-
-        self._plugin = plugin
-
-        self._network_filepath = None
-        self._trainer_filepath = None
-        self._data_filepath    = None
-
-        self.resize(350, 200)
-        self.setWindowTitle(plugin.mlGetPluginName() + ' trainer builder')
+        MLTrainerLoaderBaseUI.__init__(self, plugin)
 
         label0 = QLabel('Choose the trainer name')
         label1 = QLabel('Open a network settings file')
         label2 = QLabel('Open a trainer settings file')
         label3 = QLabel('Open a data file')
+
+        self._label4 = QLabel()
+        self._label5 = QLabel()
+        self._label6 = QLabel()
 
         self._entry = QLineEdit()
         button1 = QPushButton('Find')
@@ -34,6 +36,7 @@ class MLPTrainerLoaderUI(QWidget):
         self._validate= QPushButton('Apply')
         self._validate.setIcon(QIcon.fromTheme('system-run'))
 
+        self._entry.textChanged.connect(self.mlOnTrainerNameChanged)
         button1.clicked.connect(self.mlOpenNetworkFile)
         button2.clicked.connect(self.mlOpenTrainerFile)
         button3.clicked.connect(self.mlOpenDataFile)
@@ -65,52 +68,39 @@ class MLPTrainerLoaderUI(QWidget):
 
         vbox.addLayout(hbox0)
         vbox.addLayout(hbox1)
+        vbox.addWidget(self._label4)
         vbox.addLayout(hbox2)
+        vbox.addWidget(self._label5)
         vbox.addLayout(hbox3)
+        vbox.addWidget(self._label6)
         vbox.addLayout(hbox4)
 
         self.setLayout(vbox)
 
-    def mlGetValidateButton(self):
-        return self._validate
-
-    def mlGetNetworkFilePath(self):
-        return self._network_filepath
-
-    def mlGetDataFilePath(self):
-        return self._data_filepath
-
-    def mlGetTrainerFilePath(self):
-        return self._trainer_filepath
+    def mlOnTrainerNameChanged(self, text):
+        self._trainer_name = text
 
     def mlOpenNetworkFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self._network_filepath, _ = QFileDialog.getOpenFileName(self, "Select a network file", "", "All files (*);;Xml files (*.xml)", options=options)
+        self._label4.setText(self._network_filepath)
 
     def mlOpenTrainerFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self._trainer_filepath, _ = QFileDialog.getOpenFileName(self, "Select a network file", "", "All files (*);;Xml files (*.xml)", options=options)
+        self._label5.setText(self._trainer_filepath)
 
     def mlOpenDataFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self._data_filepath, _ = QFileDialog.getOpenFileName(self, "Select a network file", "", "All files (*);;Xml files (*.xml)", options=options)
+        self._label6.setText(self._data_filepath)
 
     def mlCancel(self):
-        self._entry.setText('')
+        self._entry.clear()
         self.close()
 
     def mlValidate(self):
-        if self._entry != '' and \
-            self._network_filepath is not None and \
-            self._trainer_filepath is not None and \
-            self._data_filepath is not None:
-            trainer = self._plugin.mlGetTrainer(self._network_filepath, \
-                                                self._data_filepath,\
-                                                self._entry.text())
-            if trainer is not None:
-                trainer.mlConfigureTrainer(self._trainer_filepath)
-
         self.close()

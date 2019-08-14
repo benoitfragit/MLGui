@@ -56,7 +56,7 @@ class MLWindow(QMainWindow):
             Populate the new trainer menu
             """
 
-            action = QAction('Create new ' + plugin.mlGetPluginName() + ' trainer', self)
+            action = QAction('Load ' + plugin.mlGetPluginName() + ' trainer', self)
             loadUI = plugin.mlGetTrainerLoaderUI()
             validate = loadUI.mlGetValidateButton()
             validate.clicked.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
