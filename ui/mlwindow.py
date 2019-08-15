@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QLabel
 
 from PyQt5.QtCore    import Qt
 
-from mltrainerviewer import MLTrainerViewer
+from mltrainerviewerui import MLTrainerViewerUI
 import os
 
 class MLWindow(QMainWindow):
@@ -57,7 +57,7 @@ class MLWindow(QMainWindow):
         """
         Build the trainer viewer
         """
-        self._trainerviewer = MLTrainerViewer(self._trainermanager, 'ML Trainer Manager', self)
+        self._trainerviewer = MLTrainerViewerUI(self._trainermanager, 'ML Trainer Manager', self)
         self.addDockWidget(Qt.LeftDockWidgetArea, self._trainerviewer)
 
         """
@@ -77,7 +77,7 @@ class MLWindow(QMainWindow):
             loadUI = plugin.mlGetTrainerLoaderUI()
             validate = loadUI.mlGetValidateButton()
             validate.clicked.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
-            validate.clicked.connect(self._trainerviewer.mlOnTrainerManagerListChanged)
+            validate.clicked.connect(self._trainerviewer.mlOnNewTrainerAdded)
             action.triggered.connect(loadUI.show)
             self._newTrainerMenu.addAction(action)
 

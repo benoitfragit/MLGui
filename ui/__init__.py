@@ -1,2 +1,3 @@
 from mlwindow import MLWindow
 from mltrainerloaderbaseui import MLTrainerLoaderBaseUI
+from mltrainerviewerui  import MLTrainerViewerUI
