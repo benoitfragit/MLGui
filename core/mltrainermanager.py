@@ -27,7 +27,7 @@ class MLTrainerManager(MLProcessManager):
 
     def mlPauseTrainerWithId(self, uuid):
         if uuid in self._trainers.keys():
-            self._processmanager.mlPauseProcess(uuid)
+            self.mlPauseProcess(uuid)
 
     def mlResumeTrainerWithId(self, uuid):
         if uuid in self._trainers.keys():
@@ -40,3 +40,9 @@ class MLTrainerManager(MLProcessManager):
             """
             self.mlKillWithId(uuid)
             self._trainers.pop(uuid)
+
+    def mlIsTrainerWithIdRunning(self, uuid):
+        return self.mlIsProcessRunning(uuid)
+
+    def mlIsTrainerWithIdPaused(self, uuid):
+        return self.mlIsProcessPaused(uuid)

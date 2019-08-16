@@ -99,7 +99,6 @@ class MLWindow(QMainWindow):
                     if trainer is not None:
                         trainer.mlConfigureTrainer(trainer_filepath)
                         self._trainermanager.mlAddTrainer(trainer)
-                        self._trainermanager.mlStartTrainerWithId(trainer.mlGetUniqId())
 
     def mlRegisterAllPlugins(self, loader):
         plugins = loader.mlGetAllPlugins()

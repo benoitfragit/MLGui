@@ -86,3 +86,19 @@ class MLProcessManager:
                                                                      self._quit[uuid]))
 
             self._processes[uuid].start()
+
+    def mlIsProcessRunning(self, uuid):
+        ret = False
+        if uuid in self._processes.keys():
+            if 'running' in self._shared[uuid].keys():
+                ret = self._shared[uuid]['running']
+
+        return ret
+
+    def mlIsProcessPaused(self, uuid):
+        ret = False
+        if uuid in self._processes.keys():
+            if 'pause' in self._shared[uuid].keys():
+                ret = self._shared[uuid]['pause'] and self._shared[uuid]['running']
+
+        return ret
