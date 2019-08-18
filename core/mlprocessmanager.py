@@ -10,33 +10,40 @@ from multiprocessing import Event
 import sys
 
 def mlRun(p, lock, shared, pause, resume, quit):
-    lock.acquire()
     if p is not None:
         if 'running' not in shared.keys():
+            lock.acquire()
             shared['running']   = True
             shared['progress']  = p.mlGetTrainerProgress()
             shared['error']     = p.mlGetTrainerError()
             shared['pause']     = False
             shared['stopped']   = False
+            lock.release()
 
         while (shared['running']):
             if pause.set():
+                lock.acquire()
                 shared['pause'] = True
+                lock.release()
             elif resume.set():
+                lock.acquire()
                 shared['pause'] = False
+                lock.release()
 
             if quit.set():
+                lock.acquire()
                 shared['stopped'] = True
                 shared['running'] = False
+                lock.release()
             elif shared['pause'] is not True:
+                lock.acquire()
                 p.mlTrainerRun()
                 shared['running']   = p.mlIsTrainerRunning()
                 shared['progress']  = p.mlGetTrainerProgress()
                 shared['error']     = p.mlGetTrainerError()
+                lock.release()
 
         print >>sys.stdout, 'Progress:%(prog)f, Error:%(err)f' % {'prog':shared['progress'], 'err':shared['error']}
-
-    lock.release()
 
 class MLProcessManager:
     def __init__(self):

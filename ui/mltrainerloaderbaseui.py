@@ -2,11 +2,19 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QDockWidget
+from PyQt5.QtWidgets import QSizePolicy
+from PyQt5.QtCore    import pyqtSignal
 
-class MLTrainerLoaderBaseUI(QWidget):
-    def __init__(self, plugin):
-        QWidget.__init__(self)
+class MLTrainerLoaderBaseUI(QDockWidget):
 
+    mlValidateTrainerSignal = pyqtSignal()
+
+    def __init__(self, plugin, parent = None):
+        QDockWidget.__init__(self, parent=parent)
+
+        self.setWindowTitle(plugin.mlGetPluginName() + ' trainer builder')
+        self._mainWidget = QWidget()
         self._plugin = plugin
 
         self._network_filepath = None
@@ -14,11 +22,16 @@ class MLTrainerLoaderBaseUI(QWidget):
         self._data_filepath    = None
         self._trainer_name     = None
 
-        self.resize(350, 200)
-        self.setWindowTitle(plugin.mlGetPluginName() + ' trainer builder')
+        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        self._mainWidget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
 
-    def mlGetValidateButton(self):
-        return self._validate
+        self.mlBuildTrainerLoaderMainWidget()
+
+        self.setWidget(self._mainWidget)
+        self.setVisible(False)
+
+    def mlBuildTrainerLoaderMainWidget(self):
+        raise NotImplementedError
 
     def mlGetNetworkFilePath(self):
         return self._network_filepath

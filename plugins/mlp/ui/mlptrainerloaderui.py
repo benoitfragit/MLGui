@@ -11,10 +11,13 @@ from PyQt5.QtWidgets    import QVBoxLayout
 from PyQt5.QtWidgets    import QFileDialog
 from PyQt5.QtGui        import QIcon
 
-class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
-    def __init__(self, plugin):
-        MLTrainerLoaderBaseUI.__init__(self, plugin)
+import os
 
+class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
+    def __init__(self, plugin, parent = None):
+        MLTrainerLoaderBaseUI.__init__(self, plugin, parent = None)
+
+    def mlBuildTrainerLoaderMainWidget(self):
         label0 = QLabel('Choose the trainer name')
         label1 = QLabel('Open a network settings file')
         label2 = QLabel('Open a trainer settings file')
@@ -73,9 +76,10 @@ class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
         vbox.addWidget(self._label5)
         vbox.addLayout(hbox3)
         vbox.addWidget(self._label6)
+        vbox.addStretch(1)
         vbox.addLayout(hbox4)
 
-        self.setLayout(vbox)
+        self._mainWidget.setLayout(vbox)
 
     def mlOnTrainerNameChanged(self, text):
         self._trainer_name = text
@@ -103,4 +107,5 @@ class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
         self.close()
 
     def mlValidate(self):
+        self.mlValidateTrainerSignal.emit()
         self.close()

@@ -10,8 +10,13 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui     import QIcon
 from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import QSize
+from PyQt5.QtCore    import pyqtSignal
+
+import uuid
 
 class MLTrainerViewerItemUI(QWidget):
+    removeTrainer = pyqtSignal(uuid.UUID)
+
     def __init__(self, manager, trainer, parent = None):
         QWidget.__init__(self, parent)
 
@@ -101,3 +106,4 @@ class MLTrainerViewerItemUI(QWidget):
             self._stop.setVisible(False)
             self._run.setVisible(True)
             self._manager.mlRemoveTrainerWithId(uuid)
+            self.removeTrainer.emit(uuid)

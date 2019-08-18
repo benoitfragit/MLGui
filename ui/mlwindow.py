@@ -7,7 +7,8 @@ from PyQt5.QtWidgets import QLabel
 
 from PyQt5.QtCore    import Qt
 
-from mltrainerviewerui import MLTrainerViewerUI
+from mltrainerviewerui      import MLTrainerViewerUI
+from mltrainerloaderbaseui  import MLTrainerLoaderBaseUI
 import os
 
 class MLWindow(QMainWindow):
@@ -41,6 +42,15 @@ class MLWindow(QMainWindow):
         manageMenu.addAction(quit)
 
         """
+        Building the DIsplay Menu
+        """
+        displayMenu = mainMenu.addMenu('&Displays')
+        displayTrainers = QAction('&Trainers', self)
+        displayTrainers.triggered.connect(self.mlOnDisplayTrainers)
+        displayMenu.addAction(displayTrainers)
+
+
+        """
         Building the Plugin Menu
         """
         pluginMenu = mainMenu.addMenu('&Plugins')
@@ -57,15 +67,21 @@ class MLWindow(QMainWindow):
         """
         Build the trainer viewer
         """
-        self._trainerviewer = MLTrainerViewerUI(self._trainermanager, 'ML Trainer Manager', self)
-        self.addDockWidget(Qt.LeftDockWidgetArea, self._trainerviewer)
+        self._trainerviewer = MLTrainerViewerUI(self._trainermanager, self)
+        self._trainerviewer.setVisible(False)
+
 
         """
         Build the central widget
         """
-        self.setCentralWidget(QLabel())
+        self._mainLabel = QLabel()
+        self.setCentralWidget(self._mainLabel)
 
         self.mlRegisterAllPlugins(pluginloader)
+
+    def mlOnDisplayTrainers(self):
+        self._trainerviewer.setVisible(True)
+        self.setCentralWidget(self._trainerviewer)
 
     def mlAddPlugin(self, plugin):
         if plugin is not None:
@@ -73,13 +89,18 @@ class MLWindow(QMainWindow):
             Populate the new trainer menu
             """
 
-            action = QAction('Load ' + plugin.mlGetPluginName() + ' trainer', self)
             loadUI = plugin.mlGetTrainerLoaderUI()
-            validate = loadUI.mlGetValidateButton()
-            validate.clicked.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
-            validate.clicked.connect(self._trainerviewer.mlOnNewTrainerAdded)
-            action.triggered.connect(loadUI.show)
-            self._newTrainerMenu.addAction(action)
+
+            if isinstance(loadUI, MLTrainerLoaderBaseUI):
+                self.addDockWidget(Qt.LeftDockWidgetArea, loadUI)
+
+                action = loadUI.toggleViewAction()
+                action.triggered.connect(loadUI.show)
+                self._newTrainerMenu.addAction(action)
+
+                loadUI.mlValidateTrainerSignal.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
+                loadUI.mlValidateTrainerSignal.connect(self._trainerviewer.mlOnNewTrainerAdded)
+
 
     def onLoadTrainerValidateClicked(self, plugin):
         if plugin is not None:

@@ -5,6 +5,7 @@ import os
 import glob
 import importlib
 
+from mlpluginbase import MLPluginBase
 
 class MLPluginLoader:
     def __init__(self):
@@ -24,7 +25,9 @@ class MLPluginLoader:
                     module  = importlib.import_module(dir, package=base)
 
                     if dirname not in self._plugins.keys():
-                        self._plugins[dirname] = module.MLPlugin()
+                        plugin = module.MLPlugin()
+                        if isinstance(plugin, MLPluginBase):
+                            self._plugins[dirname] = plugin
 
     def mlGetPluginByName(self, name):
         ret = None

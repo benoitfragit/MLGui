@@ -1,28 +1,30 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from PyQt5.QtWidgets import QDockWidget
 from PyQt5.QtWidgets import QListWidget
 from PyQt5.QtWidgets import QListWidgetItem
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QPushButton
-
 
 from PyQt5.QtGui     import QIcon
 from PyQt5.QtCore    import Qt
 
 from mltrainervieweritemui  import MLTrainerViewerItemUI
 
-class MLTrainerViewerUI(QDockWidget):
-    def __init__(self, manager, title= "Trainer viewer", parent = None):
-        QDockWidget.__init__(self, title, parent)
+class MLTrainerViewerUI(QListWidget):
+    def __init__(self, manager, parent = None):
+        QListWidget.__init__(self, parent)
 
         self._manager = manager
-        srlf._items = {}
-        self._list = QListWidget()
-        self._list.setViewMode(QListWidget.IconMode)
-        self.setWidget(self._list)
-        self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        self._items = {}
+        self.setViewMode(QListWidget.IconMode)
+
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+
+    def mlOnRemoveTrainer(self, uuid):
+        if uuid is not None and uuid in self._items.keys():
+            self.takeItem(self.row(self._items[uuid][0]))
+            self._items.pop(uuid)
 
     def mlOnNewTrainerAdded(self):
         trainers = self._manager.mlGetAllTrainers()
@@ -31,7 +33,8 @@ class MLTrainerViewerUI(QDockWidget):
                 trainer = trainers[uuid]
                 item = QListWidgetItem()
                 internal = MLTrainerViewerItemUI(self._manager, trainer)
+                internal.removeTrainer.connect(self.mlOnRemoveTrainer)
                 self._items[uuid] = [item, internal]
                 item.setSizeHint(self._items[uuid][1].sizeHint())
-                self._list.addItem(self._items[uuid][0])
-                self._list.setItemWidget(self._items[uuid][0], self._items[uuid][1])
+                self.addItem(self._items[uuid][0])
+                self.setItemWidget(self._items[uuid][0], self._items[uuid][1])
