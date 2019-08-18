@@ -18,20 +18,20 @@ class MLTrainerViewerUI(QDockWidget):
         QDockWidget.__init__(self, title, parent)
 
         self._manager = manager
-
+        srlf._items = {}
         self._list = QListWidget()
         self._list.setViewMode(QListWidget.IconMode)
-
         self.setWidget(self._list)
         self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
 
     def mlOnNewTrainerAdded(self):
         trainers = self._manager.mlGetAllTrainers()
         for uuid in trainers.keys():
-            if uuid is not None:
+            if uuid is not None  and uuid not in self._items.keys():
                 trainer = trainers[uuid]
                 item = QListWidgetItem()
                 internal = MLTrainerViewerItemUI(self._manager, trainer)
-                item.setSizeHint(internal.sizeHint())
-                self._list.addItem(item)
-                self._list.setItemWidget(item, internal)
+                self._items[uuid] = [item, internal]
+                item.setSizeHint(self._items[uuid][1].sizeHint())
+                self._list.addItem(self._items[uuid][0])
+                self._list.setItemWidget(self._items[uuid][0], self._items[uuid][1])
