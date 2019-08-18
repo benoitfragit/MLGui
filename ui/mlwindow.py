@@ -34,8 +34,6 @@ class MLWindow(QMainWindow):
         manageMenu = mainMenu.addMenu('&Manage')
         trainerMenu = manageMenu.addMenu('&Trainer')
         self._newTrainerMenu = trainerMenu.addMenu('&New trainer')
-        displayTrainers = QAction('&Display', self)
-        trainerMenu.addAction(displayTrainers)
         networkMenu = manageMenu.addMenu('&Network')
         quit = QAction('Quit', self)
         quit.triggered.connect(self.close)

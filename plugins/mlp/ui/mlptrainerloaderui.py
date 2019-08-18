@@ -88,19 +88,19 @@ class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self._network_filepath, _ = QFileDialog.getOpenFileName(self, "Select a network file", "", "All files (*);;Xml files (*.xml)", options=options)
-        self._label4.setText(self._network_filepath)
+        self._label4.setText(os.path.basename(self._network_filepath))
 
     def mlOpenTrainerFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self._trainer_filepath, _ = QFileDialog.getOpenFileName(self, "Select a network file", "", "All files (*);;Xml files (*.xml)", options=options)
-        self._label5.setText(self._trainer_filepath)
+        self._label5.setText(os.path.basename(self._trainer_filepath))
 
     def mlOpenDataFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self._data_filepath, _ = QFileDialog.getOpenFileName(self, "Select a network file", "", "All files (*);;Xml files (*.xml)", options=options)
-        self._label6.setText(self._data_filepath)
+        self._label6.setText(os.path.basename(self._data_filepath))
 
     def mlCancel(self):
         self._entry.clear()
