@@ -93,7 +93,6 @@ class MLWindow(QMainWindow):
                 self.addDockWidget(Qt.LeftDockWidgetArea, loadUI)
 
                 action = loadUI.toggleViewAction()
-                action.triggered.connect(loadUI.show)
                 self._newTrainerMenu.addAction(action)
 
                 loadUI.mlValidateTrainerSignal.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
