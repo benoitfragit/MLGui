@@ -2,10 +2,7 @@
 # -*- coding: utf-8 -*-
 
 class MLPluginActivableIFace:
-    def mlActivatePlugin(self):
-        raise NotImplementedError
-
-    def mlDeactivatePlugin(self):
+    def mlSetPluginActivated(self, activated):
         raise NotImplementedError
 
     def mlIsPluginActivated(self):

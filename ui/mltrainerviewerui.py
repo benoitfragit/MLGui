@@ -16,6 +16,7 @@ class MLTrainerViewerUI(QListWidget):
         QListWidget.__init__(self, parent)
 
         self._manager = manager
+
         self._items = {}
         self.setViewMode(QListWidget.IconMode)
 
@@ -26,11 +27,11 @@ class MLTrainerViewerUI(QListWidget):
             self.takeItem(self.row(self._items[uuid][0]))
             self._items.pop(uuid)
 
-    def mlOnNewTrainerAdded(self):
-        trainers = self._manager.mlGetAllTrainers()
-        for uuid in trainers.keys():
-            if uuid is not None  and uuid not in self._items.keys():
-                trainer = trainers[uuid]
+    def mlOnNewTrainerAdded(self, trainer):
+        if trainer is not None:
+            uuid = trainer.mlGetUniqId()
+
+            if uuid not in self._items.keys():
                 item = QListWidgetItem()
                 internal = MLTrainerViewerItemUI(self._manager, trainer)
                 internal.removeTrainer.connect(self.mlOnRemoveTrainer)

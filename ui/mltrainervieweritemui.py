@@ -11,6 +11,7 @@ from PyQt5.QtGui     import QIcon
 from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import QSize
 from PyQt5.QtCore    import pyqtSignal
+from PyQt5.QtCore    import QTimer
 
 import uuid
 
@@ -22,6 +23,8 @@ class MLTrainerViewerItemUI(QWidget):
 
         self._manager = manager
         self._trainer = trainer
+        self._timer   = QTimer()
+        self._timer.timeout.connect(self.mlUpdateTrainerItemOnTimeout)
 
         hbox1 = QHBoxLayout()
         hbox2 = QHBoxLayout()
@@ -39,13 +42,19 @@ class MLTrainerViewerItemUI(QWidget):
         configure   = QPushButton()
         remove      = QPushButton()
 
+
         self._run.setIcon(QIcon.fromTheme('media-playback-start'))
+        self._run.setFlat(True)
         self._pause.setIcon(QIcon.fromTheme('media-playback-pause'))
         self._pause.setVisible(False)
+        self._pause.setFlat(True)
         self._stop.setIcon(QIcon.fromTheme('media-playback-stop'))
         self._stop.setVisible(False)
+        self._stop.setFlat(True)
         configure.setIcon(QIcon.fromTheme('document-properties'))
+        configure.setFlat(True)
         remove.setIcon(QIcon.fromTheme('user-trash'))
+        remove.setFlat(True)
 
         self._run.clicked.connect(self.mlOnTrainerRunClicked)
         self._pause.clicked.connect(self.mlOnTrainerPauseClicked)
@@ -69,6 +78,14 @@ class MLTrainerViewerItemUI(QWidget):
 
         self.setLayout(vbox)
 
+    def mlUpdateTrainerItemOnTimeout(self):
+        if self._timer.isActive():
+            if self._manager.mlIsTrainerWithIdRunning(uuid) is not True:
+                self._pause.setVisible(False)
+                self._stop.setVisible(False)
+                self._run.setVisible(True)
+                self._timer.stop()
+
     def mlOnTrainerRunClicked(self):
         if self._manager is not None and self._trainer is not None:
             uuid = self._trainer.mlGetUniqId()
@@ -77,6 +94,7 @@ class MLTrainerViewerItemUI(QWidget):
                 self._stop.setVisible(True)
                 self._run.setVisible(False)
                 self._manager.mlStartTrainerWithId(uuid)
+                self._timer.start(500)
             elif self._manager.mlIsTrainerWithIdPaused(uuid):
                 self._pause.setVisible(True)
                 self._stop.setVisible(True)
@@ -98,6 +116,7 @@ class MLTrainerViewerItemUI(QWidget):
             self._stop.setVisible(False)
             self._run.setVisible(True)
             self._manager.mlStopTrainerWithId(uuid)
+            self._timer.stop()
 
     def mlOnRemoveTrainerClicked(self):
         if self._manager is not None and self._trainer is not None:
@@ -107,3 +126,4 @@ class MLTrainerViewerItemUI(QWidget):
             self._run.setVisible(True)
             self._manager.mlRemoveTrainerWithId(uuid)
             self.removeTrainer.emit(uuid)
+            self._timer.stop()

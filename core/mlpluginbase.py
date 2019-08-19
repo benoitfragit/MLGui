@@ -6,11 +6,14 @@ from iface import MLPluginMetaDataIFace
 from iface import MLPluginIFace
 from iface import MLPluginUIProviderIFace
 
+import uuid
+
 class MLPluginBase( MLPluginIFace, \
                     MLPluginActivableIFace, \
                     MLPluginMetaDataIFace, \
                     MLPluginUIProviderIFace):
     def __init__(self):
+        self._uuid      = uuid.uuid4()
         self._activated = False
         self._name = None
         self._version = None
@@ -18,8 +21,14 @@ class MLPluginBase( MLPluginIFace, \
         self._description = None
         self._trainerloaderui = None
 
+    def mlGetUniqId(self):
+        return self._uuid
+
     def mlGetTrainerLoaderUI(self):
         return self._trainerloaderui
+
+    def mlSetPluginActivated(self, activated):
+        self;_activated = activated
 
     def mlIsPluginActivated(self):
         return self._activated

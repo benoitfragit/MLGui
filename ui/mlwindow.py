@@ -9,6 +9,7 @@ from PyQt5.QtCore    import Qt
 
 from mltrainerviewerui      import MLTrainerViewerUI
 from mltrainerloaderbaseui  import MLTrainerLoaderBaseUI
+
 import os
 
 class MLWindow(QMainWindow):
@@ -53,6 +54,7 @@ class MLWindow(QMainWindow):
         """
         pluginMenu = mainMenu.addMenu('&Plugins')
         settings = QAction('&Settings', self)
+        settings.triggered.connect(self.mlOnShowPluginPopup)
         pluginMenu.addAction(settings)
 
         """
@@ -77,6 +79,9 @@ class MLWindow(QMainWindow):
 
         self.mlRegisterAllPlugins(pluginloader)
 
+    def mlOnShowPluginPopup(self):
+        pass
+
     def mlOnDisplayTrainers(self):
         self._trainerviewer.setVisible(True)
         self.setCentralWidget(self._trainerviewer)
@@ -96,8 +101,6 @@ class MLWindow(QMainWindow):
                 self._newTrainerMenu.addAction(action)
 
                 loadUI.mlValidateTrainerSignal.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
-                loadUI.mlValidateTrainerSignal.connect(self._trainerviewer.mlOnNewTrainerAdded)
-
 
     def onLoadTrainerValidateClicked(self, plugin):
         if plugin is not None:
@@ -117,6 +120,7 @@ class MLWindow(QMainWindow):
                     if trainer is not None:
                         trainer.mlConfigureTrainer(trainer_filepath)
                         self._trainermanager.mlAddTrainer(trainer)
+                        self._trainerviewer.mlOnNewTrainerAdded(trainer)
 
     def mlRegisterAllPlugins(self, loader):
         plugins = loader.mlGetAllPlugins()
