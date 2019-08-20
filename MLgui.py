@@ -2,10 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5    import QtWidgets
-from optparse import OptionParser
+
 from core     import MLPluginLoader
 from core     import MLTrainerManager
+
 from ui       import MLWindow
+
 import os
 import sys
 import signal
