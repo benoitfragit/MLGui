@@ -80,7 +80,8 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlUpdateTrainerItemOnTimeout(self):
         if self._timer.isActive():
-            if self._manager.mlIsTrainerWithIdRunning(uuid) is not True:
+            id = self._trainer.mlGetUniqId()
+            if self._manager.mlIsTrainerWithIdRunning(id) is not True:
                 self._pause.setVisible(False)
                 self._stop.setVisible(False)
                 self._run.setVisible(True)
