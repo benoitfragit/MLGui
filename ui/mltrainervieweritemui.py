@@ -89,42 +89,42 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlOnTrainerRunClicked(self):
         if self._manager is not None and self._trainer is not None:
-            uuid = self._trainer.mlGetUniqId()
-            if self._manager.mlIsTrainerWithIdRunning(uuid) is not True:
+            id = self._trainer.mlGetUniqId()
+            if self._manager.mlIsTrainerWithIdRunning(id) is not True:
                 self._pause.setVisible(True)
                 self._stop.setVisible(True)
                 self._run.setVisible(False)
-                self._manager.mlStartTrainerWithId(uuid)
-                self._timer.start(500)
-            elif self._manager.mlIsTrainerWithIdPaused(uuid):
+                self._manager.mlStartTrainerWithId(id)
+                self._timer.start(80)
+            elif self._manager.mlIsTrainerWithIdPaused(id):
                 self._pause.setVisible(True)
                 self._stop.setVisible(True)
                 self._run.setVisible(False)
-                self._manager.mlResumeTrainerWithId(uuid)
+                self._manager.mlResumeTrainerWithId(id)
 
     def mlOnTrainerPauseClicked(self):
         if self._manager is not None and self._trainer is not None:
-            uuid = self._trainer.mlGetUniqId()
+            id = self._trainer.mlGetUniqId()
             self._pause.setVisible(False)
             self._stop.setVisible(False)
             self._run.setVisible(True)
-            self._manager.mlPauseTrainerWithId(uuid)
+            self._manager.mlPauseTrainerWithId(id)
 
     def mlOnTrainerStopClicked(self):
         if self._manager is not None and self._trainer is not None:
-            uuid = self._trainer.mlGetUniqId()
+            id = self._trainer.mlGetUniqId()
             self._pause.setVisible(False)
             self._stop.setVisible(False)
             self._run.setVisible(True)
-            self._manager.mlStopTrainerWithId(uuid)
+            self._manager.mlStopTrainerWithId(id)
             self._timer.stop()
 
     def mlOnRemoveTrainerClicked(self):
         if self._manager is not None and self._trainer is not None:
-            uuid = self._trainer.mlGetUniqId()
+            id = self._trainer.mlGetUniqId()
             self._pause.setVisible(False)
             self._stop.setVisible(False)
             self._run.setVisible(True)
-            self._manager.mlRemoveTrainerWithId(uuid)
-            self.removeTrainer.emit(uuid)
+            self._manager.mlRemoveTrainerWithId(id)
+            self.removeTrainer.emit(id)
             self._timer.stop()
