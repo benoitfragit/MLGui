@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 class MLPluginIFace:
-    def mlGetTrainer(self, net, data, username):
+    def mlGetTrainer(self, net, data):
         raise NotImplementedError
 
     def mlDeleteTrainer(self, trainer):

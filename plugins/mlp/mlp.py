@@ -9,7 +9,6 @@ import os
 sys.path.append('..' + os.path.sep +  '..')
 
 from core  import MLPluginBase
-from core  import MLTrainer
 from core  import MLNetwork
 
 from exchange import MLPTrainer
@@ -109,10 +108,9 @@ class MLPlugin(MLLoader, MLPluginBase):
 
         self._trainerloaderui = MLPTrainerLoaderUI(self)
 
-    def mlGetTrainer(self, net, data, username):
+    def mlGetTrainer(self, net, data):
         internal = self._funcs[self._funcnames.TRAINER_NEW](net, data)
-        trainer = MLTrainer(self, internal, username)
-        return trainer
+        return internal
 
     def mlDeleteTrainer(self, trainer):
         self._funcs[self._funcnames.TRAINER_DELETE](trainer)

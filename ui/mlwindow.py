@@ -10,6 +10,8 @@ from PyQt5.QtCore    import Qt
 from mltrainerviewerui      import MLTrainerViewerUI
 from mltrainerloaderbaseui  import MLTrainerLoaderBaseUI
 
+from core import MLTrainer
+
 import os
 
 class MLWindow(QMainWindow):
@@ -116,10 +118,11 @@ class MLWindow(QMainWindow):
                 os.path.isfile(data_filepath)    and \
                 os.path.exists(trainer_filepath) and \
                 os.path.isfile(trainer_filepath):
-                    trainer = plugin.mlGetTrainer(network_filepath, data_filepath, trainer_name)
-                    if trainer is not None:
+                    internal = plugin.mlGetTrainer(network_filepath, data_filepath)
+                    if internal is not None:
+                        trainer = MLTrainer(self._trainermanager, plugin, internal, trainer_name)
                         trainer.mlConfigureTrainer(trainer_filepath)
-                        self._trainermanager.mlAddTrainer(trainer)
+                        self._trainermanager.mlAddProcess(trainer)
                         self._trainerviewer.mlOnNewTrainerAdded(trainer)
 
     def mlRegisterAllPlugins(self, loader):

@@ -1,4 +1,5 @@
 from iface              import *
+from mlprocess          import MLProcess
 from mltrainer          import MLTrainer
 from mlnetwork          import MLNetwork
 from mlpluginbase       import MLPluginBase

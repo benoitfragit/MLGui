@@ -4,7 +4,7 @@
 import os
 import glob
 import importlib
-import inspect
+import sys
 
 from mlpluginbase import MLPluginBase
 
@@ -26,14 +26,11 @@ class MLPluginLoader:
                     module  = importlib.import_module(dir, package=base)
 
                     if dirname not in self._plugins.keys():
-                        if 'MLPlugin' in inspect.get_members(module):
-                            plugin = module.MLPlugin()
-                            if isinstance(plugin, MLPluginBase):
-                                self._plugins[dirname] = plugin
-                            else:
-                                print >>sys.stderr,  'MLPlugin class is not  a valid MLPluginBase class'
+                        plugin = module.MLPlugin()
+                        if isinstance(plugin, MLPluginBase):
+                            self._plugins[dirname] = plugin
                         else:
-                            print >>sys.stderr, 'Module %(module)s does not contain a valid MLPlugin class'  % {'module': module}
+                            print >>sys.stderr,  'MLPlugin class is not  a valid MLPluginBase class'
 
     def mlGetPluginByName(self, name):
         ret = None
