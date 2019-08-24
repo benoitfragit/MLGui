@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QLabel
+from PyQt5.QtWidgets import QMenu
+from PyQt5.QtWidgets import QAction
 
 from PyQt5.QtGui     import QIcon
 from PyQt5.QtCore    import Qt
@@ -18,112 +20,87 @@ import uuid
 class MLTrainerViewerItemUI(QWidget):
     removeTrainer = pyqtSignal(uuid.UUID)
 
-    def __init__(self, manager, trainer, parent = None):
+    def __init__(self, trainer, parent = None):
         QWidget.__init__(self, parent)
 
-        self._manager = manager
         self._trainer = trainer
         self._timer   = QTimer()
         self._timer.timeout.connect(self.mlUpdateTrainerItemOnTimeout)
 
-        hbox1 = QHBoxLayout()
-        hbox2 = QHBoxLayout()
         vbox = QVBoxLayout()
 
-        self._label = QLabel(trainer.mlGetUserName())
+        label       = QLabel(trainer.mlGetUserName())
+        label.setAlignment(Qt.AlignCenter)
         pixmap      = QIcon.fromTheme('drive-harddisk').pixmap(QSize(90, 90))
         pixLabel    = QLabel()
         pixLabel.setAlignment(Qt.AlignCenter)
         pixLabel.setPixmap(pixmap)
 
-        self._run   = QPushButton()
-        self._pause = QPushButton()
-        self._stop  = QPushButton()
-        configure   = QPushButton()
-        remove      = QPushButton()
-
-        self._run.setIcon(QIcon.fromTheme('media-playback-start'))
-        self._run.setFlat(True)
-        self._pause.setIcon(QIcon.fromTheme('media-playback-pause'))
-        self._pause.setVisible(False)
-        self._pause.setFlat(True)
-        self._stop.setIcon(QIcon.fromTheme('media-playback-stop'))
-        self._stop.setVisible(False)
-        self._stop.setFlat(True)
-        configure.setIcon(QIcon.fromTheme('document-properties'))
-        configure.setFlat(True)
-        remove.setIcon(QIcon.fromTheme('user-trash'))
-        remove.setFlat(True)
-
-        self._run.clicked.connect(self.mlOnTrainerRunClicked)
-        self._pause.clicked.connect(self.mlOnTrainerPauseClicked)
-        self._stop.clicked.connect(self.mlOnTrainerStopClicked)
-        remove.clicked.connect(self.mlOnRemoveTrainerClicked)
-
-        hbox1.addWidget(configure)
-        hbox1.addStretch(1)
-        hbox1.addWidget(remove)
-
-        hbox2.addWidget(self._run)
-        hbox2.addWidget(self._pause)
-        hbox2.addStretch(1)
-        hbox2.addWidget(self._label)
-        hbox2.addStretch(1)
-        hbox2.addWidget(self._stop)
-
-        vbox.addLayout(hbox1)
         vbox.addWidget(pixLabel)
-        vbox.addLayout(hbox2)
+        vbox.addWidget(label)
 
         self.setLayout(vbox)
 
     def mlUpdateTrainerItemOnTimeout(self):
         if self._timer.isActive():
-            id = self._trainer.mlGetUniqId()
-            if self._manager.mlIsProcessRunning(id) == False:
-                self._pause.setVisible(False)
-                self._stop.setVisible(False)
-                self._run.setVisible(True)
+            if self._trainer is not None and self._trainer.mlIsProcessRunning() == False:
                 self._timer.stop()
 
     def mlOnTrainerRunClicked(self):
-        if self._manager is not None and self._trainer is not None:
-            id = self._trainer.mlGetUniqId()
-            if self._manager.mlIsProcessRunning(id) is not True:
-                self._pause.setVisible(True)
-                self._stop.setVisible(True)
-                self._run.setVisible(False)
-                self._manager.mlStartProcess(id)
+        if self._trainer is not None:
+            if self._trainer.mlIsProcessPaused():
+                self._trainer.mlResumeProcess()
+            elif not self._trainer.mlIsProcessRunning() :
+                self._trainer.start()
                 self._timer.start(100)
-            elif self._manager.mlIsProcessPaused(id):
-                self._pause.setVisible(True)
-                self._stop.setVisible(True)
-                self._run.setVisible(False)
-                self._manager.mlResumeProcess(id)
 
     def mlOnTrainerPauseClicked(self):
-        if self._manager is not None and self._trainer is not None:
-            id = self._trainer.mlGetUniqId()
-            self._pause.setVisible(False)
-            self._stop.setVisible(False)
-            self._run.setVisible(True)
-            self._manager.mlPauseProcess(id)
+        if self._trainer is not None:
+            self._trainer.mlPauseProcess()
 
     def mlOnTrainerStopClicked(self):
-        if self._manager is not None and self._trainer is not None:
-            id = self._trainer.mlGetUniqId()
-            self._pause.setVisible(False)
-            self._stop.setVisible(False)
-            self._run.setVisible(True)
-            self._manager.mlKillProcessWithId(id)
-            self._timer.stop()
+        if self._trainer is not None:
+            if self._trainer.mlIsProcessRunning():
+                self._trainer.mlKillProcess()
+                self._timer.stop()
 
     def mlOnRemoveTrainerClicked(self):
-        if self._manager is not None and self._trainer is not None:
+        if self._trainer is not None:
             id = self._trainer.mlGetUniqId()
-            self._pause.setVisible(False)
-            self._stop.setVisible(False)
-            self._run.setVisible(True)
-            self._manager.mlRemoveProcess(id)
+            self._trainer.mlKillProcess()
             self.removeTrainer.emit(id)
             self._timer.stop()
+
+    def contextMenuEvent(self, event):
+        menu = QMenu(self)
+        run    = QAction(QIcon.fromTheme('media-playback-start'), 'Run', self)
+        pause  = QAction(QIcon.fromTheme('media-playback-pause'), 'Pause', self)
+        stop   = QAction(QIcon.fromTheme('media-playback-stop'), '&Stop', self)
+        remove = QAction(QIcon.fromTheme('user-trash'),'&Remove', self)
+        configure = QAction(QIcon.fromTheme('document-properties'), '&Configure', self)
+
+        run.triggered.connect(self.mlOnTrainerRunClicked)
+        pause.triggered.connect(self.mlOnTrainerPauseClicked)
+        stop.triggered.connect(self.mlOnTrainerStopClicked)
+        remove.triggered.connect(self.mlOnRemoveTrainerClicked)
+
+        if self._trainer.mlIsProcessRunning():
+            is_paused = self._trainer.mlIsProcessPaused()
+
+            stop.setVisible(True)
+            configure.setVisible(False)
+            run.setVisible(is_paused)
+            pause.setVisible(not is_paused)
+        else:
+            is_not_finished = not self._trainer.mlIsProcessFinish()
+            run.setVisible(is_not_finished)
+            configure.setVisible(is_not_finished)
+            stop.setVisible(False)
+            pause.setVisible(False)
+
+        menu.addAction(run)
+        menu.addAction(pause)
+        menu.addAction(stop)
+        menu.addAction(configure)
+        menu.addAction(remove)
+        menu.exec_(self.mapToGlobal(event.pos()))

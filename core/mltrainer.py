@@ -42,22 +42,25 @@ class MLTrainer(MLProcess, MLTrainerIFace):
             self._shared['error']     = self.mlGetTrainerError()
             self._shared['pause']     = False
             self._shared['stopped']   = False
+            self._shared['exit']      = False
 
         while (self._shared['running']):
-            if self._pause.set():
-                self._shared['pause'] = True
-            elif self._resume.set():
-                self._shared['pause'] = False
-
-            if self._quit.set():
+            if self._shared['exit']:
                 self._shared['stopped'] = True
                 self._shared['running'] = False
-            elif self._shared['pause'] is not True:
+            elif self._shared['pause']:
+                self._resume.wait()
+                self._resume.clear()
+                self._shared['pause'] = False
+
+            else:
                 self._lock.acquire()
                 self._plugin.mlTrainerRun(self._internal)
                 self._lock.release()
                 self._shared['running']   = self.mlIsTrainerRunning()
                 self._shared['progress']  = self.mlGetTrainerProgress()
                 self._shared['error']     = self.mlGetTrainerError()
+
+        self._shared['exit'] = True
 
         print >>sys.stdout, 'Progress:%(prog)f, Error:%(err)f' % {'prog':self._shared['progress'], 'err':self._shared['error']}

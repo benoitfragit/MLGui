@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt5.QtWidgets import QListWidget
+from PyQt5.QtWidgets import QListView
 from PyQt5.QtWidgets import QListWidgetItem
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QPushButton
@@ -19,13 +20,17 @@ class MLTrainerViewerUI(QListWidget):
 
         self._items = {}
         self.setViewMode(QListWidget.IconMode)
+        self.setResizeMode(QListWidget.Adjust)
+        self.setMovement(QListView.Static)
+        self.setSpacing(10)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-    def mlOnRemoveTrainer(self, uuid):
-        if uuid is not None and uuid in self._items.keys():
-            self.takeItem(self.row(self._items[uuid][0]))
-            self._items.pop(uuid)
+    def mlOnRemoveTrainer(self, id):
+        if id is not None and id in self._items.keys():
+            self.takeItem(self.row(self._items[id][0]))
+            self._items.pop(id)
+            self._manager.mlRemoveProcess(id)
 
     def mlOnNewTrainerAdded(self, trainer):
         if trainer is not None:
@@ -33,7 +38,7 @@ class MLTrainerViewerUI(QListWidget):
 
             if uuid not in self._items.keys():
                 item = QListWidgetItem()
-                internal = MLTrainerViewerItemUI(self._manager, trainer)
+                internal = MLTrainerViewerItemUI(trainer)
                 internal.removeTrainer.connect(self.mlOnRemoveTrainer)
                 self._items[uuid] = [item, internal]
                 item.setSizeHint(self._items[uuid][1].sizeHint())

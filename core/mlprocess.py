@@ -14,15 +14,13 @@ class MLProcess(Process):
         self._uuid  = uuid.uuid4()
         self._lock  = Lock()
         self._shared= manager.dict()
-        self._pause = Event()
         self._resume= Event()
-        self._quit  = Event()
 
     def mlGetUniqId(self):
         return self._uuid
 
     def mlPauseProcess(self):
-        self._pause.set()
+        self._shared['pause'] = True
 
     def mlResumeProcess(self):
         self._resume.set()
@@ -38,13 +36,19 @@ class MLProcess(Process):
         if 'pause' in self._shared.keys():
             ret = self._shared['pause'] and \
                   self._shared['running']
+        return ret
 
+    def mlIsProcessFinish(self):
+        ret = False
+        if 'exit' in self._shared.keys():
+            ret = self._shared['exit']
         return ret
 
     def mlKillProcess(self):
-        self._quit.set()
+        self._shared['exit'] = True
         self.terminate()
         self.join()
+        self._shared['running'] = False
 
     def run(self):
         raise NotImplementedError
