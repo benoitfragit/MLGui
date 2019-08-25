@@ -14,6 +14,10 @@ class MLTrainer(MLProcess, MLTrainerIFace):
         self._plugin    = plugin
         self._username  = username
 
+        self._shared['running']   = False
+        self._shared['progress']  = self.mlGetTrainerProgress()
+        self._shared['error']     = self.mlGetTrainerError()
+
     def mlGetUserName(self):
         return self._username
 
@@ -24,25 +28,21 @@ class MLTrainer(MLProcess, MLTrainerIFace):
         self._plugin.mlConfigureTrainer(self._internal, path)
 
     def mlIsTrainerRunning(self):
-        return self._plugin.mlIsTrainerRunning(self._internal)
+        return self._shared['running']
 
     def mlGetTrainerProgress(self):
-        return self._plugin.mlGetTrainerProgress(self._internal)
+        return self._shared['progress']
 
     def mlTrainerRun(self):
         self.start()
 
     def mlGetTrainerError(self):
-        return self._plugin.mlGetTrainerError(self._internal)
+        return self._shared['error']
 
     def run(self):
-        if 'running' not in self._shared.keys():
-            self._shared['running']   = True
-            self._shared['progress']  = self.mlGetTrainerProgress()
-            self._shared['error']     = self.mlGetTrainerError()
-            self._shared['pause']     = False
-            self._shared['stopped']   = False
-            self._shared['exit']      = False
+        self._shared['running']   = True
+        self._shared['progress']  = self.mlGetTrainerProgress()
+        self._shared['error']     = self.mlGetTrainerError()
 
         while (self._shared['running']):
             if self._shared['exit']:
@@ -55,11 +55,9 @@ class MLTrainer(MLProcess, MLTrainerIFace):
             else:
                 self._lock.acquire()
                 self._plugin.mlTrainerRun(self._internal)
+                self._shared['running']   = self._plugin.mlIsTrainerRunning(self._internal)
+                self._shared['progress']  = self._plugin.mlGetTrainerProgress(self._internal)
+                self._shared['error']     = self._plugin.mlGetTrainerError(self._internal)
                 self._lock.release()
-                self._shared['running']   = self.mlIsTrainerRunning()
-                self._shared['progress']  = self.mlGetTrainerProgress()
-                self._shared['error']     = self.mlGetTrainerError()
 
         self._shared['exit'] = True
-
-        print >>sys.stdout, 'Progress:%(prog)f, Error:%(err)f' % {'prog':self._shared['progress'], 'err':self._shared['error']}

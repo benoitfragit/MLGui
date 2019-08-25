@@ -16,6 +16,13 @@ class MLProcess(Process):
         self._shared= manager.dict()
         self._resume= Event()
 
+        self._shared['pause']     = False
+        self._shared['stopped']   = False
+        self._shared['exit']      = False
+        self._shared['running']   = False
+        self._shared['progress']  = 0.0;
+        self._shared['error']     = 1.0;
+
     def mlGetUniqId(self):
         return self._uuid
 

@@ -32,15 +32,21 @@ class MLTrainerViewerItemUI(QWidget):
 
         self._progress = QProgressBar()
         self._progress.setMaximum(100.0)
+        self._progress.setMinimum(0.0)
         self._progress.setValue(0.0)
+        self._progress.setTextVisible(True)
+        self._progress.setVisible(False)
 
         self._error = QProgressBar()
         self._error.setMaximum(100.0)
+        self._error.setMinimum(0.0)
         self._error.setValue(100.0)
+        self._error.setTextVisible(True)
+        self._error.setVisible(False)
 
         label       = QLabel(trainer.mlGetUserName())
         label.setAlignment(Qt.AlignCenter)
-        pixmap      = QIcon.fromTheme('drive-harddisk').pixmap(QSize(90, 90))
+        pixmap      = QIcon.fromTheme('drive-harddisk').pixmap(QSize(120, 120))
         pixLabel    = QLabel()
         pixLabel.setAlignment(Qt.AlignCenter)
         pixLabel.setPixmap(pixmap)
@@ -58,13 +64,12 @@ class MLTrainerViewerItemUI(QWidget):
             progress    = 100.0 * self._trainer.mlGetTrainerProgress()
 
             self._error.setValue(error)
+            self._error.setFormat('Error ' + str(int(error)) + '%')
             self._progress.setValue(progress)
-
-            print "error:" + str(error) + " progress:" + str(progress)
+            self._progress.setFormat('Progress ' + str(int(progress)) + '%' )
 
             if not self._trainer.mlIsProcessRunning():
                 self._timer.stop()
-                print "on quitte"
 
     def mlOnTrainerRunClicked(self):
         if self._trainer is not None:
@@ -72,8 +77,9 @@ class MLTrainerViewerItemUI(QWidget):
                 self._trainer.mlResumeProcess()
             elif not self._trainer.mlIsProcessRunning() :
                 self._trainer.start()
+                self._error.setVisible(True)
+                self._progress.setVisible(True)
                 self._timer.start(100)
-                print "ok on lance"
 
     def mlOnTrainerPauseClicked(self):
         if self._trainer is not None:
