@@ -118,12 +118,10 @@ class MLWindow(QMainWindow):
                 os.path.isfile(data_filepath)    and \
                 os.path.exists(trainer_filepath) and \
                 os.path.isfile(trainer_filepath):
-                    internal = plugin.mlGetTrainer(network_filepath, data_filepath)
-                    if internal is not None:
-                        trainer = MLTrainer(self._trainermanager, plugin, internal, trainer_name)
-                        trainer.mlConfigureTrainer(trainer_filepath)
-                        self._trainermanager.mlAddProcess(trainer)
-                        self._trainerviewer.mlOnNewTrainerAdded(trainer)
+                    trainer = MLTrainer(self._trainermanager, plugin, network_filepath, data_filepath, trainer_name)
+                    trainer.mlConfigureTrainer(trainer_filepath)
+                    self._trainermanager.mlAddProcess(trainer)
+                    self._trainerviewer.mlOnNewTrainerAdded(trainer)
 
     def mlRegisterAllPlugins(self, loader):
         plugins = loader.mlGetAllPlugins()

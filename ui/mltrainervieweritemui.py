@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QProgressBar
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
@@ -29,6 +30,14 @@ class MLTrainerViewerItemUI(QWidget):
 
         vbox = QVBoxLayout()
 
+        self._progress = QProgressBar()
+        self._progress.setMaximum(100.0)
+        self._progress.setValue(0.0)
+
+        self._error = QProgressBar()
+        self._error.setMaximum(100.0)
+        self._error.setValue(100.0)
+
         label       = QLabel(trainer.mlGetUserName())
         label.setAlignment(Qt.AlignCenter)
         pixmap      = QIcon.fromTheme('drive-harddisk').pixmap(QSize(90, 90))
@@ -36,15 +45,26 @@ class MLTrainerViewerItemUI(QWidget):
         pixLabel.setAlignment(Qt.AlignCenter)
         pixLabel.setPixmap(pixmap)
 
-        vbox.addWidget(pixLabel)
         vbox.addWidget(label)
+        vbox.addWidget(pixLabel)
+        vbox.addWidget(self._progress)
+        vbox.addWidget(self._error)
 
         self.setLayout(vbox)
 
     def mlUpdateTrainerItemOnTimeout(self):
         if self._timer.isActive():
-            if self._trainer is not None and self._trainer.mlIsProcessRunning() == False:
+            error       = 100.0 * self._trainer.mlGetTrainerError()
+            progress    = 100.0 * self._trainer.mlGetTrainerProgress()
+
+            self._error.setValue(error)
+            self._progress.setValue(progress)
+
+            print "error:" + str(error) + " progress:" + str(progress)
+
+            if not self._trainer.mlIsProcessRunning():
                 self._timer.stop()
+                print "on quitte"
 
     def mlOnTrainerRunClicked(self):
         if self._trainer is not None:
@@ -53,6 +73,7 @@ class MLTrainerViewerItemUI(QWidget):
             elif not self._trainer.mlIsProcessRunning() :
                 self._trainer.start()
                 self._timer.start(100)
+                print "ok on lance"
 
     def mlOnTrainerPauseClicked(self):
         if self._trainer is not None:

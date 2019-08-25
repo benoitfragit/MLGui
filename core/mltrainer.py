@@ -7,10 +7,10 @@ from iface import MLTrainerIFace
 from mlprocess import MLProcess
 
 class MLTrainer(MLProcess, MLTrainerIFace):
-    def __init__(self, manager, plugin, internal, username):
+    def __init__(self, manager, plugin, network_filepath, data_filepath, username):
         MLProcess.__init__(self, manager)
 
-        self._internal  = internal
+        self._internal  = plugin.mlGetTrainer(network_filepath, data_filepath)
         self._plugin    = plugin
         self._username  = username
 
@@ -52,7 +52,6 @@ class MLTrainer(MLProcess, MLTrainerIFace):
                 self._resume.wait()
                 self._resume.clear()
                 self._shared['pause'] = False
-
             else:
                 self._lock.acquire()
                 self._plugin.mlTrainerRun(self._internal)
