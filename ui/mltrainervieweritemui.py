@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QProgressBar
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
+from PyQt5.QtGui import QPixmap
 
 from PyQt5.QtGui     import QIcon
 from PyQt5.QtCore    import Qt
@@ -17,6 +18,7 @@ from PyQt5.QtCore    import pyqtSignal
 from PyQt5.QtCore    import QTimer
 
 import uuid
+import os
 
 class MLTrainerViewerItemUI(QWidget):
     removeTrainer = pyqtSignal(uuid.UUID)
@@ -36,6 +38,7 @@ class MLTrainerViewerItemUI(QWidget):
         self._progress.setValue(0.0)
         self._progress.setTextVisible(True)
         self._progress.setVisible(False)
+        self._progress.setMaximumHeight(15)
 
         self._error = QProgressBar()
         self._error.setMaximum(100.0)
@@ -43,18 +46,23 @@ class MLTrainerViewerItemUI(QWidget):
         self._error.setValue(100.0)
         self._error.setTextVisible(True)
         self._error.setVisible(False)
+        self._error.setMaximumHeight(15)
 
         label       = QLabel(trainer.mlGetUserName())
         label.setAlignment(Qt.AlignCenter)
-        pixmap      = QIcon.fromTheme('drive-harddisk').pixmap(QSize(120, 120))
+        dirname = os.path.split(__file__)[0]
+        dirname = os.path.join(dirname, 'resources')
+        filename = os.path.join(dirname, 'neural.png')
+        pixmap = QPixmap(filename)
+        pixmap = pixmap.scaledToWidth(120)
         pixLabel    = QLabel()
         pixLabel.setAlignment(Qt.AlignCenter)
         pixLabel.setPixmap(pixmap)
 
-        vbox.addWidget(label)
         vbox.addWidget(pixLabel)
         vbox.addWidget(self._progress)
         vbox.addWidget(self._error)
+        vbox.addWidget(label)
 
         self.setLayout(vbox)
 
