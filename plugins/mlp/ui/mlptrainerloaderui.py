@@ -104,6 +104,9 @@ class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
 
     def mlCancel(self):
         self._entry.clear()
+        self._label4.setText('')
+        self _label5.setTest('')
+        self._label6.setText('')
         self.close()
 
     def mlValidate(self):
