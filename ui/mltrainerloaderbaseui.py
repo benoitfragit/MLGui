@@ -30,15 +30,17 @@ class MLTrainerLoaderBaseUI(QDockWidget):
         self.setWidget(self._mainWidget)
         self.setVisible(False)
 
+        self.visibilityChanged.connect(self.mlOnVisibilityChanged)
+
     def mlResetUI(self):
         self._network_filepath = None
         self._trainer_filepath = None
         self._data_filepath    = None
         self._trainer_name     = None
 
-    def shownEvent(self, event):
-        self.mlResetUI()
-        QDockWidget.shownEvent(self, event)
+    def mlOnVisibilityChanged(self, visible):
+        if visible:
+            self.mlResetUI()
 
     def mlBuildTrainerLoaderMainWidget(self):
         raise NotImplementedError

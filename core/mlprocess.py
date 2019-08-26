@@ -53,8 +53,9 @@ class MLProcess(Process):
 
     def mlKillProcess(self):
         self._shared['exit'] = True
-        self.terminate()
-        self.join()
+        if self._shared['running']:
+            self.terminate()
+            self.join()
         self._shared['running'] = False
 
     def run(self):

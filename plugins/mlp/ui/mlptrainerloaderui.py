@@ -28,23 +28,28 @@ class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
         self._label6 = QLabel()
 
         self._entry = QLineEdit()
-        button1 = QPushButton('Find')
+        button1 = QPushButton()
+        button1.setFlat(True)
         button1.setIcon(QIcon.fromTheme('system-search'))
-        button2 = QPushButton('Find')
+        button2 = QPushButton()
+        button2.setFlat(True)
         button2.setIcon(QIcon.fromTheme('system-search'))
-        button3 = QPushButton('Find')
+        button3 = QPushButton()
+        button3.setFlat(True)
         button3.setIcon(QIcon.fromTheme('system-search'))
         cancel  = QPushButton('Cancel')
         cancel.setIcon(QIcon.fromTheme('edit-undo'))
-        self._validate= QPushButton('Apply')
-        self._validate.setIcon(QIcon.fromTheme('system-run'))
+        cancel.setFlat(True)
+        validate= QPushButton('Apply')
+        validate.setIcon(QIcon.fromTheme('system-run'))
+        validate.setFlat(True)
 
         self._entry.textChanged.connect(self.mlOnTrainerNameChanged)
         button1.clicked.connect(self.mlOpenNetworkFile)
         button2.clicked.connect(self.mlOpenTrainerFile)
         button3.clicked.connect(self.mlOpenDataFile)
         cancel.clicked.connect(self.mlCancel)
-        self._validate.clicked.connect(self.mlValidate)
+        validate.clicked.connect(self.mlValidate)
 
         hbox0   = QHBoxLayout()
         hbox1   = QHBoxLayout()
@@ -67,7 +72,7 @@ class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
         hbox3.addWidget(button3)
         hbox4.addStretch(1)
         hbox4.addWidget(cancel)
-        hbox4.addWidget(self._validate)
+        hbox4.addWidget(validate)
 
         vbox.addLayout(hbox0)
         vbox.addLayout(hbox1)
@@ -103,12 +108,16 @@ class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
         self._label6.setText(os.path.basename(self._data_filepath))
 
     def mlCancel(self):
-        self._entry.clear()
-        self._label4.setText('')
-        self _label5.setTest('')
-        self._label6.setText('')
+        self.mlResetUI()
         self.close()
 
     def mlValidate(self):
         self.mlValidateTrainerSignal.emit()
         self.close()
+
+    def mlResetUI(self):
+        MLTrainerLoaderBaseUI.mlResetUI(self)
+        self._entry.clear()
+        self._label4.setText('')
+        self._label5.setText('')
+        self._label6.setText('')
