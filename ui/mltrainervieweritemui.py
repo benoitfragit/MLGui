@@ -17,14 +17,17 @@ from PyQt5.QtCore    import QSize
 from PyQt5.QtCore    import pyqtSignal
 from PyQt5.QtCore    import QTimer
 
+import pkgutil
 import uuid
 import os
 
 class MLTrainerViewerItemUI(QWidget):
     removeTrainer = pyqtSignal(uuid.UUID)
 
-    def __init__(self, trainer, parent = None):
+    def __init__(self, trainer, item, parent = None):
         QWidget.__init__(self, parent)
+
+        self._item = item
 
         self._trainer = trainer
         self._timer   = QTimer()
@@ -48,23 +51,26 @@ class MLTrainerViewerItemUI(QWidget):
         self._error.setVisible(False)
         self._error.setMaximumHeight(15)
 
-        label       = QLabel(trainer.mlGetUserName())
+        label   = QLabel(trainer.mlGetUserName())
         label.setAlignment(Qt.AlignCenter)
         dirname = os.path.split(__file__)[0]
         dirname = os.path.join(dirname, 'resources')
         filename = os.path.join(dirname, 'neural.png')
-        pixmap = QPixmap(filename)
+        res = pkgutil.get_loader('ui.resources')
+        pixmap = QPixmap(res.filename + os.path.sep + 'neural.png')
         pixmap = pixmap.scaledToWidth(120)
         pixLabel    = QLabel()
         pixLabel.setAlignment(Qt.AlignCenter)
         pixLabel.setPixmap(pixmap)
 
+        vbox.addWidget(label)
         vbox.addWidget(pixLabel)
         vbox.addWidget(self._progress)
         vbox.addWidget(self._error)
-        vbox.addWidget(label)
 
         self.setLayout(vbox)
+
+        self._item.setSizeHint(self.sizeHint())
 
     def mlUpdateTrainerItemOnTimeout(self):
         if self._timer.isActive():
@@ -87,6 +93,7 @@ class MLTrainerViewerItemUI(QWidget):
                 self._trainer.start()
                 self._error.setVisible(True)
                 self._progress.setVisible(True)
+                self._item.setSizeHint(self.sizeHint())
                 self._timer.start(100)
 
     def mlOnTrainerPauseClicked(self):

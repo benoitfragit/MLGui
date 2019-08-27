@@ -21,7 +21,7 @@ class MLTrainerViewerUI(QListWidget):
         self._items = {}
         self.setViewMode(QListWidget.IconMode)
         self.setResizeMode(QListWidget.Adjust)
-        self.setMovement(QListView.Static)
+        #self.setMovement(QListView.Static)
         self.setSpacing(10)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -38,9 +38,8 @@ class MLTrainerViewerUI(QListWidget):
 
             if uuid not in self._items.keys():
                 item = QListWidgetItem()
-                internal = MLTrainerViewerItemUI(trainer)
+                internal = MLTrainerViewerItemUI(trainer, item)
                 internal.removeTrainer.connect(self.mlOnRemoveTrainer)
                 self._items[uuid] = [item, internal]
-                item.setSizeHint(self._items[uuid][1].sizeHint())
                 self.addItem(self._items[uuid][0])
                 self.setItemWidget(self._items[uuid][0], self._items[uuid][1])

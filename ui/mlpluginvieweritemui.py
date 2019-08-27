@@ -15,9 +15,10 @@ class MLPluginViewerItemUI(QWidget):
     activatePlugin      = pyqtSignal(uuid.UUID)
     deactivatePlugin    = pyqtSignal(uuid.UUID)
 
-    def __init__(self, plugin, parent = None):
+    def __init__(self, plugin, item, parent = None):
         QWidget.__init__(self, parent)
 
+        self._item   = item
         self._plugin = plugin
 
         hbox1 = QHBoxLayout()
@@ -53,6 +54,8 @@ class MLPluginViewerItemUI(QWidget):
         vbox.addLayout(hbox4)
 
         self.setLayout(vbox)
+
+        self._item.setSizeHint(self.sizeHint())
 
     def mlOnPluginActivationToggled(self):
         if self._check.isChecked():

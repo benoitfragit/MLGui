@@ -3,12 +3,14 @@
 
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QLabel
 
 from PyQt5.QtCore    import Qt
 
 from mltrainerviewerui      import MLTrainerViewerUI
 from mltrainerloaderbaseui  import MLTrainerLoaderBaseUI
+from mlpluginviewerui       import MLPluginViewerUI
 
 from core import MLTrainer
 
@@ -55,9 +57,6 @@ class MLWindow(QMainWindow):
         Building the Plugin Menu
         """
         pluginMenu = mainMenu.addMenu('&Plugins')
-        settings = QAction('&Settings', self)
-        settings.triggered.connect(self.mlOnShowPluginPopup)
-        pluginMenu.addAction(settings)
 
         """
         Build the Help Menu
@@ -72,6 +71,15 @@ class MLWindow(QMainWindow):
         self._trainerviewer = MLTrainerViewerUI(self._trainermanager, self)
         self._trainerviewer.setVisible(False)
 
+        """
+        Build the plugin viewer
+        """
+        self._pluginviewer = MLPluginViewerUI()
+        self._pluginviewer.setVisible(False)
+        self.addDockWidget(Qt.RightDockWidgetArea, self._pluginviewer)
+        pluginViewerAction = self._pluginviewer.toggleViewAction()
+        pluginViewerAction.setCheckable(True)
+        pluginMenu.addAction(pluginViewerAction)
 
         """
         Build the central widget
@@ -81,15 +89,17 @@ class MLWindow(QMainWindow):
 
         self.mlRegisterAllPlugins(pluginloader)
 
-    def mlOnShowPluginPopup(self):
-        pass
-
     def mlOnDisplayTrainers(self):
         self._trainerviewer.setVisible(True)
         self.setCentralWidget(self._trainerviewer)
 
     def mlAddPlugin(self, plugin):
         if plugin is not None:
+            """
+            Populate the plugin viewer ui
+            """
+            self._pluginviewer.mlOnNewPluginAdded(plugin)
+
             """
             Populate the new trainer menu
             """
