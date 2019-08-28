@@ -19,7 +19,8 @@ class MLPluginViewerUI(QDockWidget):
         self._items = {}
 
         self._mainWidget = QListWidget()
-        self._mainWidget.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
+        self._mainWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self._mainWidget.setResizeMode(QListWidget.Adjust)
 
         self.setWidget(self._mainWidget)
         self.setVisible(False)

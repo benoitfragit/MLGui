@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QCheckBox
+from PyQt5.QtWidgets import QPlainTextEdit
 from PyQt5.QtCore    import pyqtSignal
 
 import uuid
@@ -44,14 +45,16 @@ class MLPluginViewerItemUI(QWidget):
         hbox3.addStretch(1)
         hbox3.addWidget(QLabel(self._plugin.mlGetPluginVersion()))
 
-        hbox4.addWidget(QLabel('Description'))
-        hbox4.addStretch(1)
-        hbox4.addWidget(QLabel(self._plugin.mlGetPluginDescription()))
+        text = QPlainTextEdit(self)
+        text.insertPlainText(self._plugin.mlGetPluginDescription())
+        #text.setEnable(False)
+        text.resize(90, 200)
 
         vbox.addLayout(hbox1)
         vbox.addLayout(hbox2)
         vbox.addLayout(hbox3)
-        vbox.addLayout(hbox4)
+        vbox.addWidget(QLabel('Description'))
+        vbox.addWidget(text)
 
         self.setLayout(vbox)
 
