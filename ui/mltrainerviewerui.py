@@ -32,6 +32,9 @@ class MLTrainerViewerUI(QListWidget):
             self._items.pop(id)
             self._manager.mlRemoveProcess(id)
 
+    def mlRemovePluginTrainers(self, id):
+        pass
+
     def mlOnNewTrainerAdded(self, trainer):
         if trainer is not None:
             uuid = trainer.mlGetUniqId()

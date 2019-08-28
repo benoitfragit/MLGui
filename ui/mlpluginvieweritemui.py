@@ -45,10 +45,8 @@ class MLPluginViewerItemUI(QWidget):
         hbox3.addStretch(1)
         hbox3.addWidget(QLabel(self._plugin.mlGetPluginVersion()))
 
-        text = QPlainTextEdit(self)
-        text.insertPlainText(self._plugin.mlGetPluginDescription())
-        #text.setEnable(False)
-        text.resize(90, 200)
+        text = QLabel(self._plugin.mlGetPluginDescription())
+        text.setWordWrap(True)
 
         vbox.addLayout(hbox1)
         vbox.addLayout(hbox2)
