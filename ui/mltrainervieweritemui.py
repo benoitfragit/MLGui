@@ -32,6 +32,8 @@ class MLTrainerViewerItemUI(QWidget):
         self._trainer = trainer
         self._timer   = QTimer()
         self._timer.timeout.connect(self.mlUpdateTrainerItemOnTimeout)
+        self._clearTimer = QTimer()
+        self._clearTimer.timeout.connect(self.mlOnClearTrainerItemOnTimeout)
 
         vbox = QVBoxLayout()
 
@@ -71,6 +73,14 @@ class MLTrainerViewerItemUI(QWidget):
         self.setLayout(vbox)
 
         self._item.setSizeHint(self.sizeHint())
+
+        self._clearTimer.start(100)
+
+    def mlOnClearTrainerItemOnTimeout(self):
+        if self._clearTimer.isActive():
+            if not self._trainer.mlIsPluginActivated():
+                self._clearTimer.stop()
+                self.mlOnRemoveTrainerClicked()
 
     def mlUpdateTrainerItemOnTimeout(self):
         if self._timer.isActive():

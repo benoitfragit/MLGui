@@ -21,7 +21,6 @@ class MLTrainerViewerUI(QListWidget):
         self._items = {}
         self.setViewMode(QListWidget.IconMode)
         self.setResizeMode(QListWidget.Adjust)
-        #self.setMovement(QListView.Static)
         self.setSpacing(10)
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -31,9 +30,6 @@ class MLTrainerViewerUI(QListWidget):
             self.takeItem(self.row(self._items[id][0]))
             self._items.pop(id)
             self._manager.mlRemoveProcess(id)
-
-    def mlRemovePluginTrainers(self, id):
-        pass
 
     def mlOnNewTrainerAdded(self, trainer):
         if trainer is not None:

@@ -5,6 +5,10 @@ from abc import abstractmethod
 
 class MLTrainerIFace:
     @abstractmethod
+    def mlIsPluginActivated(self):
+        raise NotImplementedError
+
+    @abstractmethod
     def mlDeleteTrainer(self):
         raise NotImplementedError
 

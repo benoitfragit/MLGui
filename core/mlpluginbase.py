@@ -28,7 +28,7 @@ class MLPluginBase( MLPluginIFace, \
         return self._trainerloaderui
 
     def mlSetPluginActivated(self, activated):
-        self;_activated = activated
+        self._activated = activated
 
     def mlIsPluginActivated(self):
         return self._activated

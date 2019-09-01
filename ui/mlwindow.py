@@ -98,7 +98,7 @@ class MLWindow(QMainWindow):
             """
             Populate the plugin viewer ui
             """
-            self._pluginviewer.mlOnNewPluginAdded(plugin)
+            self._pluginviewer.mlOnNewPluginAdded(plugin, self._newTrainerMenu)
 
             """
             Populate the new trainer menu
@@ -108,10 +108,6 @@ class MLWindow(QMainWindow):
 
             if isinstance(loadUI, MLTrainerLoaderBaseUI):
                 self.addDockWidget(Qt.LeftDockWidgetArea, loadUI)
-
-                action = loadUI.toggleViewAction()
-                self._newTrainerMenu.addAction(action)
-
                 loadUI.mlValidateTrainerSignal.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
 
     def onLoadTrainerValidateClicked(self, plugin):

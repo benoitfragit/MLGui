@@ -23,15 +23,16 @@ class MLPluginViewerUI(QDockWidget):
         self._mainWidget.setResizeMode(QListWidget.Adjust)
 
         self.setWidget(self._mainWidget)
+        self.setFeatures(QDockWidget.DockWidgetClosable)
         self.setVisible(False)
 
-    def mlOnNewPluginAdded(self, plugin):
+    def mlOnNewPluginAdded(self, plugin, menu):
         if plugin is not None:
             uuid = plugin.mlGetUniqId()
 
             if uuid not in self._items.keys():
                 item = QListWidgetItem()
-                internal = MLPluginViewerItemUI(plugin, item)
+                internal = MLPluginViewerItemUI(plugin, menu, item)
                 self._items[uuid] = [item, internal]
                 self._mainWidget.addItem(self._items[uuid][0])
                 self._mainWidget.setItemWidget(self._items[uuid][0], self._items[uuid][1])

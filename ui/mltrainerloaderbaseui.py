@@ -31,6 +31,7 @@ class MLTrainerLoaderBaseUI(QDockWidget):
         self.setVisible(False)
 
         self.visibilityChanged.connect(self.mlOnVisibilityChanged)
+        self.setFeatures(QDockWidget.DockWidgetClosable)
 
     def mlResetUI(self):
         self._network_filepath = None

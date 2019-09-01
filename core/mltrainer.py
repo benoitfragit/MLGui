@@ -18,6 +18,9 @@ class MLTrainer(MLProcess, MLTrainerIFace):
         self._shared['progress']  = self.mlGetTrainerProgress()
         self._shared['error']     = self.mlGetTrainerError()
 
+    def mlIsPluginActivated(self):
+        return self._plugin.mlIsPluginActivated()
+
     def mlGetUserName(self):
         return self._username
 

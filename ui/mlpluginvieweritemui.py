@@ -8,17 +8,15 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QPlainTextEdit
 from PyQt5.QtCore    import pyqtSignal
+from PyQt5.QtCore    import Qt
 
 import uuid
 
 class MLPluginViewerItemUI(QWidget):
-
-    activatePlugin      = pyqtSignal(uuid.UUID)
-    deactivatePlugin    = pyqtSignal(uuid.UUID)
-
-    def __init__(self, plugin, item, parent = None):
+    def __init__(self, plugin, trainerMenu, item, parent = None):
         QWidget.__init__(self, parent)
 
+        self._trainerMenu   = trainerMenu
         self._item   = item
         self._plugin = plugin
 
@@ -57,11 +55,18 @@ class MLPluginViewerItemUI(QWidget):
         self.setLayout(vbox)
 
         self._item.setSizeHint(self.sizeHint())
+        self._item.setFlags(self._item.flags() &~ Qt.ItemIsSelectable)
+
+        loadUI = self._plugin.mlGetTrainerLoaderUI()
+        self._trainerAction = loadUI.toggleViewAction()
+
+        if self._plugin.mlIsPluginActivated():
+            self._trainerMenu.addAction(self._trainerAction)
 
     def mlOnPluginActivationToggled(self):
         if self._check.isChecked():
             self._plugin.mlSetPluginActivated(True)
-            self.activatePlugin.emit(self._plugin.mlGetUniqId())
+            self._trainerMenu.addAction(self._trainerAction)
         else:
             self._plugin.mlSetPluginActivated(False)
-            self.deactivatePlugin.emit(self._plugin.mlGetUniqId())
+            self._trainerMenu.removeAction(self._trainerAction)
