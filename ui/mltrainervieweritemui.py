@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from PyQt5.QtWidgets import QListWidgetItem
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
@@ -17,6 +18,8 @@ from PyQt5.QtCore    import QSize
 from PyQt5.QtCore    import pyqtSignal
 from PyQt5.QtCore    import QTimer
 
+from mlplot2d import MLPlot2D
+
 import pkgutil
 import uuid
 import os
@@ -24,10 +27,10 @@ import os
 class MLTrainerViewerItemUI(QWidget):
     removeTrainer = pyqtSignal(uuid.UUID)
 
-    def __init__(self, trainer, item, parent = None):
+    def __init__(self, trainer, parent = None):
         QWidget.__init__(self, parent)
 
-        self._item = item
+        self._plot = MLPlot2D()
 
         self._trainer = trainer
         self._timer   = QTimer()
@@ -72,9 +75,16 @@ class MLTrainerViewerItemUI(QWidget):
 
         self.setLayout(vbox)
 
+        self._item = QListWidgetItem()
         self._item.setSizeHint(self.sizeHint())
 
         self._clearTimer.start(100)
+
+    def mlGetItem(self):
+        return self._item
+
+    def mlGetPlot(self):
+        return self._plot
 
     def mlOnClearTrainerItemOnTimeout(self):
         if self._clearTimer.isActive():
@@ -91,6 +101,9 @@ class MLTrainerViewerItemUI(QWidget):
             self._error.setFormat('Error ' + str(int(error)) + '%')
             self._progress.setValue(progress)
             self._progress.setFormat('Progress ' + str(int(progress)) + '%' )
+
+            self._plot.append(progress, error)
+            self._plot.plot()
 
             if not self._trainer.mlIsProcessRunning():
                 self._timer.stop()

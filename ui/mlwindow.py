@@ -68,8 +68,9 @@ class MLWindow(QMainWindow):
         """
         Build the trainer viewer
         """
-        self._trainerviewer = MLTrainerViewerUI(self._trainermanager, self)
+        self._trainerviewer = MLTrainerViewerUI(self._trainermanager)
         self._trainerviewer.setVisible(False)
+        self._trainerviewer.showPlot.connect(self.mlOnShowTrainerPlot)
 
         """
         Build the plugin viewer
@@ -88,6 +89,12 @@ class MLWindow(QMainWindow):
         self.setCentralWidget(self._mainLabel)
 
         self.mlRegisterAllPlugins(pluginloader)
+
+    def mlOnShowTrainerPlot(self, id):
+        plot = self._trainerviewer.mlGetPlotWidget(id)
+        if plot is not None:
+            self.centralWidget().setParent(None)
+            self.setCentralWidget(plot)
 
     def mlOnDisplayTrainers(self):
         self._trainerviewer.setVisible(True)
