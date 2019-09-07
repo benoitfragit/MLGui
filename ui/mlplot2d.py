@@ -7,17 +7,17 @@ import matplotlib.pyplot as plt
 class MLPlot2D(FigureCanvas):
     def __init__(self):
         self._figure = plt.figure()
+        self._figure.patch.set_visible(False)
         FigureCanvas.__init__(self, self._figure)
+        self._ax = self._figure.add_subplot(111)
+        self._ax.axis('off')
 
-        self._x = []
-        self._y = []
+    def plot(self, graph):
+        self._ax.cla()
+        self._ax.grid()
+        self._ax.set_title('Training error evolution')
+        self._ax.set_xlabel('Progress')
+        self._ax.set_ylabel('Error')
+        self._ax.plot(graph[0], graph[1], '-', color='blue')
 
-    def append(self, x, y):
-        self._x.append(x)
-        self._y.append(y)
-
-    def plot(self):
-        self._figure.clear()
-        ax = self._figure.add_subplot(111)
-        ax.plot(self._x, self.y, '*-')
         self.draw()

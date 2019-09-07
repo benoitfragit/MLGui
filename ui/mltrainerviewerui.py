@@ -11,12 +11,12 @@ from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import pyqtSignal
 
 from mltrainervieweritemui  import MLTrainerViewerItemUI
+from mlplot2d        import MLPlot2D
 
 import uuid
 
 class MLTrainerViewerUI(QListWidget):
-
-    showPlot = pyqtSignal(uuid.UUID)
+    mlShowTrainerPlotSignal = pyqtSignal()
 
     def __init__(self, manager, parent = None):
         QListWidget.__init__(self, parent)
@@ -24,20 +24,30 @@ class MLTrainerViewerUI(QListWidget):
         self._manager = manager
 
         self._items = {}
+        self._displayed = None
         self.setViewMode(QListWidget.IconMode)
         self.setResizeMode(QListWidget.Adjust)
         self.setSpacing(10)
 
+        # build the plot widget
+        self._plot = MLPlot2D()
+
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-    def mlShowPlot(self, id):
-        self.showPlot.emit(id)
+    def mlGetPlot(self):
+        return self._plot
 
-    def mlGetPlotWidget(self, id):
-        widget = None
-        if id is not None and id in self._items.keys():
-            widget= self._items[id].mlGetPlot()
-        return widget
+    def mlShowPlot(self, id):
+        if id in self._items.keys():
+            self._displayed = id
+            self.mlShowTrainerPlotSignal.emit()
+
+    def mlOnGraphUpdated(self, id):
+        item = None
+        if self._displayed == id and id in self._items.keys():
+            item = self._items[id]
+            graph = item.mlTrainerItemGetGraph()
+            self._plot.plot(graph)
 
     def mlOnRemoveTrainer(self, id):
         if id is not None and id in self._items.keys():
@@ -45,6 +55,9 @@ class MLTrainerViewerUI(QListWidget):
             self.takeItem(self.row(item))
             self._items.pop(id)
             self._manager.mlRemoveProcess(id)
+
+            if id == self._displayed :
+                self._displayed = None
 
     def mlOnNewTrainerAdded(self, trainer):
         if trainer is not None:
@@ -55,6 +68,8 @@ class MLTrainerViewerUI(QListWidget):
                 item = self._items[id].mlGetItem()
 
                 self._items[id].removeTrainer.connect(self.mlOnRemoveTrainer)
+                self._items[id].graphUpdated.connect(lambda:self.mlOnGraphUpdated(id))
+                self._items[id].trainerLaunched.connect(lambda:self.mlShowPlot(id))
 
                 self.addItem(item)
                 self.setItemWidget(item, self._items[id])
