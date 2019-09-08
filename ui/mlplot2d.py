@@ -12,12 +12,15 @@ class MLPlot2D(FigureCanvas):
         self._ax = self._figure.add_subplot(111)
         self._ax.axis('off')
 
-    def plot(self, graph):
+    def clear(self):
         self._ax.cla()
-        self._ax.grid()
+
+    def plot(self, graph, lbl='', clr='blue'):
+        self._ax.grid(linestyle='--')
         self._ax.set_title('Training error evolution')
         self._ax.set_xlabel('Progress')
         self._ax.set_ylabel('Error')
-        self._ax.plot(graph[0], graph[1], '-', color='blue')
-
+        self._ax.plot(graph[0], graph[1], '-', color=clr, label=lbl)
+        if self._ax.get_legend() == None:
+            self._ax.legend()
         self.draw()

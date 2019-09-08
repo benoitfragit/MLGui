@@ -62,6 +62,9 @@ class MLTrainerViewerItemUI(QWidget):
 
         self._clearTimer.start(100)
 
+    def mlGetUserName(self):
+        return self._trainer.mlGetUserName()
+
     def mlGetItem(self):
         return self._item
 
@@ -96,7 +99,7 @@ class MLTrainerViewerItemUI(QWidget):
             elif not self._trainer.mlIsProcessRunning() :
                 self._trainer.start()
                 self._item.setSizeHint(self.sizeHint())
-                self._timer.start(100)
+                self._timer.start(250)
                 self.trainerLaunched.emit()
 
     def mlOnTrainerPauseClicked(self):
