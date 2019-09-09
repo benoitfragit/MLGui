@@ -22,7 +22,7 @@ def main():
 
     window = MLWindow(manager, loader)
 
-    app.aboutToQuit.connect(manager.mlKillAll)
+    app.aboutToQuit.connect(window.mlLeave)
 
     window.show()
     sys.exit(app.exec_())

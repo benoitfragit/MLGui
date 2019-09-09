@@ -126,3 +126,21 @@ class MLWindow(QMainWindow):
         if plugins is not None:
             for name in plugins.keys():
                 self.mlAddPlugin(plugins[name])
+
+    def mlSave(self):
+        saving = '.'
+
+        home = os.environ['HOME']
+        if os.path.isdir(home):
+            local = os.path.join(home, '.local')
+            if os.path.isdir(local):
+                saving = local
+
+        mlgui = os.path.join(saving, 'mlgui')
+
+        if not os.path.isdir(mlgui):
+            os.mkdir(mlgui)
+
+    def mlLeave(self):
+        self.mlSave()
+        self._trainerviewer.mlRemoveAllTrainers()

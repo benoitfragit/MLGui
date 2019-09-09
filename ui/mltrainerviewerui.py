@@ -60,6 +60,11 @@ class MLTrainerViewerUI(QListWidget):
             if id == self._displayed :
                 self._displayed = None
 
+    def mlRemoveAllTrainers(self):
+        for id in self._items.keys():
+            self._items[id].mlOnRemoveTrainerClicked()
+            self._manager.mlRemoveProcess(id)
+
     def mlOnNewTrainerAdded(self, trainer):
         if trainer is not None:
             id = trainer.mlGetUniqId()
