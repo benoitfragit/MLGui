@@ -7,8 +7,12 @@ from iface import MLTrainerIFace
 from mlprocess import MLProcess
 
 class MLTrainer(MLProcess, MLTrainerIFace):
-    def __init__(self, manager, plugin, network_filepath, data_filepath, username):
+    def __init__(self, manager, plugin, network_filepath, data_filepath, trainer_filepath, username):
         MLProcess.__init__(self, manager)
+
+        self._network_path = network_filepath
+        self._data_path = data_filepath
+        self._settings_path = trainer_filepath
 
         self._internal  = plugin.mlGetTrainer(network_filepath, data_filepath)
         self._plugin    = plugin
@@ -17,6 +21,20 @@ class MLTrainer(MLProcess, MLTrainerIFace):
         self._shared['running']   = False
         self._shared['progress']  = self.mlGetTrainerProgress()
         self._shared['error']     = self.mlGetTrainerError()
+
+        self.mlConfigureTrainer(trainer_filepath)
+
+    def mlGetPluginName(self):
+        return self._plugin.mlGetPluginName()
+
+    def mlGetNetworkPath(self):
+        return self._network_path
+
+    def mlGetDataPath(self):
+        return self._data_path
+
+    def mlGetSettingPath(self):
+        return self._settings_path
 
     def mlIsPluginActivated(self):
         return self._plugin.mlIsPluginActivated()
@@ -28,6 +46,7 @@ class MLTrainer(MLProcess, MLTrainerIFace):
         self._plugin.mlDeleteTrainer(self._internal)
 
     def mlConfigureTrainer(self, path):
+        self._settings_path = path
         self._plugin.mlConfigureTrainer(self._internal, path)
 
     def mlIsTrainerRunning(self):

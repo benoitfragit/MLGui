@@ -16,6 +16,7 @@ from mlpluginviewerui       import MLPluginViewerUI
 from core import MLTrainer
 
 import os
+import json
 
 class MLWindow(QMainWindow):
     def __init__(self, trainermanager, pluginloader):
@@ -115,10 +116,11 @@ class MLWindow(QMainWindow):
                 os.path.isfile(data_filepath)    and \
                 os.path.exists(trainer_filepath) and \
                 os.path.isfile(trainer_filepath):
-                    trainer = MLTrainer(self._trainermanager, plugin, network_filepath, data_filepath, trainer_name)
-                    trainer.mlConfigureTrainer(trainer_filepath)
+                    trainer = MLTrainer(self._trainermanager, plugin, network_filepath, data_filepath, trainer_filepath, trainer_name)
+
                     self._trainermanager.mlAddProcess(trainer)
                     self._trainerviewer.mlOnNewTrainerAdded(trainer)
+
                     self.mlOnDisplayTrainers()
 
     def mlRegisterAllPlugins(self, loader):
@@ -133,6 +135,7 @@ class MLWindow(QMainWindow):
         home = os.environ['HOME']
         if os.path.isdir(home):
             local = os.path.join(home, '.local')
+            local = os.path.join(local, 'share')
             if os.path.isdir(local):
                 saving = local
 
@@ -140,6 +143,15 @@ class MLWindow(QMainWindow):
 
         if not os.path.isdir(mlgui):
             os.mkdir(mlgui)
+
+        json_file = os.path.join(mlgui, 'mlgui.json')
+
+        raw = {}
+        self._pluginviewer.mlJSONEncoding(raw)
+        self._trainerviewer.mlJSONEncoding(raw)
+
+        with open(json_file, 'w') as jfile:
+            json.dump(raw, jfile, indent=4)
 
     def mlLeave(self):
         self.mlSave()

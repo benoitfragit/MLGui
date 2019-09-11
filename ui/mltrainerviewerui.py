@@ -80,3 +80,8 @@ class MLTrainerViewerUI(QListWidget):
                 self.addItem(item)
                 self.setItemWidget(item, self._items[id])
                 self.itemDoubleClicked.connect(lambda:self.mlShowPlot(id))
+
+    def mlJSONEncoding(self, d):
+        for trainer in self._items.values():
+            if trainer is not None:
+                trainer.mlJSONEncoding(d)

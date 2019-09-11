@@ -153,3 +153,21 @@ class MLTrainerViewerItemUI(QWidget):
         menu.addAction(configure)
         menu.addAction(remove)
         menu.exec_(self.mapToGlobal(event.pos()))
+
+    def mlJSONEncoding(self, d):
+        pluginName  = self._trainer.mlGetPluginName()
+        networkPath = self._trainer.mlGetNetworkPath()
+        dataPath    = self._trainer.mlGetDataPath()
+        settingPath = self._trainer.mlGetSettingPath()
+        username    = self._trainer.mlGetUserName()
+        running     = self._trainer.mlIsTrainerRunning() > 0
+        error       = self._trainer.mlGetTrainerError()
+        progress    = self._trainer.mlGetTrainerProgress()
+
+        d[pluginName]['trainers'][username] = {}
+        d[pluginName]['trainers'][username]['network']  = networkPath
+        d[pluginName]['trainers'][username]['data']     = dataPath
+        d[pluginName]['trainers'][username]['settings'] = settingPath
+        d[pluginName]['trainers'][username]['running']  = running
+        d[pluginName]['trainers'][username]['error']    = error
+        d[pluginName]['trainers'][username]['progress'] = progress

@@ -7,17 +7,18 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QPlainTextEdit
+from PyQt5.QtWidgets import QListWidgetItem
 from PyQt5.QtCore    import pyqtSignal
 from PyQt5.QtCore    import Qt
 
 import uuid
 
 class MLPluginViewerItemUI(QWidget):
-    def __init__(self, plugin, trainerMenu, item, parent = None):
+    def __init__(self, plugin, trainerMenu, parent = None):
         QWidget.__init__(self, parent)
 
         self._trainerMenu   = trainerMenu
-        self._item   = item
+        self._item   = QListWidgetItem()
         self._plugin = plugin
 
         hbox1 = QHBoxLayout()
@@ -62,6 +63,18 @@ class MLPluginViewerItemUI(QWidget):
 
         if self._plugin.mlIsPluginActivated():
             self._trainerMenu.addAction(self._trainerAction)
+
+    def mlGetItem(self):
+        return self._item
+
+    def mlJSONEncoding(self, d):
+        if self._plugin is not None:
+            pluginName = self._plugin.mlGetPluginName()
+
+            d[pluginName] = {}
+            d[pluginName]['activated'] = self._plugin.mlIsPluginActivated()
+            d[pluginName]['trainers'] = {}
+            d[pluginName]['networks'] = {}
 
     def mlOnPluginActivationToggled(self):
         if self._check.isChecked():

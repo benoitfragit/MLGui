@@ -31,8 +31,11 @@ class MLPluginViewerUI(QDockWidget):
             uuid = plugin.mlGetUniqId()
 
             if uuid not in self._items.keys():
-                item = QListWidgetItem()
-                internal = MLPluginViewerItemUI(plugin, menu, item)
-                self._items[uuid] = [item, internal]
-                self._mainWidget.addItem(self._items[uuid][0])
-                self._mainWidget.setItemWidget(self._items[uuid][0], self._items[uuid][1])
+                self._items[uuid] = MLPluginViewerItemUI(plugin, menu)
+                self._mainWidget.addItem(self._items[uuid].mlGetItem())
+                self._mainWidget.setItemWidget(self._items[uuid].mlGetItem(), self._items[uuid])
+
+    def mlJSONEncoding(self, d):
+        for item in self._items.values():
+            if item is not None:
+                item.mlJSONEncoding(d)
