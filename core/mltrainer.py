@@ -83,3 +83,6 @@ class MLTrainer(MLProcess, MLTrainerIFace):
                 self._lock.release()
 
         self._shared['exit'] = True
+
+    def mlSaveTrainerProgression(self, path):
+        self._plugin.mlSaveTrainerProgression(self._internal, path)

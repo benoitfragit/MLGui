@@ -52,6 +52,7 @@ class MLPlugin(MLLoader, MLPluginBase):
                                   'TRAINER_GET_PROGRESS',
                                   'TRAINER_RUN',
                                   'TRAINER_ERROR',
+                                  'TRAINER_SAVE_PROGRESSION',
                                   'NETWORK_NEW',
                                   'NETWORK_DELETE',
                                   'NETWORK_SERIALIZE',
@@ -71,6 +72,7 @@ class MLPlugin(MLLoader, MLPluginBase):
                         ['mlp_trainer_get_progress',        ctypes.c_float,                 [ctypes.POINTER(MLPTrainer)]],
                         ['mlp_trainer_run',                 None,                           [ctypes.POINTER(MLPTrainer)]],
                         ['mlp_trainer_error',               ctypes.c_float,                 [ctypes.POINTER(MLPTrainer)]],
+                        ['mlp_save_trainer_progression',    None,     [ctypes.POINTER(MLPTrainer), ctypes.c_char_p]],
                         ['mlp_network_new',                 ctypes.POINTER(MLPNetwork),     [ctypes.c_char_p]],
                         ['mlp_network_delete',              None,                           [ctypes.POINTER(MLPNetwork)]],
                         ['mlp_network_serialize',           None,                           [ctypes.POINTER(MLPNetwork), ctypes.c_char_p]],
@@ -129,6 +131,10 @@ class MLPlugin(MLLoader, MLPluginBase):
 
     def mlGetTrainerError(self, trainer):
         return self._funcs[self._funcnames.TRAINER_ERROR](trainer)
+
+    def mlSaveTrainerProgression(self, trainer, path):
+        real_path = path + '.xml'
+        return self._funcs[self._funcnames.TRAINER_SAVE_PROGRESSION](trainer, real_path)
 
     def mlGetNetwork(self, path):
         internal = self._funcs[self._funcnames.NETWORK_NEW](path)

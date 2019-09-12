@@ -31,3 +31,7 @@ class MLTrainerIFace:
     @abstractmethod
     def mlGetTrainerError(self):
         raise NotImplementedError
+
+    @abstractmethod
+    def mlSaveTrainerProgression(self, path):
+        raise NotImplementedError

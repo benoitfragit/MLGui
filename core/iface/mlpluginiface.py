@@ -33,6 +33,10 @@ class MLPluginIFace:
         raise NotImplementedError
 
     @abstractmethod
+    def mlSaveTrainerProgression(self, trainer, path):
+        raise NotImplementedError
+
+    @abstractmethod
     def mlGetNetwork(self, path):
         raise NotImplementedError
 

@@ -28,6 +28,8 @@ class MLWindow(QMainWindow):
         self.setWindowTitle('ML Gui')
         self.resize(500, 300)
 
+        self._mlgui_directory = self.mlGetSavingDirectory()
+
         # Building the MenuBar
         mainMenu = self.menuBar()
 
@@ -80,6 +82,23 @@ class MLWindow(QMainWindow):
 
         self.mlRegisterAllPlugins(pluginloader)
 
+    def mlGetSavingDirectory(self):
+        saving = '.'
+
+        home = os.environ['HOME']
+        if os.path.isdir(home):
+            local = os.path.join(home, '.local')
+            local = os.path.join(local, 'share')
+            if os.path.isdir(local):
+                saving = local
+
+        mlgui = os.path.join(saving, 'mlgui')
+
+        if not os.path.isdir(mlgui):
+            os.mkdir(mlgui)
+
+        return mlgui
+
     def mlOnShowTrainerPlot(self):
         self.centralWidget().setCurrentIndex(2)
 
@@ -130,22 +149,11 @@ class MLWindow(QMainWindow):
                 self.mlAddPlugin(plugins[name])
 
     def mlSave(self):
-        saving = '.'
+        json_file = os.path.join(self._mlgui_directory, 'mlgui.json')
 
-        home = os.environ['HOME']
-        if os.path.isdir(home):
-            local = os.path.join(home, '.local')
-            local = os.path.join(local, 'share')
-            if os.path.isdir(local):
-                saving = local
+        self._trainermanager.mlSaveProgression(self._mlgui_directory)
 
-        mlgui = os.path.join(saving, 'mlgui')
-
-        if not os.path.isdir(mlgui):
-            os.mkdir(mlgui)
-
-        json_file = os.path.join(mlgui, 'mlgui.json')
-
+        # Saving to JSON current architecture
         raw = {}
         self._pluginviewer.mlJSONEncoding(raw)
         self._trainerviewer.mlJSONEncoding(raw)
