@@ -80,6 +80,7 @@ class MLWindow(QMainWindow):
         # Build the central widget
         self.setCentralWidget(stackwidget)
 
+        # Register all plugins
         self.mlRegisterAllPlugins(pluginloader)
 
     def mlGetSavingDirectory(self):
@@ -121,6 +122,21 @@ class MLWindow(QMainWindow):
                 self.addDockWidget(Qt.LeftDockWidgetArea, loadUI)
                 loadUI.mlValidateTrainerSignal.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
 
+    def mlAddNewTrainer(self, plugin, trainer_filepath, network_filepath, data_filepath, trainer_name):
+        if  plugin is not None and \
+            os.path.exists(network_filepath) and \
+            os.path.isfile(network_filepath) and \
+            os.path.exists(data_filepath)    and \
+            os.path.isfile(data_filepath)    and \
+            os.path.exists(trainer_filepath) and \
+            os.path.isfile(trainer_filepath):
+                trainer = MLTrainer(self._trainermanager, plugin, network_filepath, data_filepath, trainer_filepath, trainer_name)
+
+                self._trainermanager.mlAddProcess(trainer)
+                self._trainerviewer.mlOnNewTrainerAdded(trainer)
+
+                self.mlOnDisplayTrainers()
+
     def onLoadTrainerValidateClicked(self, plugin):
         if plugin is not None:
             loadUI = plugin.mlGetTrainerLoaderUI()
@@ -129,24 +145,50 @@ class MLWindow(QMainWindow):
             trainer_filepath = loadUI.mlGetTrainerFilePath()
             trainer_name = loadUI.mlGetTrainerName()
 
-            if  os.path.exists(network_filepath) and \
-                os.path.isfile(network_filepath) and \
-                os.path.exists(data_filepath)    and \
-                os.path.isfile(data_filepath)    and \
-                os.path.exists(trainer_filepath) and \
-                os.path.isfile(trainer_filepath):
-                    trainer = MLTrainer(self._trainermanager, plugin, network_filepath, data_filepath, trainer_filepath, trainer_name)
-
-                    self._trainermanager.mlAddProcess(trainer)
-                    self._trainerviewer.mlOnNewTrainerAdded(trainer)
-
-                    self.mlOnDisplayTrainers()
+            self.mlAddNewTrainer(plugin, trainer_filepath, network_filepath, data_filepath, trainer_name)
 
     def mlRegisterAllPlugins(self, loader):
+        json_file = os.path.join(self._mlgui_directory, 'mlgui.json')
+
+        decoded = None
+        if os.path.exists(json_file) and os.path.isfile(json_file):
+            with open(json_file, 'r') as jf:
+                try:
+                    decoded  = json.load(jf)
+                except ValueError:
+                    pass
+
         plugins = loader.mlGetAllPlugins()
         if plugins is not None:
-            for name in plugins.keys():
-                self.mlAddPlugin(plugins[name])
+            for plugin in plugins.values():
+                # Restore plugin status
+                name = plugin.mlGetPluginName()
+                state = None
+                if decoded is not None and name in decoded.keys():
+                    state = decoded[name]
+                    plugin.mlSetPluginActivated(state['activated'])
+
+                # Add the plugin to the GUI
+                self.mlAddPlugin(plugin)
+
+                # Restore all trainers associated to this plugins
+                if state is not None:
+                    trainers = state['trainers']
+                    for username in trainers.keys():
+                        trainer          = trainers[username]
+
+                        network_filepath = trainer['network']
+                        trainer_filepath = trainer['settings']
+                        data_filepath    = trainer['data']
+
+                        error            = trainer['error']
+                        progress         = trainer['progress']
+
+                        # Add a new trainer
+                        self.mlAddNewTrainer(plugin, trainer_filepath, network_filepath, data_filepath, username)
+
+                        # Finally restore its progression
+                        self._trainermanager.mlRestoreProgression(self._mlgui_directory, username, progress, error)
 
     def mlSave(self):
         json_file = os.path.join(self._mlgui_directory, 'mlgui.json')
@@ -154,12 +196,12 @@ class MLWindow(QMainWindow):
         self._trainermanager.mlSaveProgression(self._mlgui_directory)
 
         # Saving to JSON current architecture
-        raw = {}
-        self._pluginviewer.mlJSONEncoding(raw)
-        self._trainerviewer.mlJSONEncoding(raw)
+        encoded = {}
+        self._pluginviewer.mlJSONEncoding(encoded)
+        self._trainerviewer.mlJSONEncoding(encoded)
 
         with open(json_file, 'w') as jfile:
-            json.dump(raw, jfile, indent=4)
+            json.dump(encoded, jfile, indent=4)
 
     def mlLeave(self):
         self.mlSave()

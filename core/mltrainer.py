@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import os
 
 from iface import MLTrainerIFace
 from mlprocess import MLProcess
@@ -84,5 +85,10 @@ class MLTrainer(MLProcess, MLTrainerIFace):
 
         self._shared['exit'] = True
 
-    def mlSaveTrainerProgression(self, path):
+    def mlSaveTrainerProgression(self, directory):
+        path = os.path.join(directory, self._username)
         self._plugin.mlSaveTrainerProgression(self._internal, path)
+
+    def mlRestoreTrainerProgression(self, directory, progress, error):
+        path = os.path.join(directory, self._username)
+        self._plugin.mlRestoreTrainerProgression(self._internal, path, progress, error)
