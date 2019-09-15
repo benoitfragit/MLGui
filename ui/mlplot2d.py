@@ -10,7 +10,6 @@ class MLPlot2D(FigureCanvas):
         self._figure.patch.set_visible(False)
         FigureCanvas.__init__(self, self._figure)
         self._ax = self._figure.add_subplot(111)
-        self._ax.axis('off')
 
     def clear(self):
         self._ax.cla()
@@ -23,4 +22,4 @@ class MLPlot2D(FigureCanvas):
         self._ax.plot(graph[0], graph[1], '-', color=clr, label=lbl)
         if self._ax.get_legend() == None:
             self._ax.legend()
-        self.draw()
+        self._figure.canvas.draw_idle()
