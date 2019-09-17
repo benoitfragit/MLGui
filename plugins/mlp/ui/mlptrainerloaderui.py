@@ -26,6 +26,9 @@ class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
         self._label4 = QLabel()
         self._label5 = QLabel()
         self._label6 = QLabel()
+        self._label4.setVisible(False)
+        self._label6.setVisible(False)
+        self._label5.setVisible(False)
 
         self._entry = QLineEdit()
         button1 = QPushButton()
@@ -94,18 +97,21 @@ class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
         options |= QFileDialog.DontUseNativeDialog
         self._network_filepath, _ = QFileDialog.getOpenFileName(self, "Select a network file", "", "All files (*);;Xml files (*.xml)", options=options)
         self._label4.setText(os.path.basename(self._network_filepath))
+        self._label4.setVisible(True)
 
     def mlOpenTrainerFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self._trainer_filepath, _ = QFileDialog.getOpenFileName(self, "Select a network file", "", "All files (*);;Xml files (*.xml)", options=options)
         self._label5.setText(os.path.basename(self._trainer_filepath))
+        self._label5.setVisible(True)
 
     def mlOpenDataFile(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         self._data_filepath, _ = QFileDialog.getOpenFileName(self, "Select a network file", "", "All files (*);;Xml files (*.xml)", options=options)
         self._label6.setText(os.path.basename(self._data_filepath))
+        self._label6.setVisible(True)
 
     def mlCancel(self):
         self.mlResetUI()
@@ -121,3 +127,6 @@ class MLPTrainerLoaderUI(MLTrainerLoaderBaseUI):
         self._label4.setText('')
         self._label5.setText('')
         self._label6.setText('')
+        self._label4.setVisible(False)
+        self._label6.setVisible(False)
+        self._label5.setVisible(False)
