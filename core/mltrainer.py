@@ -91,4 +91,8 @@ class MLTrainer(MLProcess, MLTrainerIFace):
 
     def mlRestoreTrainerProgression(self, directory, progress, error):
         path = os.path.join(directory, self._username)
+        self._lock.acquire()
         self._plugin.mlRestoreTrainerProgression(self._internal, path, progress, error)
+        self._lock.release()
+        self._shared['progress'] = progress
+        self._shared['error']    = error

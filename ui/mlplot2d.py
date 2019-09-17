@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 
 class MLPlot2D(FigureCanvas):
