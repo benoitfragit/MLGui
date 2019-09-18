@@ -40,7 +40,7 @@ class MLTrainerViewerUI(QListWidget):
     def mlShowPlot(self, id):
         if id in self._items.keys():
             self._displayed = id
-            self._plot.clear()
+            #self._plot.clear()
             self.mlShowTrainerPlotSignal.emit()
 
     def mlOnGraphUpdated(self, id):
@@ -48,7 +48,7 @@ class MLTrainerViewerUI(QListWidget):
         if self._displayed == id and id in self._items.keys():
             item = self._items[id]
             graph = item.mlTrainerItemGetGraph()
-            self._plot.plot(graph, item.mlGetUserName(), 'blue')
+            self._plot.mlUpdate(graph, item.mlGetUserName(), 'blue')
 
     def mlOnRemoveTrainer(self, id):
         if id is not None and id in self._items.keys():
