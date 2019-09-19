@@ -40,7 +40,9 @@ class MLTrainerViewerUI(QListWidget):
     def mlShowPlot(self, id):
         if id in self._items.keys():
             self._displayed = id
-            #self._plot.clear()
+
+            self._plot.redraw()
+
             self.mlShowTrainerPlotSignal.emit()
 
     def mlOnGraphUpdated(self, id):
@@ -79,7 +81,17 @@ class MLTrainerViewerUI(QListWidget):
 
                 self.addItem(item)
                 self.setItemWidget(item, self._items[id])
-                self.itemDoubleClicked.connect(lambda:self.mlShowPlot(id))
+
+                self.itemDoubleClicked.connect(self.mlOnItemDoubleClicked)
+
+    def mlOnItemDoubleClicked(self, obj):
+        if obj is not None:
+            for id in self._items.keys():
+                item = self._items[id]
+
+                if obj == item.mlGetItem():
+                    self.mlShowPlot(id)
+                    break
 
     def mlJSONEncoding(self, d):
         for trainer in self._items.values():
