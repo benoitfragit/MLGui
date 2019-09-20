@@ -60,7 +60,7 @@ class MLTrainerViewerItemUI(QWidget):
         self._item = QListWidgetItem()
         self._item.setSizeHint(self.sizeHint())
 
-        self._clearTimer.start(100)
+        self._clearTimer.start(40)
 
     def mlGetUserName(self):
         return self._trainer.mlGetUserName()
