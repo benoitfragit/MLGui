@@ -190,6 +190,8 @@ class MLWindow(QMainWindow):
                         # Finally restore its progression
                         self._trainermanager.mlRestoreProgression(self._mlgui_directory, username, progress, error)
 
+        self._trainerviewer.mlJSONDecoding(decoded)
+
     def mlSave(self):
         json_file = os.path.join(self._mlgui_directory, 'mlgui.json')
 

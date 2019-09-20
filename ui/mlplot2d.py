@@ -31,7 +31,7 @@ class MLPlot2D(FigureCanvas):
         self._line.set_ydata(graph[1])
         self._line.set_color(clr)
 
-        self._ax.set_xlim(0,100.0)
-        self._ax.set_ylim(0, max(graph[1]))
+        self._ax.relim()
+        self._ax.autoscale()
 
         self._figure.canvas.draw_idle()

@@ -30,7 +30,7 @@ class MLTrainerViewerItemUI(QWidget):
     def __init__(self, trainer, parent = None):
         QWidget.__init__(self, parent)
 
-        self._graph = ([], [])
+        self._graph = [[], []]
 
         self._trainer = trainer
         self._timer   = QTimer()
@@ -171,3 +171,19 @@ class MLTrainerViewerItemUI(QWidget):
         d[pluginName]['trainers'][username]['running']  = running
         d[pluginName]['trainers'][username]['error']    = error
         d[pluginName]['trainers'][username]['progress'] = progress
+
+        d[pluginName]['trainers'][username]['graph_x'] = []
+        d[pluginName]['trainers'][username]['graph_x'] = self._graph[0][:]
+        d[pluginName]['trainers'][username]['graph_y'] = []
+        d[pluginName]['trainers'][username]['graph_y'] = self._graph[1][:]
+
+    def mlJSONDecoding(self, d):
+        pluginname  = self._trainer.mlGetPluginName()
+        username    = self._trainer.mlGetUserName()
+
+        if pluginname in d.keys():
+            if username in d[pluginname]['trainers'].keys():
+                if 'graph_x' in d[pluginname]['trainers'][username].keys():
+                    self._graph[0] = d[pluginname]['trainers'][username]['graph_x'][:]
+                if 'graph_y' in d[pluginname]['trainers'][username].keys():
+                    self._graph[1] = d[pluginname]['trainers'][username]['graph_y'][:]

@@ -34,6 +34,8 @@ class MLTrainerViewerUI(QListWidget):
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
+        self.itemDoubleClicked.connect(self.mlOnItemDoubleClicked)
+
     def mlGetPlot(self):
         return self._plot
 
@@ -42,11 +44,13 @@ class MLTrainerViewerUI(QListWidget):
             self._displayed = id
 
             self._plot.redraw()
+            self.mlOnGraphUpdated(id)
 
             self.mlShowTrainerPlotSignal.emit()
 
     def mlOnGraphUpdated(self, id):
         item = None
+
         if self._displayed == id and id in self._items.keys():
             item = self._items[id]
             graph = item.mlTrainerItemGetGraph()
@@ -69,20 +73,18 @@ class MLTrainerViewerUI(QListWidget):
 
     def mlOnNewTrainerAdded(self, trainer):
         if trainer is not None:
-            id = trainer.mlGetUniqId()
+            uid = trainer.mlGetUniqId()
 
-            if id not in self._items.keys():
-                self._items[id] = MLTrainerViewerItemUI(trainer)
-                item = self._items[id].mlGetItem()
+            if uid not in self._items.keys():
+                self._items[uid] = MLTrainerViewerItemUI(trainer)
+                item = self._items[uid].mlGetItem()
 
-                self._items[id].removeTrainer.connect(self.mlOnRemoveTrainer)
-                self._items[id].graphUpdated.connect(lambda:self.mlOnGraphUpdated(id))
-                self._items[id].trainerLaunched.connect(lambda:self.mlShowPlot(id))
+                self._items[uid].removeTrainer.connect(self.mlOnRemoveTrainer)
+                self._items[uid].graphUpdated.connect(lambda:self.mlOnGraphUpdated(uid))
+                self._items[uid].trainerLaunched.connect(lambda:self.mlShowPlot(uid))
 
                 self.addItem(item)
-                self.setItemWidget(item, self._items[id])
-
-                self.itemDoubleClicked.connect(self.mlOnItemDoubleClicked)
+                self.setItemWidget(item, self._items[uid])
 
     def mlOnItemDoubleClicked(self, obj):
         if obj is not None:
@@ -92,6 +94,11 @@ class MLTrainerViewerUI(QListWidget):
                 if obj == item.mlGetItem():
                     self.mlShowPlot(id)
                     break
+
+    def mlJSONDecoding(self, d):
+        for trainer in self._items.values():
+            if trainer is not None:
+                trainer.mlJSONDecoding(d)
 
     def mlJSONEncoding(self, d):
         for trainer in self._items.values():
