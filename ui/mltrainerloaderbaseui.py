@@ -6,14 +6,16 @@ from PyQt5.QtWidgets import QDockWidget
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtCore    import pyqtSignal
 
-class MLTrainerLoaderBaseUI(QDockWidget):
+from iface import MLTrainerLoaderBaseIface
+
+class MLTrainerLoaderBaseUI(QDockWidget, MLTrainerLoaderBaseIface):
 
     mlValidateTrainerSignal = pyqtSignal()
 
     def __init__(self, plugin, parent = None):
         QDockWidget.__init__(self, parent=parent)
 
-        self.setWindowTitle(plugin.mlGetPluginName() + ' trainer builder')
+        self.setWindowTitle(plugin.mlGetPluginName() + ' trainer loader')
         self._mainWidget = QWidget()
         self._plugin = plugin
 
@@ -42,9 +44,6 @@ class MLTrainerLoaderBaseUI(QDockWidget):
     def mlOnVisibilityChanged(self, visible):
         if visible:
             self.mlResetUI()
-
-    def mlBuildTrainerLoaderMainWidget(self):
-        raise NotImplementedError
 
     def mlGetNetworkFilePath(self):
         return self._network_filepath

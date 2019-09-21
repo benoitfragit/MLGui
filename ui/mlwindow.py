@@ -123,19 +123,23 @@ class MLWindow(QMainWindow):
                 loadUI.mlValidateTrainerSignal.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
 
     def mlAddNewTrainer(self, plugin, trainer_filepath, network_filepath, data_filepath, trainer_name):
-        if  plugin is not None and \
-            os.path.exists(network_filepath) and \
-            os.path.isfile(network_filepath) and \
-            os.path.exists(data_filepath)    and \
-            os.path.isfile(data_filepath)    and \
-            os.path.exists(trainer_filepath) and \
-            os.path.isfile(trainer_filepath):
-                trainer = MLTrainer(self._trainermanager, plugin, network_filepath, data_filepath, trainer_filepath, trainer_name)
+        if  plugin is not None:
+            if  network_filepath is not None and \
+                os.path.exists(network_filepath) and \
+                os.path.isfile(network_filepath) and \
+                data_filepath is not None and \
+                os.path.exists(data_filepath)    and \
+                os.path.isfile(data_filepath):
+                    trainer = MLTrainer(trainer_name, self._trainermanager, plugin, network_filepath, data_filepath)
 
-                self._trainermanager.mlAddProcess(trainer)
-                self._trainerviewer.mlOnNewTrainerAdded(trainer)
+                    if  trainer_filepath is not None and \
+                        os.path.exists(trainer_filepath) and \
+                        os.path.isfile(trainer_filepath):
+                        trainer.mlConfigureTrainer(trainer_filepath)
 
-                self.mlOnDisplayTrainers()
+                    self._trainermanager.mlAddProcess(trainer)
+                    self._trainerviewer.mlOnNewTrainerAdded(trainer)
+                    self.mlOnDisplayTrainers()
 
     def onLoadTrainerValidateClicked(self, plugin):
         if plugin is not None:

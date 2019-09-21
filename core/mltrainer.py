@@ -8,7 +8,7 @@ from iface import MLTrainerIFace
 from mlprocess import MLProcess
 
 class MLTrainer(MLProcess, MLTrainerIFace):
-    def __init__(self, manager, plugin, network_filepath, data_filepath, trainer_filepath, username):
+    def __init__(self, username, manager, plugin, network_filepath, data_filepath, trainer_filepath = None):
         MLProcess.__init__(self, manager)
 
         self._network_path = network_filepath
