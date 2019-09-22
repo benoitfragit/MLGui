@@ -11,7 +11,7 @@ from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import pyqtSignal
 
 from mltrainervieweritemui  import MLTrainerViewerItemUI
-from mlplot2d        import MLPlot2D
+from mlerrorplot     import MLErrorPlot
 
 import uuid
 
@@ -30,7 +30,7 @@ class MLTrainerViewerUI(QListWidget):
         self.setSpacing(10)
 
         # build the plot widget
-        self._plot = MLPlot2D()
+        self._plot = MLErrorPlot()
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -71,12 +71,12 @@ class MLTrainerViewerUI(QListWidget):
             self._items[id].mlOnRemoveTrainerClicked()
             self._manager.mlRemoveProcess(id)
 
-    def mlOnNewTrainerAdded(self, trainer):
+    def mlOnNewTrainerAdded(self, trainer, editUI):
         if trainer is not None:
             uid = trainer.mlGetUniqId()
 
             if uid not in self._items.keys():
-                self._items[uid] = MLTrainerViewerItemUI(trainer)
+                self._items[uid] = MLTrainerViewerItemUI(trainer, editUI)
                 item = self._items[uid].mlGetItem()
 
                 self._items[uid].removeTrainer.connect(self.mlOnRemoveTrainer)

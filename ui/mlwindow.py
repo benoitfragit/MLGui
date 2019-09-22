@@ -11,6 +11,7 @@ from PyQt5.QtCore           import Qt
 
 from mltrainerviewerui      import MLTrainerViewerUI
 from mltrainerloaderbaseui  import MLTrainerLoaderBaseUI
+from mltrainereditorbaseui  import MLTrainerEditorBaseUI
 from mlpluginviewerui       import MLPluginViewerUI
 
 from core import MLTrainer
@@ -117,13 +118,19 @@ class MLWindow(QMainWindow):
             Populate the new trainer menu
             """
             loadUI = plugin.mlGetTrainerLoaderUI()
+            editUI = plugin.mlGetTrainerEditorUI()
 
             if isinstance(loadUI, MLTrainerLoaderBaseUI):
                 self.addDockWidget(Qt.LeftDockWidgetArea, loadUI)
                 loadUI.mlValidateTrainerSignal.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
 
+            if isinstance(editUI, MLTrainerEditorBaseUI):
+                self.addDockWidget(Qt.LeftDockWidgetArea, editUI)
+
     def mlAddNewTrainer(self, plugin, trainer_filepath, network_filepath, data_filepath, trainer_name):
         if  plugin is not None:
+            editUI = plugin.mlGetTrainerEditorUI()
+
             if  network_filepath is not None and \
                 os.path.exists(network_filepath) and \
                 os.path.isfile(network_filepath) and \
@@ -138,7 +145,7 @@ class MLWindow(QMainWindow):
                         trainer.mlConfigureTrainer(trainer_filepath)
 
                     self._trainermanager.mlAddProcess(trainer)
-                    self._trainerviewer.mlOnNewTrainerAdded(trainer)
+                    self._trainerviewer.mlOnNewTrainerAdded(trainer, editUI)
                     self.mlOnDisplayTrainers()
 
     def onLoadTrainerValidateClicked(self, plugin):

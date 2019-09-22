@@ -16,6 +16,7 @@ from exchange import MLPNetwork
 from exchange import MLPMetaData
 
 from ui import MLPTrainerLoaderUI
+from ui import MLPTrainerEditorUI
 
 def enum(*args):
     values = dict(zip(args, range(len(args))))
@@ -111,6 +112,7 @@ class MLPlugin(MLLoader, MLPluginBase):
             self._description = metadata.description
 
         self._trainerloaderui = MLPTrainerLoaderUI(self)
+        self._trainereditorui = MLPTrainerEditorUI(self)
 
     def mlGetTrainer(self, net, data):
         internal = self._funcs[self._funcnames.TRAINER_NEW](net, data)

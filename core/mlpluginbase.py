@@ -20,12 +20,16 @@ class MLPluginBase( MLPluginIFace, \
         self._author = None
         self._description = None
         self._trainerloaderui = None
+        self._trainereditorui = None
 
     def mlGetUniqId(self):
         return self._uuid
 
     def mlGetTrainerLoaderUI(self):
         return self._trainerloaderui
+
+    def mlGetTrainerEditorUI(self):
+        return self._trainereditorui
 
     def mlSetPluginActivated(self, activated):
         self._activated = activated

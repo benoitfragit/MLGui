@@ -27,12 +27,13 @@ class MLTrainerViewerItemUI(QWidget):
     graphUpdated = pyqtSignal()
     trainerLaunched = pyqtSignal()
 
-    def __init__(self, trainer, parent = None):
+    def __init__(self, trainer, editui, parent = None):
         QWidget.__init__(self, parent)
 
         self._graph = [[], []]
 
         self._trainer = trainer
+        self._editui  = editui
         self._timer   = QTimer()
         self._timer.timeout.connect(self.mlUpdateTrainerItemOnTimeout)
         self._clearTimer = QTimer()
@@ -120,6 +121,11 @@ class MLTrainerViewerItemUI(QWidget):
             self.removeTrainer.emit(id)
             self._timer.stop()
 
+    def mlOnConfigureTrainedClicked(self):
+        if self._trainer is not None:
+            id = self._trainer.mlGetUniqId()
+            self._editui.setVisible(True)
+
     def contextMenuEvent(self, event):
         menu = QMenu(self)
         run    = QAction(QIcon.fromTheme('media-playback-start'), 'Run', self)
@@ -132,6 +138,7 @@ class MLTrainerViewerItemUI(QWidget):
         pause.triggered.connect(self.mlOnTrainerPauseClicked)
         stop.triggered.connect(self.mlOnTrainerStopClicked)
         remove.triggered.connect(self.mlOnRemoveTrainerClicked)
+        configure.triggered.connect(self.mlOnConfigureTrainedClicked)
 
         if self._trainer.mlIsProcessRunning():
             is_paused = self._trainer.mlIsProcessPaused()
