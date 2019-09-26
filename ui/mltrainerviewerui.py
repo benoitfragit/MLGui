@@ -27,6 +27,7 @@ class MLTrainerViewerUI(QListWidget):
         self._displayed = None
         self.setViewMode(QListWidget.IconMode)
         self.setResizeMode(QListWidget.Adjust)
+        self.setMovement(QListWidget.Static)
         self.setSpacing(10)
 
         # build the plot widget

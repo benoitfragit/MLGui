@@ -31,4 +31,9 @@ class MLTrainerEditorBaseUI(QDockWidget, MLTrainerEditorBaseIface):
 
     def mlOnVisibilityChanged(self, visible):
         if visible:
+            loadUI = self._plugin.mlGetTrainerLoaderUI()
+
+            if loadUI is not None:
+                loadUI.setVisible(not visible)
+
             self.mlResetUI()

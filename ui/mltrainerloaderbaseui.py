@@ -43,6 +43,11 @@ class MLTrainerLoaderBaseUI(QDockWidget, MLTrainerLoaderBaseIface):
 
     def mlOnVisibilityChanged(self, visible):
         if visible:
+            editUI = self._plugin.mlGetTrainerEditorUI()
+
+            if editUI is not None:
+                editUI.setVisible(not visible)
+
             self.mlResetUI()
 
     def mlGetNetworkFilePath(self):
