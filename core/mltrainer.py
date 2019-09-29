@@ -20,6 +20,7 @@ class MLTrainer(MLProcess, MLTrainerIFace):
         self._username  = username
 
         self._shared['running']   = False
+        self._shared['exit']      = False
         self._shared['progress']  = self.mlGetTrainerProgress()
         self._shared['error']     = self.mlGetTrainerError()
 
@@ -53,6 +54,9 @@ class MLTrainer(MLProcess, MLTrainerIFace):
     def mlIsTrainerRunning(self):
         return self._shared['running']
 
+    def mlIsTrainerExited(self):
+        return self._shared['exit']
+
     def mlGetTrainerProgress(self):
         return self._shared['progress']
 
@@ -61,6 +65,9 @@ class MLTrainer(MLProcess, MLTrainerIFace):
 
     def mlGetTrainerError(self):
         return self._shared['error']
+
+    def mlSetTrainerExited(self, exited):
+        self._shared['exit'] = exited
 
     def run(self):
         self._shared['running']   = True

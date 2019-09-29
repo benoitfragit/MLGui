@@ -9,9 +9,5 @@ class MLTrainerEditorBaseIface:
         raise NotImplementedError
 
     @abstractmethod
-    def mlResetUI(self):
-        raise NotImplementedError
-
-    @abstractmethod
     def fromTrainer(self, *args, **kwargs):
         raise NotImplementedError

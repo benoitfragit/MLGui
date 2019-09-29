@@ -123,8 +123,7 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlOnConfigureTrainedClicked(self):
         if self._trainer is not None:
-            id = self._trainer.mlGetUniqId()
-            self._editui.setVisible(True)
+            self._editui.fromTrainer(self._trainer)
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
@@ -168,6 +167,7 @@ class MLTrainerViewerItemUI(QWidget):
         settingPath = self._trainer.mlGetSettingPath()
         username    = self._trainer.mlGetUserName()
         running     = self._trainer.mlIsTrainerRunning() > 0
+        exited      = self._trainer.mlIsTrainerExited() > 0
         error       = self._trainer.mlGetTrainerError()
         progress    = self._trainer.mlGetTrainerProgress()
 
@@ -176,6 +176,7 @@ class MLTrainerViewerItemUI(QWidget):
         d[pluginName]['trainers'][username]['data']     = dataPath
         d[pluginName]['trainers'][username]['settings'] = settingPath
         d[pluginName]['trainers'][username]['running']  = running
+        d[pluginName]['trainers'][username]['exit']     = exited
         d[pluginName]['trainers'][username]['error']    = error
         d[pluginName]['trainers'][username]['progress'] = progress
 
@@ -194,3 +195,5 @@ class MLTrainerViewerItemUI(QWidget):
                     self._graph[0] = d[pluginname]['trainers'][username]['graph_x'][:]
                 if 'graph_y' in d[pluginname]['trainers'][username].keys():
                     self._graph[1] = d[pluginname]['trainers'][username]['graph_y'][:]
+                if 'exit' in d[pluginname]['trainers'][username].keys():
+                    self._trainer.mlSetTrainerExited(d[pluginname]['trainers'][username]['exit'] > 0)

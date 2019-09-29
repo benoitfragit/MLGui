@@ -35,5 +35,3 @@ class MLTrainerEditorBaseUI(QDockWidget, MLTrainerEditorBaseIface):
 
             if loadUI is not None:
                 loadUI.setVisible(not visible)
-
-            self.mlResetUI()
