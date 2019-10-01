@@ -127,36 +127,27 @@ class MLWindow(QMainWindow):
             if isinstance(editUI, MLTrainerEditorBaseUI):
                 self.addDockWidget(Qt.LeftDockWidgetArea, editUI)
 
-    def mlAddNewTrainer(self, plugin, trainer_filepath, network_filepath, data_filepath, trainer_name):
-        if  plugin is not None:
+    def mlAddNewTrainer(self, plugin, trainer_name, internal):
+        if  plugin is not None and internal is not None:
             editUI = plugin.mlGetTrainerEditorUI()
 
-            if  network_filepath is not None and \
-                os.path.exists(network_filepath) and \
-                os.path.isfile(network_filepath) and \
-                data_filepath is not None and \
-                os.path.exists(data_filepath)    and \
-                os.path.isfile(data_filepath):
-                    trainer = MLTrainer(trainer_name, self._trainermanager, plugin, network_filepath, data_filepath)
+            trainer = MLTrainer(trainer_name,
+                                self._trainermanager,
+                                plugin,
+                                internal)
 
-                    if  trainer_filepath is not None and \
-                        os.path.exists(trainer_filepath) and \
-                        os.path.isfile(trainer_filepath):
-                        trainer.mlConfigureTrainer(trainer_filepath)
-
-                    self._trainermanager.mlAddProcess(trainer)
-                    self._trainerviewer.mlOnNewTrainerAdded(trainer, editUI)
-                    self.mlOnDisplayTrainers()
+            self._trainermanager.mlAddProcess(trainer)
+            self._trainerviewer.mlOnNewTrainerAdded(trainer, editUI)
+            self.mlOnDisplayTrainers()
 
     def onLoadTrainerValidateClicked(self, plugin):
         if plugin is not None:
-            loadUI = plugin.mlGetTrainerLoaderUI()
-            network_filepath = loadUI.mlGetNetworkFilePath()
-            data_filepath = loadUI.mlGetDataFilePath()
-            trainer_filepath = loadUI.mlGetTrainerFilePath()
-            trainer_name = loadUI.mlGetTrainerName()
+            loadUI   = plugin.mlGetTrainerLoaderUI()
 
-            self.mlAddNewTrainer(plugin, trainer_filepath, network_filepath, data_filepath, trainer_name)
+            username = loadUI.mlGetTrainerName()
+            internal = plugin.mlGetLoadedTrainer()
+
+            self.mlAddNewTrainer(plugin, username, internal)
 
     def mlRegisterAllPlugins(self, loader):
         json_file = os.path.join(self._mlgui_directory, 'mlgui.json')
@@ -186,17 +177,15 @@ class MLWindow(QMainWindow):
                 if state is not None:
                     trainers = state['trainers']
                     for username in trainers.keys():
-                        trainer          = trainers[username]
+                        buf              = trainers[username]
 
-                        network_filepath = trainer['network']
-                        trainer_filepath = trainer['settings']
-                        data_filepath    = trainer['data']
+                        internal         = plugin.mlTrainerJSONDecoding(buf)
 
-                        error            = trainer['error']
-                        progress         = trainer['progress']
+                        error            = buf['error']
+                        progress         = buf['progress']
 
                         # Add a new trainer
-                        self.mlAddNewTrainer(plugin, trainer_filepath, network_filepath, data_filepath, username)
+                        self.mlAddNewTrainer(plugin, username, internal)
 
                         # Finally restore its progression
                         self._trainermanager.mlRestoreProgression(self._mlgui_directory, username, progress, error)

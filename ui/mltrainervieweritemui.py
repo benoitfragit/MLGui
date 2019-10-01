@@ -162,28 +162,15 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlJSONEncoding(self, d):
         pluginName  = self._trainer.mlGetPluginName()
-        networkPath = self._trainer.mlGetNetworkPath()
-        dataPath    = self._trainer.mlGetDataPath()
-        settingPath = self._trainer.mlGetSettingPath()
-        username    = self._trainer.mlGetUserName()
-        running     = self._trainer.mlIsTrainerRunning() > 0
-        exited      = self._trainer.mlIsTrainerExited() > 0
-        error       = self._trainer.mlGetTrainerError()
-        progress    = self._trainer.mlGetTrainerProgress()
+        if pluginName in d.keys() and 'trainers' in d[pluginName].keys():
+            username    = self.mlGetUserName()
 
-        d[pluginName]['trainers'][username] = {}
-        d[pluginName]['trainers'][username]['network']  = networkPath
-        d[pluginName]['trainers'][username]['data']     = dataPath
-        d[pluginName]['trainers'][username]['settings'] = settingPath
-        d[pluginName]['trainers'][username]['running']  = running
-        d[pluginName]['trainers'][username]['exit']     = exited
-        d[pluginName]['trainers'][username]['error']    = error
-        d[pluginName]['trainers'][username]['progress'] = progress
+            self._trainer.mlJSONEncoding(d[pluginName]['trainers'])
 
-        d[pluginName]['trainers'][username]['graph_x'] = []
-        d[pluginName]['trainers'][username]['graph_x'] = self._graph[0][:]
-        d[pluginName]['trainers'][username]['graph_y'] = []
-        d[pluginName]['trainers'][username]['graph_y'] = self._graph[1][:]
+            d[pluginName]['trainers'][username]['graph_x'] = []
+            d[pluginName]['trainers'][username]['graph_x'] = self._graph[0][:]
+            d[pluginName]['trainers'][username]['graph_y'] = []
+            d[pluginName]['trainers'][username]['graph_y'] = self._graph[1][:]
 
     def mlJSONDecoding(self, d):
         pluginname  = self._trainer.mlGetPluginName()

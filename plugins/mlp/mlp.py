@@ -6,8 +6,6 @@ import ctypes
 import sys
 import os
 
-sys.path.append('..' + os.path.sep +  '..')
-
 from core  import MLPluginBase
 from core  import MLNetwork
 
@@ -115,34 +113,115 @@ class MLPlugin(MLLoader, MLPluginBase):
         self._trainereditorui = MLPTrainerEditorUI(self)
 
     def mlGetTrainer(self, net, data):
-        internal = self._funcs[self._funcnames.TRAINER_NEW](net, data)
-        return internal
+        model = self._funcs[self._funcnames.TRAINER_NEW](net, data)
+        return model
 
     def mlDeleteTrainer(self, trainer):
-        self._funcs[self._funcnames.TRAINER_DELETE](trainer)
+        if trainer is not None and 'model' in trainer.keys():
+            self._funcs[self._funcnames.TRAINER_DELETE](trainer['model'])
 
     def mlConfigureTrainer(self, trainer, path):
-        self._funcs[self._funcnames.TRAINER_CONFIGURE](trainer, path)
+        if trainer is not None :
+            if 'model' in trainer.keys():
+                self._funcs[self._funcnames.TRAINER_CONFIGURE](trainer['model'], path)
+            if 'settings' in trainer.keys():
+                trainer['settings'] = path
 
     def mlIsTrainerRunning(self, trainer):
-        return self._funcs[self._funcnames.TRAINER_IS_RUNNING](trainer)
+        ret = False
+        if trainer is not None and 'model' in trainer.keys():
+            ret = self._funcs[self._funcnames.TRAINER_IS_RUNNING](trainer['model'])
+        return ret
 
     def mlGetTrainerProgress(self, trainer):
-        return self._funcs[self._funcnames.TRAINER_GET_PROGRESS](trainer)
+        ret = 0.0
+        if trainer is not None and 'model' in trainer.keys():
+            ret = self._funcs[self._funcnames.TRAINER_GET_PROGRESS](trainer['model'])
+        return ret
 
     def mlTrainerRun(self, trainer):
-        self._funcs[self._funcnames.TRAINER_RUN](trainer)
+        if trainer is not None and 'model' in trainer.keys():
+            self._funcs[self._funcnames.TRAINER_RUN](trainer['model'])
 
     def mlGetTrainerError(self, trainer):
-        return self._funcs[self._funcnames.TRAINER_ERROR](trainer)
+        ret = 100.0
+        if trainer is not None and 'model' in trainer.keys():
+            ret = self._funcs[self._funcnames.TRAINER_ERROR](trainer['model'])
+        return ret
 
     def mlSaveTrainerProgression(self, trainer, path):
-        real_path = path + '.xml'
-        return self._funcs[self._funcnames.TRAINER_SAVE_PROGRESSION](trainer, real_path)
+        if trainer is not None and 'model' in trainer.keys():
+            real_path = path + '.xml'
+            self._funcs[self._funcnames.TRAINER_SAVE_PROGRESSION](trainer['model'], real_path)
 
     def mlRestoreTrainerProgression(self, trainer, path, progress, error):
-        real_path =  path + '.xml'
-        self._funcs[self._funcnames.TRAINER_RESTORE_PROGRESSION](trainer, real_path, progress, error)
+        if trainer is not None and 'model' in trainer.keys():
+            real_path =  path + '.xml'
+            self._funcs[self._funcnames.TRAINER_RESTORE_PROGRESSION](trainer['model'], real_path, progress, error)
+
+    def mlGetLoadedTrainer(self):
+        ret = None
+
+        if self._trainerloaderui is not None:
+
+            network_filepath    = self._trainerloaderui.mlGetNetworkFilePath()
+            data_filepath       = self._trainerloaderui.mlGetDataFilePath()
+            trainer_filepath    = self._trainerloaderui.mlGetTrainerFilePath()
+
+            ret = self.mlGetTrainerInternal(network_filepath, data_filepath, trainer_filepath)
+
+        return ret
+
+    def mlTrainerJSONEncoding(self, trainer, d):
+        if 'network' in trainer.keys():
+            d['network']  = trainer['network']
+        if 'data' in trainer.keys():
+            d['data']     = trainer['data']
+        if 'settings' in trainer.keys():
+            d['settings'] = trainer['settings']
+
+    def mlTrainerJSONDecoding(self, buf):
+        ret = None
+        if buf is not None:
+            if  'network'   in buf.keys() and \
+                'settings'  in buf.keys() and \
+                'data'      in buf.keys():
+
+                network_filepath = buf['network']
+                trainer_filepath = buf['settings']
+                data_filepath    = buf['data']
+
+                ret = self.mlGetTrainerInternal(network_filepath, data_filepath, trainer_filepath)
+
+        return ret
+
+    def mlGetTrainerInternal(self,\
+                             network_filepath, \
+                             data_filepath, \
+                             trainer_filepath):
+        internal = None
+
+        if network_filepath is not None      and \
+            os.path.exists(network_filepath) and \
+            os.path.isfile(network_filepath) and \
+            data_filepath is not None        and \
+            os.path.exists(data_filepath)    and \
+            os.path.isfile(data_filepath):
+
+            internal = {}
+
+            internal['model']    = self.mlGetTrainer(network_filepath, data_filepath)
+
+            internal['network']  = network_filepath
+            internal['data']     = data_filepath
+            internal['settings'] = trainer_filepath
+
+            if  trainer_filepath is not None and \
+                os.path.exists(trainer_filepath) and \
+                os.path.isfile(trainer_filepath):
+                self.mlConfigureTrainer(internal, trainer_filepath)
+
+        return internal
 
     def mlGetNetwork(self, path):
         internal = self._funcs[self._funcnames.NETWORK_NEW](path)
@@ -168,4 +247,4 @@ class MLPlugin(MLLoader, MLPluginBase):
         return self._funcs[self._funcnames.NETWORK_GET_OUTPUT](net)
 
 if __name__ == '__main__':
-    l = Plugin()
+    l = MLPlugin()

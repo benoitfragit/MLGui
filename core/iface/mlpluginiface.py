@@ -37,6 +37,18 @@ class MLPluginIFace:
         raise NotImplementedError
 
     @abstractmethod
+    def mlGetLoadedTrainer(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def mlTrainerJSONDecoding(self, buf):
+        raise NotImplementedError
+
+    @abstractmethod
+    def mlTrainerJSONEncoding(self, trainer, buf):
+        raise NotImplementedError
+
+    @abstractmethod
     def mlGetNetwork(self, path):
         raise NotImplementedError
 
