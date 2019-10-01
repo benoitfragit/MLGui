@@ -86,6 +86,9 @@ class MLPlugin(MLLoader, MLPluginBase):
 
         self.load()
 
+        self._trainerloaderui = MLPTrainerLoaderUI(self)
+        self._trainereditorui = MLPTrainerEditorUI(self)
+
     def load(self):
         for i in range(self._number_of_functions):
             self._funcs[i] = self.wrap(self._api[i][0],
@@ -108,9 +111,6 @@ class MLPlugin(MLLoader, MLPluginBase):
             self._version   = metadata.version
             self._author    = metadata.author
             self._description = metadata.description
-
-        self._trainerloaderui = MLPTrainerLoaderUI(self)
-        self._trainereditorui = MLPTrainerEditorUI(self)
 
     def mlGetTrainer(self, net, data):
         model = self._funcs[self._funcnames.TRAINER_NEW](net, data)
