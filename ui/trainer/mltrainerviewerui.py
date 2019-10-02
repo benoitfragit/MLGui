@@ -33,6 +33,8 @@ class MLTrainerViewerUI(QListWidget):
 
         # build the plot widget
         self._plot = MLErrorPlot()
+        # build the multiple plots widget
+        self._allplots = MLMultiplePlot()
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
@@ -87,6 +89,8 @@ class MLTrainerViewerUI(QListWidget):
 
                 self.addItem(item)
                 self.setItemWidget(item, self._items[uid])
+
+                self._allplots.registerNewPlot(uid)
 
     def mlOnItemDoubleClicked(self, obj):
         if obj is not None:
