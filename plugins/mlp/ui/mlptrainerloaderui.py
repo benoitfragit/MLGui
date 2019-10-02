@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from ui import MLTrainerLoaderBaseUI
+from ui.trainer import MLTrainerLoaderBaseUI
 
 from PyQt5.QtWidgets    import QLineEdit
 from PyQt5.QtWidgets    import QLabel

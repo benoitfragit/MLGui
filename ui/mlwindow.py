@@ -9,12 +9,13 @@ from PyQt5.QtWidgets import QStackedWidget
 
 from PyQt5.QtCore           import Qt
 
-from mltrainerviewerui      import MLTrainerViewerUI
-from mltrainerloaderbaseui  import MLTrainerLoaderBaseUI
-from mltrainereditorbaseui  import MLTrainerEditorBaseUI
-from mlpluginviewerui       import MLPluginViewerUI
+from trainer    import MLTrainerViewerUI
+from trainer    import MLTrainerLoaderBaseUI
+from trainer    import MLTrainerEditorBaseUI
 
-from core import MLTrainer
+from plugin     import MLPluginViewerUI
+
+from core       import MLTrainer
 
 import os
 import json
