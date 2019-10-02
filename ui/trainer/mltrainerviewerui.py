@@ -12,6 +12,7 @@ from PyQt5.QtCore    import pyqtSignal
 
 from mltrainervieweritemui  import MLTrainerViewerItemUI
 from plot                   import MLErrorPlot
+from plot                   import MLMultiplePlot
 
 import uuid
 
