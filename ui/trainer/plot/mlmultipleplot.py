@@ -4,7 +4,9 @@
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from matplotlib.ticker import FormatStrFormatter
+
 import matplotlib.pyplot as plt
+import math
 
 class MLMultiplePlot(FigureCanvas):
     def __init__(self):
@@ -12,41 +14,53 @@ class MLMultiplePlot(FigureCanvas):
         self._figure.patch.set_visible(False)
         FigureCanvas.__init__(self, self._figure)
 
-        self._axes = {}
         self._lines= {}
         self._annotations = {}
+        self._axes = []
+        self._map = {}
 
-    def registerNewPlot(self, uid):
-        self._axes[uid] = self._figure.add_subplot(111)
-        self._axes[uid].set(frame_on=False)
-        self._axes[uid].axis('off')
+    def redraw(self, items):
+        if items is not None:
+            self._figure.clf()
 
-        self.redraw(uid)
+            self._axes = []
+            self._lines.clear()
+            self._annotations.clear()
+            self._map.clear()
 
-    def redraw(self, uid, title=''):
-        if uid in self._axes.keys():
-            self._axes[uid].cla()
-            self._lines[uid], = self._axes[uid].plot([], [], '-')
+            n = math.ceil(math.sqrt(len(items.keys())))
 
-            self._axes[uid].grid(linestyle='--')
-            self._axes[uid].set_title(title + ' training report')
-            self._axes[uid].set_xlabel('Progress')
-            self._axes[uid].set_ylabel('Error')
+            for i in range(len(items.keys())):
+                keys = items.keys()
+                uid = keys[i]
+                self._map[uid] = i
 
-            self._annotations[uid] = self._axes[uid].annotate('',
-                                                xy=(0.85, 0.84),
-                                                xycoords='figure fraction',
-                                                horizontalalignment='right',
-                                                verticalalignment='top',
-                                                clip_on=True,
-                                                size=25,
-                                                bbox=dict(boxstyle='round', ec=None))
+                if i == 0:
+                    self._axes.append(self._figure.add_subplot(n, n, i + 1, frame_on=False))
+                else:
+                    self._axes.append(self._figure.add_subplot(n, n, i + 1, frame_on=False, sharex=self._axes[0], sharey=self._axes[0]))
 
-            self._axes[uid].set_xlim(0.0, 100.0)
-            self._axes[uid].set_ylim(0.0, 100.0)
+                self._lines[i], = self._axes[i].plot([], [], '-')
 
-            self._axes[uid].yaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
-            self._axes[uid].xaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
+                self._axes[i].grid(linestyle='--')
+                self._axes[i].set_title(' training report')
+                #self._axes[i].set_xlabel('Progress')
+                #self._axes[i].set_ylabel('Error')
+
+                self._annotations[i] = self._axes[i].annotate('',
+                                                    xy=(0.85, 0.84),
+                                                    xycoords='figure fraction',
+                                                    horizontalalignment='right',
+                                                    verticalalignment='top',
+                                                    clip_on=True,
+                                                    size=25,
+                                                    bbox=dict(boxstyle='round', ec=None))
+
+                self._axes[i].set_xlim(0.0, 100.0)
+                self._axes[i].set_ylim(0.0, 100.0)
+
+                self._axes[i].yaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
+                self._axes[i].xaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
 
     def mlUpdateMore(self, uid, graph):
         pass

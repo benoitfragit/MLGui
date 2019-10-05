@@ -49,6 +49,9 @@ class MLWindow(QMainWindow):
         displayTrainers = QAction('&Trainers', self)
         displayTrainers.triggered.connect(self.mlOnDisplayTrainers)
         displayMenu.addAction(displayTrainers)
+        displayTrainerPlots = QAction('&Live training', self)
+        displayTrainerPlots.triggered.connect(self.mlOnDisplayAllTrainerPlots)
+        displayMenu.addAction(displayTrainerPlots)
 
         # Building the Plugin Menu
         pluginMenu = mainMenu.addMenu('&Plugins')
@@ -78,6 +81,7 @@ class MLWindow(QMainWindow):
         stackwidget.addWidget(self._mainLabel)
         stackwidget.addWidget(self._trainerviewer)
         stackwidget.addWidget(self._trainerviewer.mlGetPlot())
+        stackwidget.addWidget(self._trainerviewer.mlGetAllPLots())
 
         # Build the central widget
         self.setCentralWidget(stackwidget)
@@ -102,11 +106,19 @@ class MLWindow(QMainWindow):
 
         return mlgui
 
+    def mlOnDisplayTrainers(self):
+        self.centralWidget().setCurrentIndex(1)
+
     def mlOnShowTrainerPlot(self):
         self.centralWidget().setCurrentIndex(2)
 
-    def mlOnDisplayTrainers(self):
-        self.centralWidget().setCurrentIndex(1)
+    def mlOnDisplayAllTrainerPlots(self):
+        items = self._trainerviewer.mlGetItems()
+
+        allplots = self._trainerviewer.mlGetAllPLots()
+        allplots.redraw(items)
+
+        self.centralWidget().setCurrentIndex(3)
 
     def mlAddPlugin(self, plugin):
         if plugin is not None:

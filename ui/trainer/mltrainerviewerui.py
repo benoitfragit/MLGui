@@ -43,6 +43,12 @@ class MLTrainerViewerUI(QListWidget):
     def mlGetPlot(self):
         return self._plot
 
+    def mlGetAllPLots(self):
+        return self._allplots
+
+    def mlGetItems(self):
+        return self._items
+
     def mlShowPlot(self, id):
         if id in self._items.keys():
             self._displayed = id
@@ -89,8 +95,6 @@ class MLTrainerViewerUI(QListWidget):
 
                 self.addItem(item)
                 self.setItemWidget(item, self._items[uid])
-
-                self._allplots.registerNewPlot(uid)
 
     def mlOnItemDoubleClicked(self, obj):
         if obj is not None:
