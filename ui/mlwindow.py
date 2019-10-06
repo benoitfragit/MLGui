@@ -113,11 +113,6 @@ class MLWindow(QMainWindow):
         self.centralWidget().setCurrentIndex(2)
 
     def mlOnDisplayAllTrainerPlots(self):
-        items = self._trainerviewer.mlGetItems()
-
-        allplots = self._trainerviewer.mlGetAllPLots()
-        allplots.redraw(items)
-
         self.centralWidget().setCurrentIndex(3)
 
     def mlAddPlugin(self, plugin):

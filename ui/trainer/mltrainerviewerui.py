@@ -61,10 +61,14 @@ class MLTrainerViewerUI(QListWidget):
     def mlOnGraphUpdated(self, id):
         item = None
 
-        if self._displayed == id and id in self._items.keys():
+        if id in self._items.keys():
             item = self._items[id]
             graph = item.mlTrainerItemGetGraph()
-            self._plot.mlUpdate(graph, 'blue')
+
+            if self._displayed == id:
+                self._plot.mlUpdate(graph, 'blue')
+
+            self._allplots.mlUpdate(id, graph)
 
     def mlOnRemoveTrainer(self, id):
         if id is not None and id in self._items.keys():
@@ -76,8 +80,11 @@ class MLTrainerViewerUI(QListWidget):
             if id == self._displayed :
                 self._displayed = None
 
+            self._allplots.mlRemoveSubPlot(id)
+
     def mlRemoveAllTrainers(self):
         for id in self._items.keys():
+            self._allplots.mlRemoveSubPlot(id)
             self._items[id].mlOnRemoveTrainerClicked()
             self._manager.mlRemoveProcess(id)
 
@@ -95,6 +102,8 @@ class MLTrainerViewerUI(QListWidget):
 
                 self.addItem(item)
                 self.setItemWidget(item, self._items[uid])
+
+                self._allplots.mlAddSubPlot(uid, self._items[uid])
 
     def mlOnItemDoubleClicked(self, obj):
         if obj is not None:

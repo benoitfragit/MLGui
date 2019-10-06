@@ -184,3 +184,5 @@ class MLTrainerViewerItemUI(QWidget):
                     self._graph[1] = d[pluginname]['trainers'][username]['graph_y'][:]
                 if 'exit' in d[pluginname]['trainers'][username].keys():
                     self._trainer.mlSetTrainerExited(d[pluginname]['trainers'][username]['exit'] > 0)
+
+                self.graphUpdated.emit()

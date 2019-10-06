@@ -4,6 +4,7 @@
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
 from matplotlib.ticker import FormatStrFormatter
+from matplotlib.gridspec import GridSpec
 
 import matplotlib.pyplot as plt
 import math
@@ -12,68 +13,100 @@ class MLMultiplePlot(FigureCanvas):
     def __init__(self):
         self._figure = plt.figure(frameon=False)
         self._figure.patch.set_visible(False)
+
         FigureCanvas.__init__(self, self._figure)
 
         self._lines= {}
         self._annotations = {}
-        self._axes = []
+        self._axes = self._figure.axes
         self._map = {}
 
-    def redraw(self, items):
-        if items is not None:
-            self._figure.clf()
+    def mlRemoveSubPlot(self, uid):
+        #TODO : decrease i idx for other subplot
+        if uid in self._map.keys():
+            i = self._map[uid]
+            self._lines.pop(i)
+            self._annotations.pop(i)
+            self._figure.delaxes(self._axes[i])
+            self._axes.pop(i)
+            self._map.pop(uid)
 
-            self._axes = []
-            self._lines.clear()
-            self._annotations.clear()
-            self._map.clear()
+            N = len(self._axes)
 
-            n = math.ceil(math.sqrt(len(items.keys())))
+            # new gridspec
+            cols = 2
+            rows = int(math.ceil(float(N)/float(cols)))
+            grid = GridSpec(rows, cols)
+            grid.update(wspace=0.5,hspace=0.5)
 
-            for i in range(len(items.keys())):
-                keys = items.keys()
-                uid = keys[i]
-                self._map[uid] = i
+            # move old axes to their new position
+            for gs, ax in zip(grid, self._axes):
+                ax.set_position(gs.get_position(self._figure))
 
-                if i == 0:
-                    self._axes.append(self._figure.add_subplot(n, n, i + 1, frame_on=False))
-                else:
-                    self._axes.append(self._figure.add_subplot(n, n, i + 1, frame_on=False, sharex=self._axes[0], sharey=self._axes[0]))
+            self._figure.canvas.draw_idle()
 
-                self._lines[i], = self._axes[i].plot([], [], '-')
+    def mlAddSubPlot(self, uid, item):
+        if item is not None:
+            # new number of axes
+            N = len(self._axes) + 1
 
-                self._axes[i].grid(linestyle='--')
-                self._axes[i].set_title(' training report')
-                #self._axes[i].set_xlabel('Progress')
-                #self._axes[i].set_ylabel('Error')
+            # new gridspec
+            cols = 2
+            rows = int(math.ceil(float(N)/float(cols)))
+            grid = GridSpec(rows, cols)
+            grid.update(wspace=0.5,hspace=0.5)
 
-                self._annotations[i] = self._axes[i].annotate('',
-                                                    xy=(0.85, 0.84),
-                                                    xycoords='figure fraction',
-                                                    horizontalalignment='right',
-                                                    verticalalignment='top',
-                                                    clip_on=True,
-                                                    size=25,
-                                                    bbox=dict(boxstyle='round', ec=None))
+            # move old axes to their new position
+            for gs, ax in zip(grid, self._axes):
+                ax.set_position(gs.get_position(self._figure))
 
-                self._axes[i].set_xlim(0.0, 100.0)
-                self._axes[i].set_ylim(0.0, 100.0)
+            self._map[uid] = N - 1
 
-                self._axes[i].yaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
-                self._axes[i].xaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
+            # adding new axis
+            self._axes.append(self._figure.add_subplot(grid[N - 1], frame_on=False))
 
-    def mlUpdateMore(self, uid, graph):
-        pass
+            self._lines[N - 1], = self._axes[-1].plot([], [], '-')
+
+            self._axes[- 1].grid(linestyle='--')
+            self._axes[- 1].set_title(item.mlGetUserName() + ' training report', size=9)
+            #self._axes[- 1].set_xlabel('Progress')
+            self._axes[- 1].set_ylabel('Error')
+            self._axes[- 1].xaxis.label.set_size(8)
+            self._axes[- 1].yaxis.label.set_size(8)
+
+            self._annotations[N - 1] = self._axes[-1].annotate('',
+                                                xy=(0.85, 0.84),
+                                                xycoords='axes fraction',
+                                                horizontalalignment='right',
+                                                verticalalignment='top',
+                                                clip_on=True,
+                                                size=10,
+                                                bbox=dict(boxstyle='round', ec=None, fc=(0.0, 0.0, 0.9)))
+
+            self._axes[-1].set_xlim(0.0, 100.0)
+            self._axes[-1].set_ylim(0.0, 100.0)
+
+            self._axes[-1].yaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
+            self._axes[-1].xaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
+
+            graph = item.mlTrainerItemGetGraph()
+
+            self.mlUpdate(uid, graph)
+
+            self._figure.canvas.draw_idle()
 
     def mlUpdate(self, uid, graph, clr='blue'):
-        if uid in self._lines.keys():
-            self._lines[uid].set_xdata(graph[0])
-            self._lines[uid].set_ydata(graph[1])
-            self._lines[uid].set_color(clr)
+        if uid in self._map.keys():
+            i = self._map[uid]
 
-            self.mlUpdateMore(uid, graph)
+            self._lines[i].set_xdata(graph[0])
+            self._lines[i].set_ydata(graph[1])
+            self._lines[i].set_color(clr)
 
-            self._axes[uid].relim()
-            self._axes[uid].autoscale()
+            if len(graph[1]) > 0 :
+                self._annotations[i].set_text('Error:{0:.2f} %'.format(graph[1][-1]))
+
+            self._axes[i].relim()
+            self._axes[i].autoscale()
 
             self._figure.canvas.draw_idle()
