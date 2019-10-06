@@ -4,10 +4,9 @@
 import sys
 import os
 
-from iface import MLTrainerIFace
 from mlprocess import MLProcess
 
-class MLTrainer(MLProcess, MLTrainerIFace):
+class MLTrainer(MLProcess):
     def __init__(self, username, manager, plugin, internal):
         MLProcess.__init__(self, manager)
 
@@ -103,3 +102,6 @@ class MLTrainer(MLProcess, MLTrainerIFace):
         d[username]['exit']     = exited
         d[username]['error']    = error
         d[username]['progress'] = progress
+
+    def mlGetInternal(self):
+        return self._internal

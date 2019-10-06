@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from iface import MLNetworkIFace
-
-class MLNetwork(MLNetworkIFace):
+class MLNetwork:
     def __init__(self, plugin, internal):
         self._plugin = plugin
         self._internal = internal

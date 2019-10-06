@@ -123,7 +123,7 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlOnConfigureTrainedClicked(self):
         if self._trainer is not None:
-            self._editui.fromTrainer(self._trainer)
+            self._editui.fromTrainer(self._trainer.mlGetInternal())
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)

@@ -10,8 +10,13 @@ from PyQt5.QtWidgets import QSpinBox
 from PyQt5.QtWidgets import QHBoxLayout
 from PyQt5.QtWidgets import QVBoxLayout
 from PyQt5.QtWidgets import QPushButton
+
 from PyQt5.QtGui     import QIcon
 
+from PyQt5.QtCore    import Qt
+
+import os
+import xml.etree.ElementTree as ET
 
 class MLPTrainerEditorUI(MLTrainerEditorBaseUI):
     def __init__(self, plugin, parent = None):
@@ -20,18 +25,30 @@ class MLPTrainerEditorUI(MLTrainerEditorBaseUI):
 
         self._error         = QDoubleSpinBox()
         self._error.setRange(0.0, 100.0)
+        self._error.setDecimals(4)
+        self._error.setSuffix('%')
+        self._error.setAlignment(Qt.AlignRight)
+        self._error.setFrame(False)
 
         self._iterations    = QSpinBox()
         self._iterations.setRange(0, 1000000)
+        self._iterations.setAlignment(Qt.AlignRight)
+        self._iterations.setFrame(False)
 
         self._minibatch     = QSpinBox()
         self._minibatch.setRange(1, 1000)
+        self._minibatch.setAlignment(Qt.AlignRight)
+        self._minibatch.setFrame(False)
 
         self._learning      = QDoubleSpinBox()
         self._learning.setRange(0.0, 5.0)
+        self._learning.setAlignment(Qt.AlignRight)
+        self._learning.setFrame(False)
 
         self._momemtum      = QDoubleSpinBox()
         self._momemtum.setRange(0.0, 5.0)
+        self._momemtum.setAlignment(Qt.AlignRight)
+        self._momemtum.setFrame(False)
 
         self._cancel  = QPushButton('Cancel')
         self._cancel.setIcon(QIcon.fromTheme('edit-undo'))
@@ -102,6 +119,28 @@ class MLPTrainerEditorUI(MLTrainerEditorBaseUI):
 
     def fromTrainer(self, *args, **kwargs):
         trainer = args[0]
+        path = trainer['settings']
+
+        if os.path.exists(path) and os.path.isfile(path):
+            tree = ET.parse(path)
+            root = tree.getroot()
+
+            if root.tag == 'backpropagation':
+                learning        = float(root.attrib['learning-rate'])
+                minibatch       = int(root.attrib['mini-batch-size'])
+                momemtum        = float(root.attrib['momentum'])
+                iterations      = int(root.attrib['iterations'])
+                error           = float(root.attrib['error'])
+                costfunction    = root.attrib['cost-function']
+
+                self._error.setValue(error)
+                self._iterations.setValue(iterations)
+                self._minibatch.setValue(minibatch)
+                self._learning.setValue(learning)
+                self._momemtum.setValue(momemtum)
+                idx = self._costfunction.findText(costfunction, Qt.MatchFixedString)
+                if idx >= 0:
+                    self._costfunction.setCurrentIndex(idx)
 
         if trainer is not None:
             self.setVisible(True)

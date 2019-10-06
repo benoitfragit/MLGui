@@ -18,20 +18,16 @@ class MLMultiplePlot(FigureCanvas):
 
         self._lines= {}
         self._annotations = {}
-        self._axes = self._figure.axes
-        self._map = {}
+        self._axes = {}
 
     def mlRemoveSubPlot(self, uid):
-        #TODO : decrease i idx for other subplot
-        if uid in self._map.keys():
-            i = self._map[uid]
-            self._lines.pop(i)
-            self._annotations.pop(i)
-            self._figure.delaxes(self._axes[i])
-            self._axes.pop(i)
-            self._map.pop(uid)
+        if uid in self._lines.keys():
+            self._lines.pop(uid)
+            self._annotations.pop(uid)
+            self._figure.delaxes(self._axes[uid])
+            self._axes.pop(uid)
 
-            N = len(self._axes)
+            N = len(self._axes.keys())
 
             # new gridspec
             cols = 2
@@ -40,7 +36,7 @@ class MLMultiplePlot(FigureCanvas):
             grid.update(wspace=0.5,hspace=0.5)
 
             # move old axes to their new position
-            for gs, ax in zip(grid, self._axes):
+            for gs, ax in zip(grid, self._axes.values()):
                 ax.set_position(gs.get_position(self._figure))
 
             self._figure.canvas.draw_idle()
@@ -48,7 +44,7 @@ class MLMultiplePlot(FigureCanvas):
     def mlAddSubPlot(self, uid, item):
         if item is not None:
             # new number of axes
-            N = len(self._axes) + 1
+            N = len(self._axes.keys()) + 1
 
             # new gridspec
             cols = 2
@@ -57,24 +53,22 @@ class MLMultiplePlot(FigureCanvas):
             grid.update(wspace=0.5,hspace=0.5)
 
             # move old axes to their new position
-            for gs, ax in zip(grid, self._axes):
+            for gs, ax in zip(grid, self._axes.values()):
                 ax.set_position(gs.get_position(self._figure))
 
-            self._map[uid] = N - 1
-
             # adding new axis
-            self._axes.append(self._figure.add_subplot(grid[N - 1], frame_on=False))
+            self._axes[uid] = self._figure.add_subplot(grid[N - 1], frame_on=False)
 
-            self._lines[N - 1], = self._axes[-1].plot([], [], '-')
+            self._lines[uid], = self._axes[uid].plot([], [], '-')
 
-            self._axes[- 1].grid(linestyle='--')
-            self._axes[- 1].set_title(item.mlGetUserName() + ' training report', size=9)
-            #self._axes[- 1].set_xlabel('Progress')
-            self._axes[- 1].set_ylabel('Error')
-            self._axes[- 1].xaxis.label.set_size(8)
-            self._axes[- 1].yaxis.label.set_size(8)
+            self._axes[uid].grid(linestyle='--')
+            self._axes[uid].set_title(item.mlGetUserName() + ' training report', size=9)
+            self._axes[uid].set_xlabel('Progress')
+            self._axes[uid].set_ylabel('Error')
+            self._axes[uid].xaxis.label.set_size(8)
+            self._axes[uid].yaxis.label.set_size(8)
 
-            self._annotations[N - 1] = self._axes[-1].annotate('',
+            self._annotations[uid] = self._axes[uid].annotate('',
                                                 xy=(0.85, 0.84),
                                                 xycoords='axes fraction',
                                                 horizontalalignment='right',
@@ -83,11 +77,11 @@ class MLMultiplePlot(FigureCanvas):
                                                 size=10,
                                                 bbox=dict(boxstyle='round', ec=None, fc=(0.0, 0.0, 0.9)))
 
-            self._axes[-1].set_xlim(0.0, 100.0)
-            self._axes[-1].set_ylim(0.0, 100.0)
+            self._axes[uid].set_xlim(0.0, 100.0)
+            self._axes[uid].set_ylim(0.0, 100.0)
 
-            self._axes[-1].yaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
-            self._axes[-1].xaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
+            self._axes[uid].yaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
+            self._axes[uid].xaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
 
             graph = item.mlTrainerItemGetGraph()
 
@@ -96,17 +90,15 @@ class MLMultiplePlot(FigureCanvas):
             self._figure.canvas.draw_idle()
 
     def mlUpdate(self, uid, graph, clr='blue'):
-        if uid in self._map.keys():
-            i = self._map[uid]
-
-            self._lines[i].set_xdata(graph[0])
-            self._lines[i].set_ydata(graph[1])
-            self._lines[i].set_color(clr)
+        if uid in self._axes.keys():
+            self._lines[uid].set_xdata(graph[0])
+            self._lines[uid].set_ydata(graph[1])
+            self._lines[uid].set_color(clr)
 
             if len(graph[1]) > 0 :
-                self._annotations[i].set_text('Error:{0:.2f} %'.format(graph[1][-1]))
+                self._annotations[uid].set_text('Error:{0:.2f} %'.format(graph[1][-1]))
 
-            self._axes[i].relim()
-            self._axes[i].autoscale()
+            self._axes[uid].relim()
+            self._axes[uid].autoscale()
 
             self._figure.canvas.draw_idle()
