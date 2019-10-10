@@ -100,7 +100,7 @@ class MLTrainerViewerItemUI(QWidget):
             elif not self._trainer.mlIsProcessRunning() :
                 self._trainer.start()
                 self._item.setSizeHint(self.sizeHint())
-                self._timer.start(250)
+                self._timer.start(30)
                 self.trainerLaunched.emit()
 
     def mlOnTrainerPauseClicked(self):

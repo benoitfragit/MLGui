@@ -13,8 +13,13 @@ class MLPlot2D(FigureCanvas):
         self._ax = self._figure.add_subplot(111)
         self._ax.set(frame_on=False)
         self._ax.axis('off')
+        self._ax.xaxis.set_ticks(range(0,125, 25))
+        self._ax.xaxis.set_ticks(range(0,125, 25))
+        self._annotation = None
 
         self.redraw()
+
+        self._figure.canvas.draw()
 
     def redraw(self, title=''):
         self._ax.cla()

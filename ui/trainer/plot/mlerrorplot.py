@@ -8,8 +8,6 @@ class MLErrorPlot(MLPlot2D):
     def __init__(self):
         MLPlot2D.__init__(self)
 
-        self._annotation = None
-
     def redraw(self, title=''):
         MLPlot2D.redraw(self, title)
 

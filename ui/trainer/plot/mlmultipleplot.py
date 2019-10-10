@@ -67,6 +67,8 @@ class MLMultiplePlot(FigureCanvas):
             self._axes[uid].set_ylabel('Error')
             self._axes[uid].xaxis.label.set_size(8)
             self._axes[uid].yaxis.label.set_size(8)
+            self._axes[uid].xaxis.set_ticks(range(0,150, 50))
+            self._axes[uid].yaxis.set_ticks(range(0,150, 50))
 
             self._annotations[uid] = self._axes[uid].annotate('',
                                                 xy=(0.85, 0.84),
@@ -75,7 +77,7 @@ class MLMultiplePlot(FigureCanvas):
                                                 verticalalignment='top',
                                                 clip_on=True,
                                                 size=10,
-                                                bbox=dict(boxstyle='round', ec=None, fc=(0.0, 0.0, 0.9)))
+                                                bbox=dict(boxstyle='round', ec=None))
 
             self._axes[uid].set_xlim(0.0, 100.0)
             self._axes[uid].set_ylim(0.0, 100.0)
