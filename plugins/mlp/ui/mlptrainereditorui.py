@@ -24,6 +24,7 @@ class MLPTrainerEditorUI(MLTrainerEditorBaseUI):
 
         self._costfunction  = QComboBox()
         self._costfunction.addItems(["CrossEntropy", "Quadratic"])
+        self._costfunction.setToolTip('This define how the error is computed')
 
         self._error         = QDoubleSpinBox()
         self._error.setRange(0.0, 100.0)
@@ -31,26 +32,31 @@ class MLPTrainerEditorUI(MLTrainerEditorBaseUI):
         self._error.setSuffix('%')
         self._error.setAlignment(Qt.AlignRight)
         self._error.setFrame(False)
+        self._error.setToolTip('Define the error threshold to stop the training')
 
         self._iterations    = QSpinBox()
         self._iterations.setRange(0, 1000000)
         self._iterations.setAlignment(Qt.AlignRight)
         self._iterations.setFrame(False)
+        self._iterations.setToolTip('Define the maximum number of iteration')
 
         self._minibatch     = QSpinBox()
         self._minibatch.setRange(1, 1000)
         self._minibatch.setAlignment(Qt.AlignRight)
         self._minibatch.setFrame(False)
+        self._minibatch.setToolTip('Define number of sample in all minibatch sample')
 
         self._learning      = QDoubleSpinBox()
         self._learning.setRange(0.0, 5.0)
         self._learning.setAlignment(Qt.AlignRight)
         self._learning.setFrame(False)
+        self._learning.setToolTip('Define the learning rate value, if it low learning will be slow and it could stuck into a local minimum else learning will be faster but may not find the minimum')
 
         self._momemtum      = QDoubleSpinBox()
         self._momemtum.setRange(0.0, 5.0)
         self._momemtum.setAlignment(Qt.AlignRight)
         self._momemtum.setFrame(False)
+        self._momemtum.setToolTip('Define the inertial parameter value for the training')
 
         self._cancel  = QPushButton('Cancel')
         self._cancel.setIcon(QIcon.fromTheme('edit-undo'))
