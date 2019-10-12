@@ -4,13 +4,10 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QDockWidget
 from PyQt5.QtWidgets import QSizePolicy
-from PyQt5.QtCore    import pyqtSignal
 
 from iface import MLTrainerEditorBaseIface
 
 class MLTrainerEditorBaseUI(QDockWidget, MLTrainerEditorBaseIface):
-    mlEditTrainerSignal = pyqtSignal()
-
     def __init__(self, plugin, parent = None):
         QDockWidget.__init__(self, parent=parent)
 
@@ -29,9 +26,15 @@ class MLTrainerEditorBaseUI(QDockWidget, MLTrainerEditorBaseIface):
         self.visibilityChanged.connect(self.mlOnVisibilityChanged)
         self.setFeatures(QDockWidget.DockWidgetClosable)
 
+
+    def mlResetUI(self):
+        pass
+
     def mlOnVisibilityChanged(self, visible):
         if visible:
             loadUI = self._plugin.mlGetTrainerLoaderUI()
 
             if loadUI is not None:
                 loadUI.setVisible(not visible)
+
+            self.mlResetUI()

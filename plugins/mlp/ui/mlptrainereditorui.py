@@ -20,6 +20,8 @@ import xml.etree.ElementTree as ET
 
 class MLPTrainerEditorUI(MLTrainerEditorBaseUI):
     def __init__(self, plugin, parent = None):
+        self._trainer = None
+
         self._costfunction  = QComboBox()
         self._costfunction.addItems(["CrossEntropy", "Quadratic"])
 
@@ -53,10 +55,12 @@ class MLPTrainerEditorUI(MLTrainerEditorBaseUI):
         self._cancel  = QPushButton('Cancel')
         self._cancel.setIcon(QIcon.fromTheme('edit-undo'))
         self._cancel.setFlat(True)
+        self._cancel.clicked.connect(self.mlCancel)
 
         self._validate= QPushButton('Apply')
         self._validate.setIcon(QIcon.fromTheme('system-run'))
         self._validate.setFlat(True)
+        self._validate.clicked.connect(self.mlValidate)
 
         MLTrainerEditorBaseUI.__init__(self, plugin, parent)
 
@@ -117,30 +121,60 @@ class MLPTrainerEditorUI(MLTrainerEditorBaseUI):
 
         self._mainWidget.setLayout(vbox)
 
+    def mlResetUI(self):
+        MLTrainerEditorBaseUI.mlResetUI(self)
+        self._trainer = None
+
     def fromTrainer(self, *args, **kwargs):
-        trainer = args[0]
-        path = trainer['settings']
-
-        if os.path.exists(path) and os.path.isfile(path):
-            tree = ET.parse(path)
-            root = tree.getroot()
-
-            if root.tag == 'backpropagation':
-                learning        = float(root.attrib['learning-rate'])
-                minibatch       = int(root.attrib['mini-batch-size'])
-                momemtum        = float(root.attrib['momentum'])
-                iterations      = int(root.attrib['iterations'])
-                error           = float(root.attrib['error'])
-                costfunction    = root.attrib['cost-function']
-
-                self._error.setValue(error)
-                self._iterations.setValue(iterations)
-                self._minibatch.setValue(minibatch)
-                self._learning.setValue(learning)
-                self._momemtum.setValue(momemtum)
-                idx = self._costfunction.findText(costfunction, Qt.MatchFixedString)
-                if idx >= 0:
-                    self._costfunction.setCurrentIndex(idx)
-
-        if trainer is not None:
+        if args[0] is not None:
             self.setVisible(True)
+
+            self._trainer = args[0]
+            path = self._trainer['settings']
+
+            if os.path.exists(path) and os.path.isfile(path):
+                tree = ET.parse(path)
+                root = tree.getroot()
+
+                if root.tag == 'backpropagation':
+                    learning        = float (root.attrib['learning-rate'])
+                    minibatch       = int   (root.attrib['mini-batch-size'])
+                    momemtum        = float (root.attrib['momentum'])
+                    iterations      = int   (root.attrib['iterations'])
+                    error           = float (root.attrib['error'])
+                    costfunction    =        root.attrib['cost-function']
+
+                    self._error.setValue(error)
+                    self._iterations.setValue(iterations)
+                    self._minibatch.setValue(minibatch)
+                    self._learning.setValue(learning)
+                    self._momemtum.setValue(momemtum)
+                    idx = self._costfunction.findText(costfunction, Qt.MatchFixedString)
+                    if idx >= 0:
+                        self._costfunction.setCurrentIndex(idx)
+
+    def mlCancel(self):
+        self.mlResetUI()
+        self.close()
+
+    def mlValidate(self):
+        if self._trainer is not None:
+            backpropagation = ET.Element('backpropagation')
+
+            # save the xml file
+            backpropagation.set('learning-rate'  , str(self._learning.value()))
+            backpropagation.set('mini-batch-size', str(self._minibatch.value()))
+            backpropagation.set('momentum'       , str(self._momemtum.value()))
+            backpropagation.set('iterations'     , str(self._iterations.value()))
+            backpropagation.set('error'          , str(self._error.value()))
+            backpropagation.set('cost-function'  , str(self._costfunction.currentText()))
+
+            data = ET.tostring(backpropagation)
+            with open(self._trainer['settings'], 'w') as settings:
+                settings.write(data)
+                settings.close()
+
+            # Reload the xml file
+            self._plugin.mlConfigureTrainer(self._trainer, self._trainer['settings'])
+
+        self.close()
