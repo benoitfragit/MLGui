@@ -96,7 +96,12 @@ class MLMultiplePlot(FigureCanvas):
         if uid in self._axes.keys():
             self._lines[uid].set_xdata(graph[0])
             self._lines[uid].set_ydata(graph[1])
-            self._lines[uid].set_color(clr)
+            color = clr
+            if len(graph[0]) > 0:
+                val = graph[0][-1]
+                if val < 95.0:
+                    color = 'green'
+            self._lines[uid].set_color(color)
 
             if len(graph[1]) > 0 :
                 self._annotations[uid].set_text('Error:{0:.2f} %'.format(graph[1][-1]))

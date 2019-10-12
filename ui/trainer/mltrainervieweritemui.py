@@ -85,13 +85,17 @@ class MLTrainerViewerItemUI(QWidget):
 
             self.setToolTip('Progress:' + str(progress) + ' Error:' +str(error))
 
-            self._graph[0].append(progress)
-            self._graph[1].append(error)
+            val = -1.0
+            if len(self._graph[0]) > 0:
+                val = self._graph[0][-1]
+
+            if val < progress:
+                self._graph[0].append(progress)
+                self._graph[1].append(error)
+                self.graphUpdated.emit()
 
             if not self._trainer.mlIsProcessRunning():
                 self._timer.stop()
-            else:
-                self.graphUpdated.emit()
 
     def mlOnTrainerRunClicked(self):
         if self._trainer is not None:
