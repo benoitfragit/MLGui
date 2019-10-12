@@ -64,6 +64,7 @@ class MLWindow(QMainWindow):
         # Build the trainer viewer
         self._trainerviewer = MLTrainerViewerUI(self._trainermanager)
         self._trainerviewer.mlShowTrainerPlotSignal.connect(self.mlOnShowTrainerPlot)
+        self._trainerviewer.mlShowAllTrainerPlotSignal.connect(self.mlOnShowSelectedTrainerPlots)
 
         # Build the plugin viewer
         self._pluginviewer = MLPluginViewerUI()
@@ -113,6 +114,10 @@ class MLWindow(QMainWindow):
         self.centralWidget().setCurrentIndex(2)
 
     def mlOnDisplayAllTrainerPlots(self):
+        self._trainerviewer.mlGetAllPLots().mlToggleAllPlotsVisibility(True)
+        self.centralWidget().setCurrentIndex(3)
+
+    def mlOnShowSelectedTrainerPlots(self):
         self.centralWidget().setCurrentIndex(3)
 
     def mlAddPlugin(self, plugin):

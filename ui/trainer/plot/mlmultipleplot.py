@@ -77,7 +77,8 @@ class MLMultiplePlot(FigureCanvas):
                                                 verticalalignment='top',
                                                 clip_on=True,
                                                 size=10,
-                                                bbox=dict(boxstyle='round', ec=None))
+                                                bbox=None)
+                                                #dict(boxstyle='round', ec=None)
 
             self._axes[uid].set_xlim(0.0, 100.0)
             self._axes[uid].set_ylim(0.0, 100.0)
@@ -103,4 +104,14 @@ class MLMultiplePlot(FigureCanvas):
             self._axes[uid].relim()
             self._axes[uid].autoscale()
 
+            self._figure.canvas.draw_idle()
+
+    def mlToggleAllPlotsVisibility(self, visible):
+        for uid in self._axes.keys():
+            self._axes[uid].set_visible(visible)
+        self._figure.canvas.draw_idle()
+
+    def mlSetPlotVisible(self, uid):
+        if uid in self._axes.keys():
+            self._axes[uid].set_visible(True)
             self._figure.canvas.draw_idle()

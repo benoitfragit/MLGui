@@ -186,3 +186,6 @@ class MLTrainerViewerItemUI(QWidget):
                     self._trainer.mlSetTrainerExited(d[pluginname]['trainers'][username]['exit'] > 0)
 
                 self.graphUpdated.emit()
+
+    def mlGetUniqId(self):
+        return self._trainer.mlGetUniqId()

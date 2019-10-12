@@ -18,6 +18,7 @@ import uuid
 
 class MLTrainerViewerUI(QListWidget):
     mlShowTrainerPlotSignal = pyqtSignal()
+    mlShowAllTrainerPlotSignal = pyqtSignal()
 
     def __init__(self, manager, parent = None):
         QListWidget.__init__(self, parent)
@@ -29,7 +30,7 @@ class MLTrainerViewerUI(QListWidget):
         self.setViewMode(QListWidget.IconMode)
         self.setResizeMode(QListWidget.Adjust)
         self.setMovement(QListWidget.Static)
-        self.setSpacing(10)
+        self.setSpacing(30)
 
         # build the plot widget
         self._plot = MLErrorPlot()
@@ -37,8 +38,35 @@ class MLTrainerViewerUI(QListWidget):
         self._allplots = MLMultiplePlot()
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.setSelectionMode(QListWidget.ExtendedSelection)
 
         self.itemDoubleClicked.connect(self.mlOnItemDoubleClicked)
+        self.itemSelectionChanged.connect(self.mlOnItemSelected)
+
+        self._mouseSelection = False
+
+    def mlOnItemSelected(self):
+        items = self.selectedItems()
+
+        if len(items) >= 2:
+            self._mouseSelection = True
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.LeftButton and self._mouseSelection:
+            self._mouseSelection = False
+
+            self._allplots.mlToggleAllPlotsVisibility(False)
+
+            items = self.selectedItems()
+
+            for item in items:
+                widget = self.itemWidget(item)
+                if widget is not None:
+                    self._allplots.mlSetPlotVisible(widget.mlGetUniqId())
+
+            self.mlShowAllTrainerPlotSignal.emit()
+
+        QListWidget.mouseReleaseEvent(self, event)
 
     def mlGetPlot(self):
         return self._plot
