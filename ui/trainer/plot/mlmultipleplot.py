@@ -96,12 +96,16 @@ class MLMultiplePlot(FigureCanvas):
         if uid in self._axes.keys():
             self._lines[uid].set_xdata(graph[0])
             self._lines[uid].set_ydata(graph[1])
-            color = clr
             if len(graph[0]) > 0:
                 val = graph[0][-1]
                 if val < 95.0:
-                    color = 'green'
-            self._lines[uid].set_color(color)
+                    self._axes[uid].set_frame_on(True)
+                    self._axes[uid].patch.set_alpha(0.2)
+                    self._axes[uid].patch.set_edgecolor('yellow')
+                    self._axes[uid].patch.set_facecolor('yellow')
+                else:
+                    self._axes[uid].set_frame_on(False)
+            self._lines[uid].set_color(clr)
 
             if len(graph[1]) > 0 :
                 self._annotations[uid].set_text('Error:{0:.2f} %'.format(graph[1][-1]))
@@ -114,9 +118,33 @@ class MLMultiplePlot(FigureCanvas):
     def mlToggleAllPlotsVisibility(self, visible):
         for uid in self._axes.keys():
             self._axes[uid].set_visible(visible)
+
+        if visible:
+            N = len(self._axes.keys())
+
+            # restore the gridspec
+            cols = 2
+            rows = int(math.ceil(float(N)/float(cols)))
+            grid = GridSpec(rows, cols)
+            grid.update(wspace=0.5,hspace=0.5)
+
+            # move old axes to their new position
+            for gs, ax in zip(grid, self._axes.values()):
+                ax.set_position(gs.get_position(self._figure))
+
         self._figure.canvas.draw_idle()
 
-    def mlSetPlotVisible(self, uid):
+    def mlSetPlotVisible(self, uid, i, N):
         if uid in self._axes.keys():
             self._axes[uid].set_visible(True)
+
+            if N > 0 and i >= 0 and i <= N:
+                cols = 2
+                rows = int(math.ceil(float(N)/float(cols)))
+                grid = GridSpec(rows, cols)
+                grid.update(wspace=0.5,hspace=0.5)
+
+                # move old axes to their new position
+                self._axes[uid].set_position(grid[i].get_position(self._figure))
+
             self._figure.canvas.draw_idle()

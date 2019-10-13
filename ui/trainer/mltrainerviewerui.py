@@ -58,11 +58,14 @@ class MLTrainerViewerUI(QListWidget):
             self._allplots.mlToggleAllPlotsVisibility(False)
 
             items = self.selectedItems()
+            N = len(items)
+            i = 0
 
             for item in items:
                 widget = self.itemWidget(item)
                 if widget is not None:
-                    self._allplots.mlSetPlotVisible(widget.mlGetUniqId())
+                    self._allplots.mlSetPlotVisible(widget.mlGetUniqId(), i, N)
+                    i = i + 1
 
             self.mlShowAllTrainerPlotSignal.emit()
 
