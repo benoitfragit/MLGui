@@ -11,14 +11,13 @@ from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import pyqtSignal
 
 from mltrainervieweritemui  import MLTrainerViewerItemUI
-from plot                   import MLErrorPlot
-from plot                   import MLMultiplePlot
+from mlplotmanager          import MLPlotManager
 
 import uuid
 
 class MLTrainerViewerUI(QListWidget):
     mlShowTrainerPlotSignal = pyqtSignal()
-    mlShowAllTrainerPlotSignal = pyqtSignal()
+    mlShowSelectedTrainerPlotSignal = pyqtSignal()
 
     def __init__(self, manager, parent = None):
         QListWidget.__init__(self, parent)
@@ -26,16 +25,13 @@ class MLTrainerViewerUI(QListWidget):
         self._manager = manager
 
         self._items = {}
-        self._displayed = None
         self.setViewMode(QListWidget.IconMode)
         self.setResizeMode(QListWidget.Adjust)
         self.setMovement(QListWidget.Static)
         self.setSpacing(30)
 
-        # build the plot widget
-        self._plot = MLErrorPlot()
         # build the multiple plots widget
-        self._allplots = MLMultiplePlot()
+        self._allplots = MLPlotManager()
 
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.setSelectionMode(QListWidget.ExtendedSelection)
@@ -67,14 +63,11 @@ class MLTrainerViewerUI(QListWidget):
                     self._allplots.mlSetPlotVisible(widget.mlGetUniqId(), i, N)
                     i = i + 1
 
-            self.mlShowAllTrainerPlotSignal.emit()
+            self.mlShowSelectedTrainerPlotSignal.emit()
 
         QListWidget.mouseReleaseEvent(self, event)
 
-    def mlGetPlot(self):
-        return self._plot
-
-    def mlGetAllPLots(self):
+    def mlGetPlotManager(self):
         return self._allplots
 
     def mlGetItems(self):
@@ -82,12 +75,10 @@ class MLTrainerViewerUI(QListWidget):
 
     def mlShowPlot(self, id):
         if id in self._items.keys():
-            self._displayed = id
-
-            self._plot.redraw(self._items[id].mlGetUserName())
+            self._allplots.mlToggleAllPlotsVisibility(False)
+            self._allplots.mlSetPlotVisible(id, 0, 1)
             self.mlOnGraphUpdated(id)
-
-            self.mlShowTrainerPlotSignal.emit()
+            self.mlShowSelectedTrainerPlotSignal.emit()
 
     def mlOnGraphUpdated(self, id):
         item = None
@@ -95,10 +86,6 @@ class MLTrainerViewerUI(QListWidget):
         if id in self._items.keys():
             item = self._items[id]
             graph = item.mlTrainerItemGetGraph()
-
-            if self._displayed == id:
-                self._plot.mlUpdate(graph, 'blue')
-
             self._allplots.mlUpdate(id, graph)
 
     def mlOnRemoveTrainer(self, id):
@@ -107,10 +94,6 @@ class MLTrainerViewerUI(QListWidget):
             self.takeItem(self.row(item))
             self._items.pop(id)
             self._manager.mlRemoveProcess(id)
-
-            if id == self._displayed :
-                self._displayed = None
-
             self._allplots.mlRemoveSubPlot(id)
 
     def mlRemoveAllTrainers(self):

@@ -9,7 +9,7 @@ from matplotlib.gridspec import GridSpec
 import matplotlib.pyplot as plt
 import math
 
-class MLMultiplePlot(FigureCanvas):
+class MLPlotManager(FigureCanvas):
     def __init__(self):
         self._figure = plt.figure(frameon=False)
         self._figure.patch.set_visible(False)
@@ -139,7 +139,9 @@ class MLMultiplePlot(FigureCanvas):
             self._axes[uid].set_visible(True)
 
             if N > 0 and i >= 0 and i <= N:
-                cols = 2
+                cols = 1
+                if N > 1:
+                    cols = 2
                 rows = int(math.ceil(float(N)/float(cols)))
                 grid = GridSpec(rows, cols)
                 grid.update(wspace=0.5,hspace=0.5)
