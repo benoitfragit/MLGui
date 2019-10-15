@@ -16,9 +16,36 @@ class MLPlotManager(FigureCanvas):
 
         FigureCanvas.__init__(self, self._figure)
 
+        self._handle = self._figure.canvas.mpl_connect('button_press_event', self.mlOnAxeClicked)
+
         self._lines= {}
         self._annotations = {}
         self._axes = {}
+
+    def mlReogarnizePlot(self, N):
+        cols = 2
+        rows = int(math.ceil(float(N)/float(cols)))
+        grid = GridSpec(rows, cols)
+        grid.update(wspace=0.5,hspace=0.5)
+
+        for gs, ax in zip(grid, self._axes.values()):
+            ax.set_position(gs.get_position(self._figure))
+
+        return grid
+
+    def mlOnAxeClicked(self, event):
+        if event.inaxes is not None:
+            visible_id = None
+            for uid in self._axes.keys():
+                if self._axes[uid].get_visible() and self._axes[uid].in_axes(event):
+                    #x, y = self._axes[uid].transAxes.inverted().transform([event.x, event.y])
+                    #if 0 <= x and x <= 1 and 0 <= y and y <= 1:
+                    visible_id = uid
+                    break
+
+            if visible_id is not None:
+                self.mlToggleAllPlotsVisibility(False)
+                self.mlSetPlotVisible(visible_id, 0, 1)
 
     def mlRemoveSubPlot(self, uid):
         if uid in self._lines.keys():
@@ -29,15 +56,7 @@ class MLPlotManager(FigureCanvas):
 
             N = len(self._axes.keys())
 
-            # new gridspec
-            cols = 2
-            rows = int(math.ceil(float(N)/float(cols)))
-            grid = GridSpec(rows, cols)
-            grid.update(wspace=0.5,hspace=0.5)
-
-            # move old axes to their new position
-            for gs, ax in zip(grid, self._axes.values()):
-                ax.set_position(gs.get_position(self._figure))
+            self.mlReogarnizePlot(N)
 
             self._figure.canvas.draw_idle()
 
@@ -46,15 +65,7 @@ class MLPlotManager(FigureCanvas):
             # new number of axes
             N = len(self._axes.keys()) + 1
 
-            # new gridspec
-            cols = 2
-            rows = int(math.ceil(float(N)/float(cols)))
-            grid = GridSpec(rows, cols)
-            grid.update(wspace=0.5,hspace=0.5)
-
-            # move old axes to their new position
-            for gs, ax in zip(grid, self._axes.values()):
-                ax.set_position(gs.get_position(self._figure))
+            grid = self.mlReogarnizePlot(N)
 
             # adding new axis
             self._axes[uid] = self._figure.add_subplot(grid[N - 1], frame_on=False)
@@ -96,6 +107,7 @@ class MLPlotManager(FigureCanvas):
         if uid in self._axes.keys():
             self._lines[uid].set_xdata(graph[0])
             self._lines[uid].set_ydata(graph[1])
+
             if len(graph[0]) > 0:
                 val = graph[0][-1]
                 if val < 95.0:
@@ -105,6 +117,7 @@ class MLPlotManager(FigureCanvas):
                     self._axes[uid].patch.set_facecolor('yellow')
                 else:
                     self._axes[uid].set_frame_on(False)
+
             self._lines[uid].set_color(clr)
 
             if len(graph[1]) > 0 :
@@ -122,15 +135,7 @@ class MLPlotManager(FigureCanvas):
         if visible:
             N = len(self._axes.keys())
 
-            # restore the gridspec
-            cols = 2
-            rows = int(math.ceil(float(N)/float(cols)))
-            grid = GridSpec(rows, cols)
-            grid.update(wspace=0.5,hspace=0.5)
-
-            # move old axes to their new position
-            for gs, ax in zip(grid, self._axes.values()):
-                ax.set_position(gs.get_position(self._figure))
+            self.mlReogarnizePlot(N)
 
         self._figure.canvas.draw_idle()
 
