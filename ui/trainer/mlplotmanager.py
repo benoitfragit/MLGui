@@ -34,18 +34,19 @@ class MLPlotManager(FigureCanvas):
         return grid
 
     def mlOnAxeClicked(self, event):
-        if event.inaxes is not None:
-            visible_id = None
-            for uid in self._axes.keys():
-                if self._axes[uid].get_visible() and self._axes[uid].in_axes(event):
-                    #x, y = self._axes[uid].transAxes.inverted().transform([event.x, event.y])
-                    #if 0 <= x and x <= 1 and 0 <= y and y <= 1:
-                    visible_id = uid
-                    break
+        if event.dblclick:
+            self.mlToggleAllPlotsVisibility(True)
+        else:
+            if event.inaxes is not None:
+                visible_id = None
+                for uid in self._axes.keys():
+                    if self._axes[uid].get_visible() and self._axes[uid].in_axes(event):
+                        visible_id = uid
+                        break
 
-            if visible_id is not None:
-                self.mlToggleAllPlotsVisibility(False)
-                self.mlSetPlotVisible(visible_id, 0, 1)
+                if visible_id is not None:
+                    self.mlToggleAllPlotsVisibility(False)
+                    self.mlSetPlotVisible(visible_id, 0, 1)
 
     def mlRemoveSubPlot(self, uid):
         if uid in self._lines.keys():
