@@ -18,6 +18,7 @@ import uuid
 class MLTrainerViewerUI(QListWidget):
     mlShowTrainerPlotSignal = pyqtSignal()
     mlShowSelectedTrainerPlotSignal = pyqtSignal()
+    mlRemoveManagedNetworkSignal = pyqtSignal(uuid.UUID)
 
     def __init__(self, manager, parent = None):
         QListWidget.__init__(self, parent)
@@ -91,6 +92,10 @@ class MLTrainerViewerUI(QListWidget):
     def mlOnRemoveTrainer(self, id):
         if id is not None and id in self._items.keys():
             item = self._items[id].mlGetItem()
+
+            networkId = self._items[id].mlGetManagedNetworkId()
+            self.mlRemoveManagedNetworkSignal.emit(networkId)
+
             self.takeItem(self.row(item))
             self._items.pop(id)
             self._manager.mlRemoveProcess(id)

@@ -43,11 +43,8 @@ class MLTrainerViewerItemUI(QWidget):
 
         label   = QLabel(trainer.mlGetUserName())
         label.setAlignment(Qt.AlignCenter)
-        dirname = os.path.split(__file__)[0]
-        dirname = os.path.join(dirname, 'resources')
-        filename = os.path.join(dirname, 'neural.png')
         res = pkgutil.get_loader('ui.resources')
-        pixmap = QPixmap(res.filename + os.path.sep + 'neural.png')
+        pixmap = QPixmap(res.filename + os.path.sep + 'trainer.png')
         pixmap = pixmap.scaledToWidth(120)
         pixLabel    = QLabel()
         pixLabel.setAlignment(Qt.AlignCenter)
@@ -193,3 +190,6 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlGetUniqId(self):
         return self._trainer.mlGetUniqId()
+
+    def mlGetManagedNetworkId(self):
+        return self._trainer.mlGetManagedNetwork().mlGetUniqId()

@@ -1,103 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import ctypes
-
 import sys
 import os
 
-from core  import MLPluginBase
-from core  import MLNetwork
+from mlploader import MLPLoader
 
-from exchange import MLPTrainer
-from exchange import MLPNetwork
-from exchange import MLPMetaData
+from core  import MLPluginBase
 
 from ui import MLPTrainerLoaderUI
 from ui import MLPTrainerEditorUI
 
-def enum(*args):
-    values = dict(zip(args, range(len(args))))
-    return type('Enum', (), values)
-
-class MLLoader:
-    def __init__(self, lib):
-        self._libc = ctypes.CDLL(lib)
-
-    def wrap(self, funcname, restype, argtypes):
-        func = self._libc.__getattr__(funcname)
-        func.restype = restype
-        func.argtypes = argtypes
-        return func
-
-    def load(self):
-        raise NotImplementedError
-
-class MLPlugin(MLLoader, MLPluginBase):
+class MLPlugin(MLPluginBase, MLPLoader):
     def __init__(self):
-        """
-        If libMLP is installed in a non common path, please
-        add it to the LD_LIBRARY_PATH before using
-        """
         MLPluginBase.__init__(self)
-        MLLoader.__init__(self, 'libMLP.so')
-
-        self._funcnames = enum(   'INIT',
-                                  'METADATA',
-                                  'TRAINER_NEW',
-                                  'TRAINER_DELETE',
-                                  'TRAINER_CONFIGURE',
-                                  'TRAINER_IS_RUNNING',
-                                  'TRAINER_GET_PROGRESS',
-                                  'TRAINER_RUN',
-                                  'TRAINER_ERROR',
-                                  'TRAINER_SAVE_PROGRESSION',
-                                  'TRAINER_RESTORE_PROGRESSION',
-                                  'NETWORK_NEW',
-                                  'NETWORK_DELETE',
-                                  'NETWORK_SERIALIZE',
-                                  'NETWORK_DESERIALIZE',
-                                  'NETWORK_PREDICT',
-                                  'NETWORK_GET_OUTPUT',
-                                  'NETWORK_GET_OUTPUT_LENGTH')
-
-        self._number_of_functions = (self._funcnames.NETWORK_GET_OUTPUT_LENGTH - self._funcnames.INIT + 1)
-
-        self._api = [   ['mlp_plugin_init',                 None,                           []],
-                        ['mlp_plugin_metadata',             ctypes.POINTER(MLPMetaData),    []],
-                        ['mlp_trainer_new',                 ctypes.POINTER(MLPTrainer),     [ctypes.c_char_p, ctypes.c_char_p]],
-                        ['mlp_trainer_delete',              None,                           [ctypes.POINTER(MLPTrainer)]],
-                        ['mlp_trainer_configure',           None,                           [ctypes.POINTER(MLPTrainer), ctypes.c_char_p]],
-                        ['mlp_trainer_is_running',          ctypes.c_ubyte,                 [ctypes.POINTER(MLPTrainer)]],
-                        ['mlp_trainer_get_progress',        ctypes.c_double,                [ctypes.POINTER(MLPTrainer)]],
-                        ['mlp_trainer_run',                 None,                           [ctypes.POINTER(MLPTrainer)]],
-                        ['mlp_trainer_error',               ctypes.c_double,                [ctypes.POINTER(MLPTrainer)]],
-                        ['mlp_trainer_save_progression',    None,                           [ctypes.POINTER(MLPTrainer), ctypes.c_char_p]],
-                        ['mlp_trainer_restore_progression', None,                           [ctypes.POINTER(MLPTrainer), ctypes.c_char_p, ctypes.c_double, ctypes.c_double]],
-                        ['mlp_network_new',                 ctypes.POINTER(MLPNetwork),     [ctypes.c_char_p]],
-                        ['mlp_network_delete',              None,                           [ctypes.POINTER(MLPNetwork)]],
-                        ['mlp_network_serialize',           None,                           [ctypes.POINTER(MLPNetwork), ctypes.c_char_p]],
-                        ['mlp_network_deserialize',         None,                           [ctypes.POINTER(MLPNetwork), ctypes.c_char_p]],
-                        ['mlp_network_predict',             None,                           [ctypes.POINTER(MLPNetwork), ctypes.c_uint, ctypes.c_void_p]],
-                        ['mlp_network_get_output',          ctypes.c_void_p,                [ctypes.POINTER(MLPNetwork)]],
-                        ['mlp_network_get_output_length',   ctypes.c_uint,                  [ctypes.POINTER(MLPNetwork)]]]
-
-        self._funcs = {}
-
-        self.load()
+        MLPLoader.__init__(self)
 
         self._trainerloaderui = MLPTrainerLoaderUI(self)
         self._trainereditorui = MLPTrainerEditorUI(self)
 
     def load(self):
-        for i in range(self._number_of_functions):
-            self._funcs[i] = self.wrap(self._api[i][0],
-                                        self._api[i][1],
-                                        self._api[i][2])
-            if self._funcs[i] is not None:
-                print >> sys.stdout, 'Method:' + self._api[i][0] + ' has been loaded'
-            else:
-                print >> sys.stderr, 'Method:' + self._api[i][0] + ' hasn t been loaded'
+        MLPLoader.load(self)
 
         # Call plugin init method
         if self._funcs[self._funcnames.INIT] is not None:
@@ -112,6 +35,11 @@ class MLPlugin(MLLoader, MLPluginBase):
             self._author    = metadata.author
             self._description = metadata.description
 
+    """
+    ....................................................................
+    .......................... Plugin TRINER api........................
+    ....................................................................
+    """
     def mlGetTrainer(self, net, data):
         model = self._funcs[self._funcnames.TRAINER_NEW](net, data)
         return model
@@ -223,28 +151,40 @@ class MLPlugin(MLLoader, MLPluginBase):
 
         return internal
 
+    def mlTrainerGetManagedNetwork(self, trainer):
+        ret = None
+
+        if 'model' in trainer.keys():
+            ret = self._funcs[self._funcnames.TRAINER_GET_MANAGED_NETWORK](trainer['model'])
+
+        return ret
+
+    """
+    ....................................................................
+    .......................... Plugin NETWORK api.......................
+    ....................................................................
+    """
     def mlGetNetwork(self, path):
         internal = self._funcs[self._funcnames.NETWORK_NEW](path)
-        network = MLNetwork(self, internal)
-        return network
+        return internal
 
-    def mlDeleteNetwork(self, net):
-        self._funcs[self._funcnames.NETWORK_DELETE](net)
+    def mlDeleteNetwork(self, network):
+        self._funcs[self._funcnames.NETWORK_DELETE](network)
 
-    def mlSaveNetwork(self, net, path):
-        self._funcs[self._funcnames.NETWORK_SERIALIZE](net, path)
+    def mlSaveNetwork(self, network, path):
+        self._funcs[self._funcnames.NETWORK_SERIALIZE](network, path)
 
-    def mlLoadNetwork(self, net, path):
-        self._funcs[self._funcnames.NETWORK_DESERIALIZE](net, path)
+    def mlLoadNetwork(self, network, path):
+        self._funcs[self._funcnames.NETWORK_DESERIALIZE](network, path)
 
-    def mlPredict(self, net, num, sig):
-        self._funcs[self._funcnames.NETWORK_PREDICT](net, num, sig)
+    def mlPredict(self, network, num, sig):
+        self._funcs[self._funcnames.NETWORK_PREDICT](network, num, sig)
 
-    def mlGetNetworkOutputLength(self, net):
-        return self._funcs[self._funcnames.NETWORK_GET_OUTPUT_LENGTH](net)
+    def mlGetNetworkOutputLength(self, network):
+        return self._funcs[self._funcnames.NETWORK_GET_OUTPUT_LENGTH](network)
 
-    def mlGetNetworkPrediction(self, net):
-        return self._funcs[self._funcnames.NETWORK_GET_OUTPUT](net)
+    def mlGetNetworkPrediction(self, network):
+        return self._funcs[self._funcnames.NETWORK_GET_OUTPUT](network)
 
 if __name__ == '__main__':
     l = MLPlugin()

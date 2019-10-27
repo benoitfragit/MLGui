@@ -5,6 +5,7 @@ import sys
 import os
 
 from mlprocess import MLProcess
+from mlnetwork import MLNetwork
 
 class MLTrainer(MLProcess):
     def __init__(self, username, manager, plugin, internal):
@@ -18,6 +19,8 @@ class MLTrainer(MLProcess):
         self._shared['exit']      = False
         self._shared['progress']  = self.mlGetTrainerProgress()
         self._shared['error']     = self.mlGetTrainerError()
+
+        self._network = MLNetwork(self.mlGetUserName(), self._plugin, self._internal, True)
 
     def mlGetPluginName(self):
         return self._plugin.mlGetPluginName()
@@ -105,3 +108,6 @@ class MLTrainer(MLProcess):
 
     def mlGetInternal(self):
         return self._internal
+
+    def mlGetManagedNetwork(self):
+        return self._network

@@ -1,21 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QStackedWidget
+from PyQt5.QtCore    import Qt
 
-from PyQt5.QtCore           import Qt
-
-from trainer    import MLTrainerViewerUI
-from trainer    import MLTrainerLoaderBaseUI
-from trainer    import MLTrainerEditorBaseUI
-
-from plugin     import MLPluginViewerUI
-
-from core       import MLTrainer
+from trainer         import MLTrainerViewerUI
+from trainer         import MLTrainerLoaderBaseUI
+from trainer         import MLTrainerEditorBaseUI
+from network         import MLNetworkViewerUI
+from plugin          import MLPluginViewerUI
+from core            import MLTrainer
 
 import os
 import json
@@ -52,6 +49,9 @@ class MLWindow(QMainWindow):
         displayTrainerPlots = QAction('&Live training', self)
         displayTrainerPlots.triggered.connect(self.mlOnDisplayAllTrainerPlots)
         displayMenu.addAction(displayTrainerPlots)
+        displayNetworks = QAction('&Networks', self)
+        displayNetworks.triggered.connect(self.mlOnDisplayNetworks)
+        displayMenu.addAction(displayNetworks)
 
         # Building the Plugin Menu
         pluginMenu = mainMenu.addMenu('&Plugins')
@@ -64,6 +64,10 @@ class MLWindow(QMainWindow):
         # Build the trainer viewer
         self._trainerviewer = MLTrainerViewerUI(self._trainermanager)
         self._trainerviewer.mlShowSelectedTrainerPlotSignal.connect(self.mlOnShowSelectedTrainerPlots)
+
+        # Build the network viewer
+        self._networkviewer = MLNetworkViewerUI()
+        self._trainerviewer.mlRemoveManagedNetworkSignal.connect(self._networkviewer.mlOnRemoveManagedNetwork)
 
         # Build the plugin viewer
         self._pluginviewer = MLPluginViewerUI()
@@ -81,6 +85,7 @@ class MLWindow(QMainWindow):
         stackwidget.addWidget(self._mainLabel)
         stackwidget.addWidget(self._trainerviewer)
         stackwidget.addWidget(self._trainerviewer.mlGetPlotManager())
+        stackwidget.addWidget(self._networkviewer)
 
         # Build the central widget
         self.setCentralWidget(stackwidget)
@@ -107,6 +112,9 @@ class MLWindow(QMainWindow):
 
     def mlOnDisplayTrainers(self):
         self.centralWidget().setCurrentIndex(1)
+
+    def mlOnDisplayNetworks(self):
+        self.centralWidget().setCurrentIndex(3)
 
     def mlOnDisplayAllTrainerPlots(self):
         self._trainerviewer.mlGetPlotManager().mlToggleAllPlotsVisibility(True)
@@ -146,6 +154,7 @@ class MLWindow(QMainWindow):
 
             self._trainermanager.mlAddProcess(trainer)
             self._trainerviewer.mlOnNewTrainerAdded(trainer, editUI)
+            self._networkviewer.mlOnNewNetworkAdded(trainer.mlGetManagedNetwork())
             self.mlOnDisplayTrainers()
 
     def onLoadTrainerValidateClicked(self, plugin):

@@ -1,10 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import uuid
+
 class MLNetwork:
-    def __init__(self, plugin, internal):
+    def __init__(self, username, plugin, internal, managed = False):
         self._plugin = plugin
         self._internal = internal
+        self._username = username
+        self._uuid  = uuid.uuid4()
+        self._managed = managed
+
+    def mlIsManaged(self):
+        return self._managed
+
+    def mlGetUserName(self):
+        return self._username
+
+    def mlGetUniqId(self):
+        return self._uuid
 
     def mlDeleteNetwork(self):
         self._plugin.mlDeleteNetwork(self._internal)
