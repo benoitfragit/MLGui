@@ -1,3 +1,3 @@
 from mlnetworkviewerui import MLNetworkViewerUI
 from mlnetworkvieweritemui import MLNetworkViewerItemUI
-from mlnetworkvisualisationui import MLNetworkVisualisationUI
+#from mlnetworkvisualisationui import MLNetworkVisualisationUI
