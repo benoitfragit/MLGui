@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QListWidget
 from PyQt5.QtWidgets import QListView
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QGraphicsView
 
 from PyQt5.QtGui     import QIcon
 from PyQt5.QtCore    import Qt
@@ -32,6 +33,8 @@ class MLNetworkViewerUI(QListWidget):
 
         self.itemDoubleClicked.connect(self.mlOnItemDoubleClicked)
 
+        self._viewer = QGraphicsView()
+
     def mlOnNewNetworkAdded(self, network):
         if network is not None:
             uid = network.mlGetUniqId()
@@ -58,7 +61,11 @@ class MLNetworkViewerUI(QListWidget):
         if widget is not None:
             item = self.itemWidget(widget)
             if item is not None:
-                item.mlDisplayNetwork()
+                item.mlOnDisplayNetwork(self._viewer)
+                self.mlShowNetworkSignal.emit()
+
+    def mlGetNetworkViewer(self):
+        return self._viewer;
 
     def mlJSONDecoding(self, d):
         pass

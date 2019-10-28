@@ -37,3 +37,6 @@ class MLNetwork:
 
     def mlGetNetworkPrediction(self):
         return self._plugin.mlGetNetworkPrediction(self._internal)
+
+    def mlGetNetworkDrawerUI(self):
+        return self._plugin.mlGetNetworkDrawerUI()
