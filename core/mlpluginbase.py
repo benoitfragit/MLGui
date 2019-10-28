@@ -14,16 +14,20 @@ class MLPluginBase( MLPluginIFace, \
                     MLPluginUIProviderIFace):
     def __init__(self):
         self._uuid      = uuid.uuid4()
-        self._activated = False
-        self._name = None
-        self._version = None
-        self._author = None
-        self._description = None
-        self._trainerloaderui = None
-        self._trainereditorui = None
+        self._activated         = False
+        self._name              = None
+        self._version           = None
+        self._author            = None
+        self._description       = None
+        self._trainerloaderui   = None
+        self._trainereditorui   = None
+        self._networkdrawerui   = None
 
     def mlGetUniqId(self):
         return self._uuid
+
+    def mlGetNetworkDrawerUI(self):
+        return self._networkdrawerui
 
     def mlGetTrainerLoaderUI(self):
         return self._trainerloaderui

@@ -54,8 +54,11 @@ class MLNetworkViewerUI(QListWidget):
             self.takeItem(self.row(item))
             self._items.pop(uid)
 
-    def mlOnItemDoubleClicked(self, obj):
-        pass
+    def mlOnItemDoubleClicked(self, widget):
+        if widget is not None:
+            item = self.itemWidget(widget)
+            if item is not None:
+                item.mlDisplayNetwork()
 
     def mlJSONDecoding(self, d):
         pass

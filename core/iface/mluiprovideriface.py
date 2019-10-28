@@ -11,3 +11,7 @@ class MLPluginUIProviderIFace:
     @abstractmethod
     def mlGetTrainerEditorUI(self):
         raise NotImplementedError
+
+    @abstractmethod
+    def mlGetNetworkDrawerUI(self):
+        raise NotImplementedError

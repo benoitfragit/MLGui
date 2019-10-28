@@ -19,12 +19,9 @@ class MLPluginLoader:
                 dir         = os.path.basename(directory)
                 base        = os.path.dirname(directory)
 
-                print "base=" + str(base)
-
                 for module_dir in module_dirs:
                     dirname = os.path.dirname(module_dir).split('/')[-1]
                     dir = dir + '.' + dirname
-                    print "dir="+str(dir)
 
                     module  = importlib.import_module(dir, package=base)
 
