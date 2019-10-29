@@ -75,3 +75,15 @@ class MLPluginIFace:
     @abstractmethod
     def mlGetNetworkPrediction(self, net):
         raise NotImplementedError
+
+    @abstractmethod
+    def mlGetNetworkNumberOfLayer(self, network):
+        raise NotImplementedError
+
+    @abstractmethod
+    def mlGetNetworkNumberOfInput(self, network):
+        raise NotImplementedError
+
+    @abstractmethod
+    def mlGetLayerNumberOfNeuron(self, network, i):
+        raise NotImplementedError

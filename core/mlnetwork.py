@@ -40,3 +40,12 @@ class MLNetwork:
 
     def mlGetNetworkDrawerUI(self):
         return self._plugin.mlGetNetworkDrawerUI()
+
+    def mlDisplayNetworkDrawerUI(self):
+        scene = self.mlGetNetworkDrawerUI()
+
+        # clear the scene
+        scene.clear()
+
+        # draw the scene
+        scene.mlOnDisplayNetwork(self._internal)

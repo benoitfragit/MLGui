@@ -98,13 +98,11 @@ class MLNetworkViewerItemUI(QWidget):
 
     def mlOnDisplayNetwork(self, viewer):
         if viewer is not None:
+            # Initially create the scene
+            self._network.mlDisplayNetworkDrawerUI()
+
             scene = self._network.mlGetNetworkDrawerUI()
 
-            scene.clear()
-
-            scene.mlAddSignalRepresentation(3, 0, [1, 2, 3])
-            scene.mlAddSignalRepresentation(3, 1, [1, 2, 3, 4, 5, 6, 7, 8])
-            scene.mlAddSignalRepresentation(3, 2, [1, 2, 3, 4])
-
             viewer.setScene(scene)
+
             viewer.fitInView(scene.sceneRect(), Qt.KeepAspectRatio)

@@ -20,7 +20,8 @@ class MLTrainer(MLProcess):
         self._shared['progress']  = self.mlGetTrainerProgress()
         self._shared['error']     = self.mlGetTrainerError()
 
-        self._network = MLNetwork(self.mlGetUserName(), self._plugin, self._internal, True)
+        net = self._plugin.mlTrainerGetManagedNetwork(self._internal)
+        self._network = MLNetwork(self.mlGetUserName(), self._plugin, net, True)
 
     def mlGetPluginName(self):
         return self._plugin.mlGetPluginName()
