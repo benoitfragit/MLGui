@@ -46,9 +46,6 @@ class MLWindow(QMainWindow):
         displayTrainers = QAction('&Trainers', self)
         displayTrainers.triggered.connect(self.mlOnDisplayTrainers)
         displayMenu.addAction(displayTrainers)
-        displayTrainerPlots = QAction('&Live training', self)
-        displayTrainerPlots.triggered.connect(self.mlOnDisplayAllTrainerPlots)
-        displayMenu.addAction(displayTrainerPlots)
         displayNetworks = QAction('&Networks', self)
         displayNetworks.triggered.connect(self.mlOnDisplayNetworks)
         displayMenu.addAction(displayNetworks)
@@ -114,10 +111,6 @@ class MLWindow(QMainWindow):
 
     def mlOnDisplayTrainers(self):
         self.centralWidget().setCurrentIndex(1)
-
-    def mlOnDisplayAllTrainerPlots(self):
-        self._trainerviewer.mlGetPlotManager().mlToggleAllPlotsVisibility(True)
-        self.centralWidget().setCurrentIndex(2)
 
     def mlOnShowSelectedTrainerPlots(self):
         self.centralWidget().setCurrentIndex(2)
