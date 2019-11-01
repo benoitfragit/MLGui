@@ -1,17 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from iface import MLPluginActivableIFace
-from iface import MLPluginMetaDataIFace
 from iface import MLPluginIFace
-from iface import MLPluginUIProviderIFace
-
 import uuid
 
-class MLPluginBase( MLPluginIFace, \
-                    MLPluginActivableIFace, \
-                    MLPluginMetaDataIFace, \
-                    MLPluginUIProviderIFace):
+class MLPluginBase( MLPluginIFace):
     def __init__(self):
         self._uuid      = uuid.uuid4()
         self._activated         = False
