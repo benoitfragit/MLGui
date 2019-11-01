@@ -190,6 +190,3 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlGetUniqId(self):
         return self._trainer.mlGetUniqId()
-
-    def mlGetManagedNetworkId(self):
-        return self._trainer.mlGetManagedNetwork().mlGetUniqId()

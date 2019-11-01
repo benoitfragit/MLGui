@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QGraphicsView
 
 from PyQt5.QtGui     import QIcon
+from PyQt5.QtCore    import QTimer
 from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import pyqtSignal
 
@@ -33,6 +34,10 @@ class MLNetworkViewerUI(QListWidget):
 
         self._items = {}
 
+        self._timer = QTimer()
+        self._timer.timeout.connect(self.mlOnUpdateGraphicsView)
+        self._displayed = None;
+
         self.setViewMode(QListWidget.IconMode)
         self.setResizeMode(QListWidget.Adjust)
         self.setMovement(QListWidget.Static)
@@ -45,7 +50,11 @@ class MLNetworkViewerUI(QListWidget):
 
         self._viewer = MLGraphicsView()
 
-    def mlOnNewNetworkAdded(self, network):
+    def mlOnUpdateGraphicsView(self):
+        if self._displayed is not None:
+            self._displayed.mlOnUpdate()
+
+    def mlOnNetworkProviderAdded(self, network):
         if network is not None:
             uid = network.mlGetUniqId()
 
@@ -58,11 +67,14 @@ class MLNetworkViewerUI(QListWidget):
                 self.addItem(item)
                 self.setItemWidget(item, self._items[uid])
 
-    def mlOnRemoveManagedNetwork(self, id):
+    def mlOnRemoveProvider(self, id):
         self.mlOnRemoveNetwork(id)
 
     def mlOnRemoveNetwork(self, uid):
         if uid is not None and uid in self._items.keys():
+            if self._items[uid] == self._displayed:
+                self._timer.stop()
+                self._displayed = None
             item = self._items[uid].mlGetItem()
             self.takeItem(self.row(item))
             self._items.pop(uid)
@@ -71,6 +83,9 @@ class MLNetworkViewerUI(QListWidget):
         if widget is not None:
             item = self.itemWidget(widget)
             if item is not None:
+                self._timer.stop()
+                self._timer.start(100)
+                self._displayed = item
                 item.mlOnDisplayNetwork(self._viewer)
                 self.mlShowNetworkSignal.emit()
 

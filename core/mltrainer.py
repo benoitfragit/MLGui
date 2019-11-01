@@ -5,32 +5,26 @@ import sys
 import os
 
 from mlprocess import MLProcess
-from mlnetwork import MLNetwork
+from mlnetworkprovider import MLNetworkProvider
 
-class MLTrainer(MLProcess):
+class MLTrainer(MLProcess, MLNetworkProvider):
     def __init__(self, username, manager, plugin, internal):
         MLProcess.__init__(self, manager)
+        network = plugin.mlTrainerGetManagedNetwork(internal)
+        MLNetworkProvider.__init__(self, plugin, network ,username, True)
 
         self._internal  = internal
-        self._plugin    = plugin
-        self._username  = username
 
         self._shared['running']   = False
         self._shared['exit']      = False
         self._shared['progress']  = self.mlGetTrainerProgress()
         self._shared['error']     = self.mlGetTrainerError()
 
-        net = self._plugin.mlTrainerGetManagedNetwork(self._internal)
-        self._network = MLNetwork(self.mlGetUserName(), self._plugin, net, True)
-
     def mlGetPluginName(self):
         return self._plugin.mlGetPluginName()
 
     def mlIsPluginActivated(self):
         return self._plugin.mlIsPluginActivated()
-
-    def mlGetUserName(self):
-        return self._username
 
     def mlDeleteTrainer(self):
         self._plugin.mlDeleteTrainer(self._internal)
@@ -72,9 +66,14 @@ class MLTrainer(MLProcess):
             else:
                 self._lock.acquire()
                 self._plugin.mlTrainerRun(self._internal)
+
                 self._shared['running']   = self._plugin.mlIsTrainerRunning(self._internal)
                 self._shared['progress']  = self._plugin.mlGetTrainerProgress(self._internal)
                 self._shared['error']     = self._plugin.mlGetTrainerError(self._internal)
+
+                network = self._plugin.mlTrainerGetManagedNetwork(self._internal)
+                self.mlUpdateNetworkProvider(network)
+
                 self._lock.release()
 
         self._shared['exit'] = True
@@ -109,6 +108,3 @@ class MLTrainer(MLProcess):
 
     def mlGetInternal(self):
         return self._internal
-
-    def mlGetManagedNetwork(self):
-        return self._network

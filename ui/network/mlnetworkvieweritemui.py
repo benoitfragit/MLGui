@@ -15,7 +15,6 @@ from PyQt5.QtGui     import QIcon
 from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import QSize
 from PyQt5.QtCore    import pyqtSignal
-from PyQt5.QtCore    import QTimer
 
 import pkgutil
 import uuid
@@ -95,6 +94,10 @@ class MLNetworkViewerItemUI(QWidget):
 
     def mlGetUniqId(self):
         return self._network.mlGetUniqId()
+
+    def mlOnUpdate(self):
+        if  self._network is not None:
+            self._network.mlUpdateNetworkDrawerUI()
 
     def mlOnDisplayNetwork(self, viewer):
         if viewer is not None:

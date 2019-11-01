@@ -5,13 +5,9 @@ from abc import abstractmethod
 
 class MLNetworkDrawerBaseIface:
     @abstractmethod
-    def mlAddSignalRepresentation   (self, *args, **kwargs):
+    def mlAddSignalRepresentation(self, ncols, j, M, title=''):
         raise NotImplementedError
 
     @abstractmethod
-    def mlOnDisplayNetwork          (self, *args, **kwargs):
-        raise NotImplementedError
-
-    @abstractmethod
-    def mlUpdateSignalRepresentation(self, *args, **kwargs):
+    def mlOnUpdateSignalRepresentation(self, j, s):
         raise NotImplementedError

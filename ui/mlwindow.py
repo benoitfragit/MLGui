@@ -68,7 +68,7 @@ class MLWindow(QMainWindow):
         # Build the network viewer
         self._networkviewer = MLNetworkViewerUI()
         self._networkviewer.mlShowNetworkSignal.connect(self.mlOnShowNetworkViewer)
-        self._trainerviewer.mlRemoveManagedNetworkSignal.connect(self._networkviewer.mlOnRemoveManagedNetwork)
+        self._trainerviewer.mlRemoveProviderSignal.connect(self._networkviewer.mlOnRemoveProvider)
 
         # Build the plugin viewer
         self._pluginviewer = MLPluginViewerUI()
@@ -159,7 +159,7 @@ class MLWindow(QMainWindow):
 
             self._trainermanager.mlAddProcess(trainer)
             self._trainerviewer.mlOnNewTrainerAdded(trainer, editUI)
-            self._networkviewer.mlOnNewNetworkAdded(trainer.mlGetManagedNetwork())
+            self._networkviewer.mlOnNetworkProviderAdded(trainer)
             self.mlOnDisplayTrainers()
 
     def onLoadTrainerValidateClicked(self, plugin):

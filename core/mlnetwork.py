@@ -3,19 +3,13 @@
 
 import uuid
 
-class MLNetwork:
-    def __init__(self, username, plugin, internal, managed = False):
-        self._plugin = plugin
+from mlnetworkprovider import MLNetworkProvider
+
+class MLNetwork(MLNetworkProvider):
+    def __init__(self, username, plugin, internal):
+        MLNetworkProvider.__init__(self, plugin, internal, username, False)
         self._internal = internal
-        self._username = username
         self._uuid  = uuid.uuid4()
-        self._managed = managed
-
-    def mlIsManaged(self):
-        return self._managed
-
-    def mlGetUserName(self):
-        return self._username
 
     def mlGetUniqId(self):
         return self._uuid
@@ -37,15 +31,3 @@ class MLNetwork:
 
     def mlGetNetworkPrediction(self):
         return self._plugin.mlGetNetworkPrediction(self._internal)
-
-    def mlGetNetworkDrawerUI(self):
-        return self._plugin.mlGetNetworkDrawerUI()
-
-    def mlDisplayNetworkDrawerUI(self):
-        scene = self.mlGetNetworkDrawerUI()
-
-        # clear the scene
-        scene.clear()
-
-        # draw the scene
-        scene.mlOnDisplayNetwork(self._internal)

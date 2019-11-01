@@ -49,6 +49,10 @@ class MLPluginIFace:
         raise NotImplementedError
 
     @abstractmethod
+    def mlUpdateManagedNetwork(self, trainer):
+        raise NotImplementedError
+
+    @abstractmethod
     def mlGetNetwork(self, path):
         raise NotImplementedError
 
@@ -86,4 +90,16 @@ class MLPluginIFace:
 
     @abstractmethod
     def mlGetLayerNumberOfNeuron(self, network, i):
+        raise NotImplementedError
+
+    @abstractmethod
+    def mlGetNetworkLayerOutputSignal(self, network, i):
+        raise NotImplementedError
+
+    @abstractmethod
+    def mlGetNetworkInputSignal(self, network):
+        raise NotImplementedError
+
+    @abstractmethod
+    def mlUpdateManagedNetwork(self, network):
         raise NotImplementedError
