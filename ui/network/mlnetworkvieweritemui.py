@@ -54,7 +54,7 @@ class MLNetworkViewerItemUI(QWidget):
         return self._item
 
     def contextMenuEvent(self, event):
-        if not self._network.mlIsManaged():
+        if not self._network.managed:
             menu = QMenu(self)
 
             connect     = QAction(QIcon.fromTheme('media-playback-start'), '&Connect', self)

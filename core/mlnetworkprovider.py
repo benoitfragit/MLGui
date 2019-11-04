@@ -25,6 +25,7 @@ class MLNetworkProvider:
 
     def mlUpdateNetworkProvider(self, network):
         if network is not None:
+            print "ok 1"
             for i in self.arrays.keys():
                 signal = None
                 if i == 0:
@@ -37,7 +38,8 @@ class MLNetworkProvider:
     def mlGetUserName(self):
         return self._username
 
-    def isManaged(self):
+    @property
+    def managed(self):
         return self._managed
 
     def mlGetNetworkDrawerUI(self):
