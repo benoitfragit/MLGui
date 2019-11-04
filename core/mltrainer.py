@@ -17,8 +17,6 @@ class MLTrainer(MLProcess, MLNetworkProvider):
 
         self._shared['running']   = False
         self._shared['exit']      = False
-        self._shared['progress']  = self.mlGetTrainerProgress()
-        self._shared['error']     = self.mlGetTrainerError()
         self._shared['progress']  = 0.0;
         self._shared['error']     = 1.0;
 
