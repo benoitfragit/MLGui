@@ -7,7 +7,7 @@ from mlnetworkprovider import MLNetworkProvider
 
 class MLNetwork(MLNetworkProvider):
     def __init__(self, username, plugin, internal):
-        MLNetworkProvider.__init__(self, plugin, internal, username, False)
+        MLNetworkProvider.__init__(self, plugin, manager, internal, username, False)
         self._internal = internal
         self._uuid  = uuid.uuid4()
 

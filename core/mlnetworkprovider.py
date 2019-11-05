@@ -4,8 +4,8 @@
 from multiprocessing import Array
 
 class MLNetworkProvider:
-    def __init__(self, plugin, network, username, managed = False):
-        self._arrays    = {}
+    def __init__(self, plugin, manager, network, username, managed = False):
+        self._arrays    = manager.dict()
         self._managed   = managed
         self._plugin    = plugin
         self._username  = username
@@ -14,10 +14,10 @@ class MLNetworkProvider:
         numberOfInputs = self._plugin.mlGetNetworkNumberOfInput(network)
 
         # pass a signal for the input and all layer
-        self._arrays[0] = Array('d', numberOfInputs)
+        self._arrays[0] = manager.list([0] * numberOfInputs)
         for i in range(numberOfLayers):
             numberOfNeurons = self._plugin.mlGetLayerNumberOfNeuron(network, i)
-            self._arrays[i+1] = Array('d', numberOfNeurons)
+            self._arrays[i+1] = manager.list([0] * numberOfNeurons)
 
     @property
     def arrays(self):
@@ -25,7 +25,6 @@ class MLNetworkProvider:
 
     def mlUpdateNetworkProvider(self, network):
         if network is not None:
-            print "ok 1"
             for i in self.arrays.keys():
                 signal = None
                 if i == 0:

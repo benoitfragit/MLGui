@@ -12,7 +12,8 @@ from PyQt5.QtCore    import QTimer
 from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import pyqtSignal
 
-from mlnetworkvieweritemui import MLNetworkViewerItemUI
+from mlnetworkvieweritemui  import MLNetworkViewerItemUI
+from mlgraphicviewui        import MLGraphicsViewUI
 
 import uuid
 
@@ -84,7 +85,7 @@ class MLNetworkViewerUI(QListWidget):
             item = self.itemWidget(widget)
             if item is not None:
                 self._timer.stop()
-                self._timer.start(100)
+                self._timer.start(40)
                 self._displayed = item
                 item.mlOnDisplayNetwork(self._viewer)
                 self.mlShowNetworkSignal.emit()

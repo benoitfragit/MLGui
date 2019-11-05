@@ -11,7 +11,7 @@ class MLTrainer(MLProcess, MLNetworkProvider):
     def __init__(self, username, manager, plugin, internal):
         MLProcess.__init__(self, manager)
         network = plugin.mlTrainerGetManagedNetwork(internal)
-        MLNetworkProvider.__init__(self, plugin, network ,username, True)
+        MLNetworkProvider.__init__(self, plugin, manager, network ,username, True)
 
         self._internal  = internal
 
