@@ -16,16 +16,6 @@ from mlnetworkvieweritemui  import MLNetworkViewerItemUI
 
 import uuid
 
-class MLGraphicsView(QGraphicsView):
-    def __init__(self, parent = None):
-        QGraphicsView.__init__(self, parent)
-
-    def resizeEvent(self, event):
-        QGraphicsView.resizeEvent(self, event)
-        scene = self.scene()
-        if scene is not None:
-            self.fitInView(scene.sceneRect(), Qt.KeepAspectRatio)
-
 class MLNetworkViewerUI(QListWidget):
     mlShowNetworkSignal = pyqtSignal()
 
@@ -48,7 +38,7 @@ class MLNetworkViewerUI(QListWidget):
 
         self.itemDoubleClicked.connect(self.mlOnItemDoubleClicked)
 
-        self._viewer = MLGraphicsView()
+        self._viewer = MLGraphicsViewUI()
 
     def mlOnUpdateGraphicsView(self):
         if self._displayed is not None:
