@@ -103,9 +103,5 @@ class MLNetworkViewerItemUI(QWidget):
         if viewer is not None:
             # Initially create the scene
             self._network.mlDisplayNetworkDrawerUI()
-
-            scene = self._network.mlGetNetworkDrawerUI()
-
-            viewer.setScene(scene)
-
-            viewer.fitInView(scene.sceneRect(), Qt.KeepAspectRatio)
+            viewer.setScene(self._network.scene)
+            viewer.fitInView(self._network.scene.sceneRect(), Qt.KeepAspectRatio)

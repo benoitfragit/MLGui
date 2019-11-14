@@ -9,6 +9,7 @@ class MLNetworkProvider:
         self._managed   = managed
         self._plugin    = plugin
         self._username  = username
+        self._scene     = self._plugin.mlGetNetworkDrawerUI()
 
         numberOfLayers = self._plugin.mlGetNetworkNumberOfLayer(network)
         numberOfInputs = self._plugin.mlGetNetworkNumberOfInput(network)
@@ -41,18 +42,13 @@ class MLNetworkProvider:
     def managed(self):
         return self._managed
 
-    def mlGetNetworkDrawerUI(self):
-        return self._plugin.mlGetNetworkDrawerUI()
+    @property
+    def scene(self):
+        return self._scene
 
     def mlDisplayNetworkDrawerUI(self):
-        scene = self.mlGetNetworkDrawerUI()
-
-        # clear the scene
-        scene.clear()
-
-        # draw the scene
-        scene.mlOnDisplayNetwork(self)
+        self._scene.clear()
+        self._scene.mlOnDisplayNetwork(self)
 
     def mlUpdateNetworkDrawerUI(self):
-        scene = self.mlGetNetworkDrawerUI()
-        scene.mlOnUpdateNetwork(self)
+        self._scene.mlOnUpdateNetwork(self)

@@ -4,6 +4,9 @@
 from abc import abstractmethod
 
 class MLTrainerEditorBaseIface:
+    """
+    Define all requested methods that a trainer editor should implement
+    """
     @abstractmethod
     def mlBuildTrainerEditorMainWidget(self):
         raise NotImplementedError

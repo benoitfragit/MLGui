@@ -14,13 +14,9 @@ class MLPluginBase( MLPluginIFace):
         self._description       = None
         self._trainerloaderui   = None
         self._trainereditorui   = None
-        self._networkdrawerui   = None
 
     def mlGetUniqId(self):
         return self._uuid
-
-    def mlGetNetworkDrawerUI(self):
-        return self._networkdrawerui
 
     def mlGetTrainerLoaderUI(self):
         return self._trainerloaderui

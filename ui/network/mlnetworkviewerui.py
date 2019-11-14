@@ -13,7 +13,6 @@ from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import pyqtSignal
 
 from mlnetworkvieweritemui  import MLNetworkViewerItemUI
-from mlgraphicviewui        import MLGraphicsViewUI
 
 import uuid
 

@@ -27,13 +27,14 @@ class MLTrainerViewerItemUI(QWidget):
     graphUpdated = pyqtSignal()
     trainerLaunched = pyqtSignal()
 
-    def __init__(self, trainer, editui, parent = None):
+    def __init__(self, trainer, editui, view, parent = None):
         QWidget.__init__(self, parent)
 
         self._graph = [[], []]
 
         self._trainer = trainer
         self._editui  = editui
+        self._view    = view
         self._timer   = QTimer()
         self._timer.timeout.connect(self.mlUpdateTrainerItemOnTimeout)
         self._clearTimer = QTimer()
@@ -90,6 +91,8 @@ class MLTrainerViewerItemUI(QWidget):
                 self._graph[0].append(progress)
                 self._graph[1].append(error)
                 self.graphUpdated.emit()
+
+            self._trainer.mlUpdateNetworkDrawerUI()
 
             if not self._trainer.mlIsProcessRunning():
                 self._timer.stop()
@@ -190,3 +193,10 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlGetUniqId(self):
         return self._trainer.mlGetUniqId()
+
+    def mlOnDisplayTrainer(self):
+        if self._view is not None:
+            # Initially create the scene
+            self._trainer.mlDisplayNetworkDrawerUI()
+            self._view.setScene(self._trainer.scene)
+            self._view.fitInView(self._trainer.scene.sceneRect(), Qt.KeepAspectRatio)
