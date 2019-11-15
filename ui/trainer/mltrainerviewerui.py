@@ -101,9 +101,6 @@ class MLTrainerViewerUI(QListWidget):
 
         QListWidget.mouseReleaseEvent(self, event)
 
-    def mlGetPlotManager(self):
-        return self._allplots
-
     def mlGetTrainerOverview(self):
         return self._overview
 
