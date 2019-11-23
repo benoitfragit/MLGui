@@ -8,3 +8,4 @@ from mlpluginloader     import MLPluginLoader
 from mlprocessmanager   import MLProcessManager
 from mltrainermanager   import MLTrainerManager
 from mlnetworkprovider  import MLNetworkProvider
+from mlfunction         import MLFunction

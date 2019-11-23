@@ -12,6 +12,3 @@ class MLLoader:
         func.restype = restype
         func.argtypes = argtypes
         return func
-
-    def load(self):
-        raise NotImplementedError

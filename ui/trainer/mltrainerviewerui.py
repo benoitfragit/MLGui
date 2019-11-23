@@ -85,6 +85,8 @@ class MLTrainerViewerUI(QListWidget):
         if event.button() == Qt.LeftButton and self._mouseSelection:
             self._mouseSelection = False
 
+            self._overview.view.setVisible(False)
+            self._overview.plot.setVisible(True)
             self._overview.plot.mlToggleAllPlotsVisibility(False)
 
             items = self.selectedItems()
