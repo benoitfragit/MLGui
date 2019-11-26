@@ -125,6 +125,7 @@ class MLTrainerViewerItemUI(QWidget):
             self._trainer.mlDeleteTrainer()
             self.removeTrainer.emit(id)
             self._timer.stop()
+            self._trainer.scene.clear()
 
     def mlOnConfigureTrainedClicked(self):
         if self._trainer is not None:
