@@ -8,8 +8,13 @@ class MLFunction:
         self._restype = restype
         self._argstype = argstype
         self._func = None
+        self._loaded = None
 
         self.load(loader)
+
+    @property
+    def loaded(self):
+        return self._loaded
 
     def load(self, loader):
         if loader is not None:
