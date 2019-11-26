@@ -105,6 +105,7 @@ class MLTrainerViewerItemUI(QWidget):
                 self._trainer.start()
                 self._item.setSizeHint(self.sizeHint())
                 self._timer.start(30)
+                self.mlOnDisplayTrainer()
                 self.trainerLaunched.emit()
 
     def mlOnTrainerPauseClicked(self):
