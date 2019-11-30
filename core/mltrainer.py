@@ -71,10 +71,11 @@ class MLTrainer(MLProcess, MLNetworkProvider):
                 self._shared['progress']  = self._plugin.mlGetTrainerProgress(self._internal)
                 self._shared['error']     = self._plugin.mlGetTrainerError(self._internal)
 
-                network = self._plugin.mlTrainerGetManagedNetwork(self._internal)
-                self.mlUpdateNetworkProvider(network)
+                self.mlUpdateTrainerProvider()
 
                 self._lock.release()
+
+
 
         self._shared['exit'] = True
 
@@ -108,3 +109,15 @@ class MLTrainer(MLProcess, MLNetworkProvider):
 
     def mlGetInternal(self):
         return self._internal
+
+    def mlUpdateTrainerProvider(self):
+        for i in self.arrays.keys():
+            signal = None
+            sizeOfSignal = len(self._arrays[i])
+            if i == 0:
+                signal = self._plugin.mlGetTrainerInputSignal(self._internal, sizeOfSignal)
+            else:
+                signal = self._plugin.mlGetTrainerLayerOutputSignal(self._internal, i - 1, sizeOfSignal)
+            if signal is not None:
+                self._arrays[i] = signal[:]
+                print self._arrays[i]

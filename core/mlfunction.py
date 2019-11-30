@@ -3,14 +3,28 @@
 import sys
 
 class MLFunction:
-    def __init__(self, loader, name, restype, argstype):
+    def __init__(self, loader, name, restype, argstype, livewrapping = False):
         self._name = name
         self._restype = restype
         self._argstype = argstype
         self._func = None
         self._loaded = None
 
-        self.load(loader)
+        if not livewrapping:
+            self.load(loader)
+
+        if self._func is not None:
+            print >> sys.stderr, 'Method:' + self._name + ' has been loaded'
+        else:
+            print >> sys.stderr, 'Method:' + self._name + ' hasn t been loaded'
+
+    @property
+    def restype(self):
+        return self._restype
+
+    @property
+    def argstype(self):
+        return self._argstype
 
     @property
     def loaded(self):
@@ -18,13 +32,11 @@ class MLFunction:
 
     def load(self, loader):
         if loader is not None:
-            print >> sys.stderr, 'Method:' + self._name + ' has been loaded'
             self._func = loader.wrap(self._name, self._restype, self._argstype)
-        if self._func is None:
-            print >> sys.stderr, 'Method:' + self._name + ' hasn t been loaded'
 
     def __call__(self, *args):
         ret = None
+
         if self._func is not None:
             if len(args) == len(self._argstype):
                 if len(args) > 0:
