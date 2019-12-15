@@ -18,13 +18,24 @@ class MLFunction:
         else:
             print >> sys.stderr, 'Method:' + self._name + ' hasn t been loaded'
 
+    def setResType(self, value):
+        self._restype = value
+
     @property
     def restype(self):
         return self._restype
 
+    @restype.setter
+    def restype(self, value):
+        self._restype = value
+
     @property
     def argstype(self):
         return self._argstype
+
+    @argstype.setter
+    def argstype(self, value):
+        self._argstype = value
 
     @property
     def loaded(self):

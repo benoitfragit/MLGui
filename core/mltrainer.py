@@ -75,8 +75,6 @@ class MLTrainer(MLProcess, MLNetworkProvider):
 
                 self._lock.release()
 
-
-
         self._shared['exit'] = True
 
     def mlSaveTrainerProgression(self, directory):
@@ -120,4 +118,4 @@ class MLTrainer(MLProcess, MLNetworkProvider):
                 signal = self._plugin.mlGetTrainerLayerOutputSignal(self._internal, i - 1, sizeOfSignal)
             if signal is not None:
                 self._arrays[i] = signal[:]
-                print self._arrays[i]
+                print i, self._arrays[i]
