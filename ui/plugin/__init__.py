@@ -1,2 +1,2 @@
-from mlpluginviewerui       import MLPluginViewerUI
-from mlpluginvieweritemui   import MLPluginViewerItemUI
+from ui.plugin.mlpluginviewerui       import *
+from ui.plugin.mlpluginvieweritemui   import *

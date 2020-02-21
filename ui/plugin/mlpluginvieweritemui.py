@@ -32,19 +32,31 @@ class MLPluginViewerItemUI(QWidget):
         self._check.setChecked(self._plugin.mlIsPluginActivated())
         self._check.toggled.connect(self.mlOnPluginActivationToggled)
         hbox1.addWidget(QLabel('Plugin'))
-        hbox1.addWidget(QLabel(self._plugin.mlGetPluginName()))
+        try:
+            hbox1.addWidget(QLabel(self._plugin.mlGetPluginName()))
+        except:
+            hbox1.addWidget(QLabel('Plugin name'))
         hbox1.addStretch(1)
         hbox1.addWidget(self._check)
 
         hbox2.addWidget(QLabel('Author'))
         hbox2.addStretch(1)
-        hbox2.addWidget(QLabel(self._plugin.mlGetPluginAuthor()))
+        try:
+            hbox2.addWidget(QLabel(self._plugin.mlGetPluginAuthor()))
+        except:
+            hbox2.addWidget(QLabel('Plugin author'))
 
         hbox3.addWidget(QLabel('Version'))
         hbox3.addStretch(1)
-        hbox3.addWidget(QLabel(self._plugin.mlGetPluginVersion()))
+        try:
+            hbox3.addWidget(QLabel(self._plugin.mlGetPluginVersion()))
+        except:
+            hbox3.addWidget(QLabel('Plugin version'))
 
-        text = QLabel(self._plugin.mlGetPluginDescription())
+        try:
+            text = QLabel(self._plugin.mlGetPluginDescription())
+        except:
+            text = QLabel("Plugin description")
         text.setWordWrap(True)
 
         vbox.addLayout(hbox1)

@@ -1,0 +1,94 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>40774d3b-edbf-40a8-8c8e-77d6aa4ca9a1</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>MLGui.py</StartupFile>
+    <SearchPath>..\MLGui;..\..\MLGui;..\..\..\C\MLPlugins\out\install\x86-Debug;..\MLGui;..\..\..\C\MLPlugins\out\install\x86-Debug\plugins\MLP</SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>MLGui</Name>
+    <RootNamespace>MLGui</RootNamespace>
+    <InterpreterId>Global|PythonCore|3.7-32</InterpreterId>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="core\mlfunction.py" />
+    <Compile Include="core\mlloader.py" />
+    <Compile Include="core\mlnetwork.py" />
+    <Compile Include="core\mlnetworkprovider.py" />
+    <Compile Include="core\mlpluginbase.py" />
+    <Compile Include="core\mlpluginloader.py" />
+    <Compile Include="core\mlprocess.py" />
+    <Compile Include="core\mlprocessmanager.py" />
+    <Compile Include="core\mltrainer.py" />
+    <Compile Include="core\mltrainermanager.py" />
+    <Compile Include="core\__init__.py" />
+    <Compile Include="iface\network\mlnetworkdrawerbaseiface.py" />
+    <Compile Include="iface\network\__init__.py" />
+    <Compile Include="iface\plugin\mlpluginiface.py" />
+    <Compile Include="iface\plugin\__init__.py" />
+    <Compile Include="iface\trainer\mltrainereditorbaseiface.py" />
+    <Compile Include="iface\trainer\mltrainerloaderbaseiface.py" />
+    <Compile Include="iface\trainer\__init__.py" />
+    <Compile Include="iface\__init__.py" />
+    <Compile Include="MLGui.py" />
+    <Compile Include="ui\mlwindow.py" />
+    <Compile Include="ui\network\mlnetworkdrawerbaseui.py" />
+    <Compile Include="ui\network\mlnetworkvieweritemui.py" />
+    <Compile Include="ui\network\mlnetworkviewerui.py" />
+    <Compile Include="ui\network\__init__.py" />
+    <Compile Include="ui\plugin\mlpluginvieweritemui.py" />
+    <Compile Include="ui\plugin\mlpluginviewerui.py" />
+    <Compile Include="ui\plugin\__init__.py" />
+    <Compile Include="ui\resources\__init__.py" />
+    <Compile Include="ui\trainer\mlplotmanager.py" />
+    <Compile Include="ui\trainer\mltrainereditorbaseui.py" />
+    <Compile Include="ui\trainer\mltrainerloaderbaseui.py" />
+    <Compile Include="ui\trainer\mltrainervieweritemui.py" />
+    <Compile Include="ui\trainer\mltrainerviewerui.py" />
+    <Compile Include="ui\trainer\__init__.py" />
+    <Compile Include="ui\__init__.py" />
+    <Compile Include="__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="core\" />
+    <Folder Include="core\__pycache__\" />
+    <Folder Include="iface\" />
+    <Folder Include="iface\network\" />
+    <Folder Include="iface\plugin\" />
+    <Folder Include="iface\trainer\" />
+    <Folder Include="iface\__pycache__\" />
+    <Folder Include="ui\" />
+    <Folder Include="ui\network\" />
+    <Folder Include="ui\plugin\" />
+    <Folder Include="ui\resources\" />
+    <Folder Include="ui\trainer\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="core\__pycache__\__init__.cpython-37.pyc" />
+    <Content Include="iface\__pycache__\__init__.cpython-37.pyc" />
+    <Content Include="ui\resources\network.png" />
+    <Content Include="ui\resources\trainer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|PythonCore|3.7-32" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>

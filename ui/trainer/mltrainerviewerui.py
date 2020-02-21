@@ -13,8 +13,8 @@ from PyQt5.QtGui     import QIcon
 from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import pyqtSignal
 
-from mltrainervieweritemui  import MLTrainerViewerItemUI
-from mlplotmanager          import MLPlotManager
+from ui.trainer.mltrainervieweritemui  import MLTrainerViewerItemUI
+from ui.trainer.mlplotmanager          import MLPlotManager
 
 import uuid
 

@@ -1,1 +1,1 @@
-from mlpluginiface          import MLPluginIFace
+from iface.plugin.mlpluginiface import *

@@ -7,12 +7,12 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QStackedWidget
 from PyQt5.QtCore    import Qt
 
-from trainer         import MLTrainerViewerUI
-from trainer         import MLTrainerLoaderBaseUI
-from trainer         import MLTrainerEditorBaseUI
-from network         import MLNetworkViewerUI
-from plugin          import MLPluginViewerUI
-from core            import MLTrainer
+from MLGui.ui.trainer         import MLTrainerViewerUI
+from MLGui.ui.trainer         import MLTrainerLoaderBaseUI
+from MLGui.ui.trainer         import MLTrainerEditorBaseUI
+from MLGui.ui.network         import MLNetworkViewerUI
+from MLGui.ui.plugin          import MLPluginViewerUI
+from core.mltrainer           import MLTrainer
 
 import os
 import json
@@ -94,12 +94,15 @@ class MLWindow(QMainWindow):
     def mlGetSavingDirectory(self):
         saving = '.'
 
-        home = os.environ['HOME']
-        if os.path.isdir(home):
-            local = os.path.join(home, '.local')
-            local = os.path.join(local, 'share')
-            if os.path.isdir(local):
-                saving = local
+        if os.name == 'nt':
+            saving = os.getenv('APPDATA')
+        else:
+            home = os.environ['HOME']
+            if os.path.isdir(home):
+                local = os.path.join(home, '.local')
+                local = os.path.join(local, 'share')
+                if os.path.isdir(local):
+                    saving = local
 
         mlgui = os.path.join(saving, 'mlgui')
 

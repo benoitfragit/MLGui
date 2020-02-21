@@ -12,7 +12,7 @@ from PyQt5.QtCore    import QTimer
 from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import pyqtSignal
 
-from mlnetworkvieweritemui  import MLNetworkViewerItemUI
+from ui.network.mlnetworkvieweritemui  import MLNetworkViewerItemUI
 
 import uuid
 

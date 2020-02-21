@@ -5,13 +5,16 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QDockWidget
 from PyQt5.QtWidgets import QSizePolicy
 
-from iface import MLTrainerEditorBaseIface
+from iface.trainer.mltrainereditorbaseiface import MLTrainerEditorBaseIface
 
 class MLTrainerEditorBaseUI(QDockWidget, MLTrainerEditorBaseIface):
     def __init__(self, plugin, parent = None):
         QDockWidget.__init__(self, parent=parent)
 
-        self.setWindowTitle(plugin.mlGetPluginName() + ' trainer editor')
+        try:
+            self.setWindowTitle(plugin.mlGetPluginName() + ' trainer editor')
+        except:
+            self.setWindowTitle('Plugin trainer editor')
         self._mainWidget = QWidget()
         self._plugin = plugin
 

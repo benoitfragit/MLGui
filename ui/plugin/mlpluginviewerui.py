@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtGui     import QIcon
 from PyQt5.QtCore    import Qt
 
-from mlpluginvieweritemui import MLPluginViewerItemUI
+from ui.plugin.mlpluginvieweritemui import MLPluginViewerItemUI
 
 class MLPluginViewerUI(QDockWidget):
     def __init__(self, parent = None):

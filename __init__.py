@@ -1,2 +1,3 @@
-from core   import *
-from ui     import *
+from core import *
+from ui import *
+from iface import *

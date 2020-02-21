@@ -6,7 +6,9 @@ from PyQt5.QtWidgets import QDockWidget
 from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtCore    import pyqtSignal
 
-from iface import MLTrainerLoaderBaseIface
+from iface.trainer.mltrainerloaderbaseiface import MLTrainerLoaderBaseIface
+
+import sys
 
 class MLTrainerLoaderBaseUI(QDockWidget, MLTrainerLoaderBaseIface):
 
@@ -14,8 +16,10 @@ class MLTrainerLoaderBaseUI(QDockWidget, MLTrainerLoaderBaseIface):
 
     def __init__(self, plugin, parent = None):
         QDockWidget.__init__(self, parent=parent)
-
-        self.setWindowTitle(plugin.mlGetPluginName() + ' trainer loader')
+        try:
+            self.setWindowTitle(plugin.mlGetPluginName() + ' trainer loader')
+        except:
+            self.setWindowTitle('Plugin trainer loader')
         self._mainWidget = QWidget()
         self._plugin = plugin
 

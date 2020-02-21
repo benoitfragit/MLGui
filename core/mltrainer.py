@@ -4,8 +4,8 @@
 import sys
 import os
 
-from mlprocess import MLProcess
-from mlnetworkprovider import MLNetworkProvider
+from core.mlprocess import MLProcess
+from core.mlnetworkprovider import MLNetworkProvider
 
 class MLTrainer(MLProcess, MLNetworkProvider):
     def __init__(self, username, manager, plugin, internal):
@@ -118,4 +118,4 @@ class MLTrainer(MLProcess, MLNetworkProvider):
                 signal = self._plugin.mlGetTrainerLayerOutputSignal(self._internal, i - 1, sizeOfSignal)
             if signal is not None:
                 self._arrays[i] = signal[:]
-                print i, self._arrays[i]
+                print (i, self._arrays[i])

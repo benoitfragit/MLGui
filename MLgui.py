@@ -3,10 +3,10 @@
 
 from PyQt5    import QtWidgets
 
-from core     import MLPluginLoader
-from core     import MLTrainerManager
+from core.mlpluginloader import MLPluginLoader
+from core.mltrainermanager import MLTrainerManager
 
-from ui       import MLWindow
+from ui.mlwindow   import MLWindow
 
 import os
 import sys

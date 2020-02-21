@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from iface import MLPluginIFace
+from iface.plugin import MLPluginIFace
 import uuid
 
 class MLPluginBase( MLPluginIFace):

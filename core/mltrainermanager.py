@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from mlprocessmanager import MLProcessManager
+from core.mlprocessmanager import MLProcessManager
 
 import os
 

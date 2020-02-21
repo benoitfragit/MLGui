@@ -14,9 +14,9 @@ class MLFunction:
             self.load(loader)
 
         if self._func is not None:
-            print >> sys.stderr, 'Method:' + self._name + ' has been loaded'
+            sys.stdout.write('Method:' + self._name + ' has been loaded')
         else:
-            print >> sys.stderr, 'Method:' + self._name + ' hasn t been loaded'
+            sys.stderr.write('Method:' + self._name + ' hasn t been loaded')
 
     def setResType(self, value):
         self._restype = value
@@ -55,8 +55,8 @@ class MLFunction:
                 else:
                     ret = self._func()
             else:
-                print >> sys.stderr, 'Method ' + self._name + ': Invalid number of argument'
+                sys.stderr.write( 'Method ' + self._name + ': Invalid number of argument')
         else:
-            print >> sys.stderr, 'Method:' + self._name + ' hasn t been loaded'
+            sys.stderr.write( 'Method:' + self._name + ' hasn t been loaded')
 
         return ret

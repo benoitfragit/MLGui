@@ -8,7 +8,7 @@ from PyQt5.QtGui     import QPen
 
 from PyQt5.QtCore    import Qt
 
-from iface           import MLNetworkDrawerBaseIface
+from iface.network           import MLNetworkDrawerBaseIface
 
 class MLNetworkDrawerBaseUI(QGraphicsScene, MLNetworkDrawerBaseIface):
     def __init__(self):
