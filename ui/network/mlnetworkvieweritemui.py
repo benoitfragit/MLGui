@@ -16,7 +16,8 @@ from PyQt5.QtCore    import Qt
 from PyQt5.QtCore    import QSize
 from PyQt5.QtCore    import pyqtSignal
 
-import pkgutil
+from importlib import resources
+from ui import data
 import uuid
 import os
 
@@ -32,12 +33,12 @@ class MLNetworkViewerItemUI(QWidget):
 
         label   = QLabel(network.mlGetUserName())
         label.setAlignment(Qt.AlignCenter)
-        res = pkgutil.get_loader('ui.resources')
-        pixmap = QPixmap(res.filename + os.path.sep + 'network.png')
-        pixmap = pixmap.scaledToWidth(120)
         pixLabel    = QLabel()
-        pixLabel.setAlignment(Qt.AlignCenter)
-        pixLabel.setPixmap(pixmap)
+        with resources.path(data, 'network.png') as p:
+            pixmap = QPixmap(str(p))
+            pixmap = pixmap.scaledToWidth(120)
+            pixLabel.setAlignment(Qt.AlignCenter)
+            pixLabel.setPixmap(pixmap)
 
         vbox.addWidget(label)
         vbox.addWidget(pixLabel)

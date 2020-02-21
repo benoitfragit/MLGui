@@ -7,11 +7,11 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QStackedWidget
 from PyQt5.QtCore    import Qt
 
-from MLGui.ui.trainer         import MLTrainerViewerUI
-from MLGui.ui.trainer         import MLTrainerLoaderBaseUI
-from MLGui.ui.trainer         import MLTrainerEditorBaseUI
-from MLGui.ui.network         import MLNetworkViewerUI
-from MLGui.ui.plugin          import MLPluginViewerUI
+from ui.trainer         import MLTrainerViewerUI
+from ui.trainer         import MLTrainerLoaderBaseUI
+from ui.trainer         import MLTrainerEditorBaseUI
+from ui.network         import MLNetworkViewerUI
+from ui.plugin          import MLPluginViewerUI
 from core.mltrainer           import MLTrainer
 
 import os

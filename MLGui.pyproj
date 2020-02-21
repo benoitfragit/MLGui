@@ -5,12 +5,14 @@
     <ProjectGuid>40774d3b-edbf-40a8-8c8e-77d6aa4ca9a1</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>MLGui.py</StartupFile>
-    <SearchPath>..\..\MLGui;..\..\..\C\MLPlugins\out\install\x86-Debug;..\MLGui;..\..\..\C\MLPlugins\out\install\x86-Debug\plugins\MLP</SearchPath>
+    <SearchPath>..\MLGui;..\..\Python;..\..\C\MLPlugins\out\install\x86-Debug;..\MLGuii;..\..\C\MLPlugins\out\install\x86-Debug\plugins\MLP</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>MLGui</Name>
     <RootNamespace>MLGui</RootNamespace>
     <InterpreterId>Global|PythonCore|3.7-32</InterpreterId>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,7 +51,7 @@
     <Compile Include="ui\plugin\mlpluginvieweritemui.py" />
     <Compile Include="ui\plugin\mlpluginviewerui.py" />
     <Compile Include="ui\plugin\__init__.py" />
-    <Compile Include="ui\resources\__init__.py" />
+    <Compile Include="ui\data\__init__.py" />
     <Compile Include="ui\trainer\mlplotmanager.py" />
     <Compile Include="ui\trainer\mltrainereditorbaseui.py" />
     <Compile Include="ui\trainer\mltrainerloaderbaseui.py" />
@@ -70,14 +72,14 @@
     <Folder Include="ui\" />
     <Folder Include="ui\network\" />
     <Folder Include="ui\plugin\" />
-    <Folder Include="ui\resources\" />
+    <Folder Include="ui\data\" />
     <Folder Include="ui\trainer\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="core\__pycache__\__init__.cpython-37.pyc" />
     <Content Include="iface\__pycache__\__init__.cpython-37.pyc" />
-    <Content Include="ui\resources\network.png" />
-    <Content Include="ui\resources\trainer.png" />
+    <Content Include="ui\data\network.png" />
+    <Content Include="ui\data\trainer.png" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.7-32" />

@@ -18,7 +18,8 @@ from PyQt5.QtCore    import QSize
 from PyQt5.QtCore    import pyqtSignal
 from PyQt5.QtCore    import QTimer
 
-import pkgutil
+from importlib import resources
+from ui import data
 import uuid
 import os
 
@@ -44,12 +45,12 @@ class MLTrainerViewerItemUI(QWidget):
 
         label   = QLabel(trainer.mlGetUserName())
         label.setAlignment(Qt.AlignCenter)
-        res = pkgutil.get_loader('ui.resources')
-        pixmap = QPixmap(res.filename + os.path.sep + 'trainer.png')
-        pixmap = pixmap.scaledToWidth(120)
         pixLabel    = QLabel()
-        pixLabel.setAlignment(Qt.AlignCenter)
-        pixLabel.setPixmap(pixmap)
+        with resources.path(data, 'trainer.png') as p:
+            pixmap = QPixmap(str(p))
+            pixmap = pixmap.scaledToWidth(120)
+            pixLabel.setAlignment(Qt.AlignCenter)
+            pixLabel.setPixmap(pixmap)
 
         vbox.addWidget(label)
         vbox.addWidget(pixLabel)
