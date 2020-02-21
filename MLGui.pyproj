@@ -5,7 +5,7 @@
     <ProjectGuid>40774d3b-edbf-40a8-8c8e-77d6aa4ca9a1</ProjectGuid>
     <ProjectHome>.</ProjectHome>
     <StartupFile>MLGui.py</StartupFile>
-    <SearchPath>..\MLGui;..\..\MLGui;..\..\..\C\MLPlugins\out\install\x86-Debug;..\MLGui;..\..\..\C\MLPlugins\out\install\x86-Debug\plugins\MLP</SearchPath>
+    <SearchPath>..\..\MLGui;..\..\..\C\MLPlugins\out\install\x86-Debug;..\MLGui;..\..\..\C\MLPlugins\out\install\x86-Debug\plugins\MLP</SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>MLGui</Name>
