@@ -89,6 +89,7 @@ class MLWindow(QMainWindow):
         self.setCentralWidget(stackwidget)
 
         # Register all plugins
+        self._editUIs = {}
         self.mlRegisterAllPlugins(pluginloader)
 
     def mlGetSavingDirectory(self):
@@ -126,44 +127,47 @@ class MLWindow(QMainWindow):
     def mlAddPlugin(self, plugin):
         if plugin is not None:
             """
-            Populate the plugin viewer ui
-            """
-            self._pluginviewer.mlOnNewPluginAdded(plugin, self._newTrainerMenu)
-
-            """
             Populate the new trainer menu
             """
-            loadUI = plugin.mlGetTrainerLoaderUI()
-            editUI = plugin.mlGetTrainerEditorUI()
+            loadUI, editUI = plugin.mlGetTrainerUI()
+            
+            """
+            Populate the plugin viewer ui
+            """
+            self._pluginviewer.mlOnNewPluginAdded(plugin, self._newTrainerMenu, loadUI)
 
             if isinstance(loadUI, MLTrainerLoaderBaseUI):
                 self.addDockWidget(Qt.LeftDockWidgetArea, loadUI)
-                loadUI.mlValidateTrainerSignal.connect(lambda:self.onLoadTrainerValidateClicked(plugin))
+                loadUI.mlValidateTrainerSignal.connect(lambda:self.onLoadTrainerValidateClicked(plugin, loadUI))
 
             if isinstance(editUI, MLTrainerEditorBaseUI):
                 self.addDockWidget(Qt.LeftDockWidgetArea, editUI)
+                self._editUIs[plugin.mlGetUniqId()] = editUI
 
-    def mlAddNewTrainer(self, plugin, trainer_name, internal):
-        if  plugin is not None and internal is not None:
-            editUI = plugin.mlGetTrainerEditorUI()
+    def mlAddNewTrainer(self, plugin, trainer_name, network_filepath, data_filepath, trainer_filepath):
+        if  plugin is not None:
+            editUI = self._editUIs[plugin.mlGetUniqId()]
 
             trainer = MLTrainer(trainer_name,
                                 self._trainermanager,
                                 plugin,
-                                internal)
+                                network_filepath,
+                                data_filepath,
+                                trainer_filepath)
 
             self._trainermanager.mlAddProcess(trainer)
             self._trainerviewer.mlOnNewTrainerAdded(trainer, editUI)
+
             self.mlOnDisplayTrainers()
 
-    def onLoadTrainerValidateClicked(self, plugin):
+    def onLoadTrainerValidateClicked(self, plugin, loadui):
         if plugin is not None:
-            loadUI   = plugin.mlGetTrainerLoaderUI()
+            username            = loadui.mlGetTrainerName()
+            network_filepath    = loadui.mlGetNetworkFilePath()
+            data_filepath       = loadui.mlGetDataFilePath()
+            trainer_filepath    = loadui.mlGetTrainerFilePath()
 
-            username = loadUI.mlGetTrainerName()
-            internal = plugin.mlGetLoadedTrainer()
-
-            self.mlAddNewTrainer(plugin, username, internal)
+            self.mlAddNewTrainer(plugin, username, network_filepath, data_filepath, trainer_filepath)
 
     def mlRegisterAllPlugins(self, loader):
         json_file = os.path.join(self._mlgui_directory, 'mlgui.json')
@@ -195,13 +199,14 @@ class MLWindow(QMainWindow):
                     for username in trainers.keys():
                         buf              = trainers[username]
 
-                        internal         = plugin.mlTrainerJSONDecoding(buf)
-
                         error            = buf['error']
                         progress         = buf['progress']
+                        network_filepath = buf['network_filepath']
+                        data_filepath    = buf['data_filepath']
+                        trainer_filepath = buf['trainer_filepath']
 
                         # Add a new trainer
-                        self.mlAddNewTrainer(plugin, username, internal)
+                        self.mlAddNewTrainer(plugin, username, network_filepath, data_filepath, trainer_filepath)
 
                         # Finally restore its progression
                         self._trainermanager.mlRestoreProgression(self._mlgui_directory, username, progress, error)

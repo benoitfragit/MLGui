@@ -14,7 +14,7 @@ from PyQt5.QtCore    import Qt
 import uuid
 
 class MLPluginViewerItemUI(QWidget):
-    def __init__(self, plugin, trainerMenu, parent = None):
+    def __init__(self, plugin, trainerMenu, loadUI, parent = None):
         QWidget.__init__(self, parent)
 
         self._trainerMenu   = trainerMenu
@@ -70,7 +70,6 @@ class MLPluginViewerItemUI(QWidget):
         self._item.setSizeHint(self.sizeHint())
         self._item.setFlags(self._item.flags() &~ Qt.ItemIsSelectable)
 
-        loadUI = self._plugin.mlGetTrainerLoaderUI()
         self._trainerAction = loadUI.toggleViewAction()
 
         if self._plugin.mlIsPluginActivated():

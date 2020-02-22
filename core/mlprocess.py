@@ -14,10 +14,7 @@ class MLProcess(Process):
         self._uuid  = uuid.uuid4()
         self._lock  = Lock()
         self._shared= manager.dict()
-        self._resume= Event()
 
-        self._shared['pause']     = False
-        self._shared['stopped']   = False
         self._shared['exit']      = False
         self._shared['running']   = False
 
@@ -25,10 +22,11 @@ class MLProcess(Process):
         return self._uuid
 
     def mlPauseProcess(self):
-        self._shared['pause'] = True
+        self._shared['running'] = False
 
     def mlResumeProcess(self):
-        self._resume.set()
+        if not self._shared['exit']:
+            self._shared['running'] = True
 
     def mlIsProcessRunning(self):
         ret = False
@@ -37,13 +35,9 @@ class MLProcess(Process):
         return ret
 
     def mlIsProcessPaused(self):
-        ret = False
-        if 'pause' in self._shared.keys():
-            ret = self._shared['pause'] and \
-                  self._shared['running']
-        return ret
+        return not self.mlIsProcessRunning()
 
-    def mlIsProcessFinish(self):
+    def mlIsProcessExited(self):
         ret = False
         if 'exit' in self._shared.keys():
             ret = self._shared['exit']
@@ -51,10 +45,8 @@ class MLProcess(Process):
 
     def mlKillProcess(self):
         self._shared['exit'] = True
-        if self._shared['running']:
-            self.terminate()
-            self.join()
-        self._shared['running'] = False
+        self.terminate()
+        self.join()
 
     def run(self):
         raise NotImplementedError

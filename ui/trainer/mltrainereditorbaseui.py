@@ -29,15 +29,17 @@ class MLTrainerEditorBaseUI(QDockWidget, MLTrainerEditorBaseIface):
         self.visibilityChanged.connect(self.mlOnVisibilityChanged)
         self.setFeatures(QDockWidget.DockWidgetClosable)
 
+        self._exclusiveUI = None
+
+    def setExclusiveUI(self, exclusive):
+        self._exclusiveUI = exclusive
 
     def mlResetUI(self):
         pass
 
     def mlOnVisibilityChanged(self, visible):
         if visible:
-            loadUI = self._plugin.mlGetTrainerLoaderUI()
-
-            if loadUI is not None:
-                loadUI.setVisible(not visible)
+            if self._exclusiveUI is not None:
+                self._exclusiveUI.setVisible(not visible)
 
             self.mlResetUI()

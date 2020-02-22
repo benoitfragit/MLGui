@@ -26,12 +26,12 @@ class MLPluginViewerUI(QDockWidget):
         self.setFeatures(QDockWidget.DockWidgetClosable)
         self.setVisible(False)
 
-    def mlOnNewPluginAdded(self, plugin, menu):
+    def mlOnNewPluginAdded(self, plugin, menu, loadUI):
         if plugin is not None:
             uuid = plugin.mlGetUniqId()
 
             if uuid not in self._items.keys():
-                self._items[uuid] = MLPluginViewerItemUI(plugin, menu)
+                self._items[uuid] = MLPluginViewerItemUI(plugin, menu, loadUI)
                 self._mainWidget.addItem(self._items[uuid].mlGetItem())
                 self._mainWidget.setItemWidget(self._items[uuid].mlGetItem(), self._items[uuid])
 

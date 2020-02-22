@@ -103,7 +103,7 @@ class MLTrainerViewerItemUI(QWidget):
             if self._trainer.mlIsProcessPaused():
                 self._trainer.mlResumeProcess()
             elif not self._trainer.mlIsProcessRunning() :
-                self._trainer.start()
+                self._trainer.mlTrainerRun()
                 self._item.setSizeHint(self.sizeHint())
                 self._timer.start(30)
                 self.mlOnDisplayTrainer()
@@ -130,7 +130,7 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlOnConfigureTrainedClicked(self):
         if self._trainer is not None:
-            self._editui.fromTrainer(self._trainer.mlGetInternal())
+            self._editui.fromTrainer(self._trainer)
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
