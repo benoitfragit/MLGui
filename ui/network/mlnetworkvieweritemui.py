@@ -28,10 +28,11 @@ class MLNetworkViewerItemUI(QWidget):
         QWidget.__init__(self, parent)
 
         self._network = network
+        self._scene   = self._network.mlGetScene()
 
         vbox = QVBoxLayout()
 
-        label   = QLabel(network.mlGetUserName())
+        label   = QLabel(network.username)
         label.setAlignment(Qt.AlignCenter)
         pixLabel    = QLabel()
         with resources.path(data, 'network.png') as p:
@@ -49,7 +50,7 @@ class MLNetworkViewerItemUI(QWidget):
         self._item.setSizeHint(self.sizeHint())
 
     def mlGetUserName(self):
-        return self._network.mlGetUserName()
+        return self._network.username
 
     def mlGetItem(self):
         return self._item
@@ -98,11 +99,11 @@ class MLNetworkViewerItemUI(QWidget):
 
     def mlOnUpdate(self):
         if  self._network is not None:
-            self._network.mlUpdateNetworkDrawerUI()
+            self._network.mlUpdateNetworkDrawerUI(self._scene)
 
     def mlOnDisplayNetwork(self, viewer):
         if viewer is not None:
             # Initially create the scene
-            self._network.mlDisplayNetworkDrawerUI()
-            viewer.setScene(self._network.scene)
-            viewer.fitInView(self._network.scene.sceneRect(), Qt.KeepAspectRatio)
+            self._network.mlDisplayNetworkDrawerUI(self._scene)
+            viewer.setScene(self._scene)
+            viewer.fitInView(self._scene.sceneRect(), Qt.KeepAspectRatio)

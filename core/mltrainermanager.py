@@ -25,6 +25,6 @@ class MLTrainerManager(MLProcessManager):
 
             if os.path.exists(trainer_directory) and os.path.isdir(trainer_directory):
                 for process in self._processes.values():
-                    if process.mlGetUserName() == name and not process.mlIsProcessExited():
+                    if process.username == name and not process.mlIsProcessExited():
                         process.mlRestoreTrainerProgression(trainer_directory, progress, error)
                         break

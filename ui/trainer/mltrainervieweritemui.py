@@ -41,9 +41,11 @@ class MLTrainerViewerItemUI(QWidget):
         self._clearTimer = QTimer()
         self._clearTimer.timeout.connect(self.mlOnClearTrainerItemOnTimeout)
 
+        self._scene = self._trainer.mlGetScene()
+
         vbox = QVBoxLayout()
 
-        label   = QLabel(trainer.mlGetUserName())
+        label   = QLabel(trainer.username)
         label.setAlignment(Qt.AlignCenter)
         pixLabel    = QLabel()
         with resources.path(data, 'trainer.png') as p:
@@ -63,7 +65,7 @@ class MLTrainerViewerItemUI(QWidget):
         self._clearTimer.start(40)
 
     def mlGetUserName(self):
-        return self._trainer.mlGetUserName()
+        return self._trainer.username
 
     def mlGetItem(self):
         return self._item
@@ -93,7 +95,7 @@ class MLTrainerViewerItemUI(QWidget):
                 self._graph[1].append(error)
                 self.graphUpdated.emit()
 
-            self._trainer.mlUpdateNetworkDrawerUI()
+            self._trainer.mlUpdateNetworkDrawerUI(self._scene)
 
             if not self._trainer.mlIsProcessRunning():
                 self._timer.stop()
@@ -181,7 +183,7 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlJSONDecoding(self, d):
         pluginname  = self._trainer.mlGetPluginName()
-        username    = self._trainer.mlGetUserName()
+        username    = self._trainer.username
 
         if pluginname in d.keys():
             if username in d[pluginname]['trainers'].keys():
@@ -200,6 +202,6 @@ class MLTrainerViewerItemUI(QWidget):
     def mlOnDisplayTrainer(self):
         if self._view is not None:
             # Initially create the scene
-            self._trainer.mlDisplayNetworkDrawerUI()
-            self._view.setScene(self._trainer.scene)
-            self._view.fitInView(self._trainer.scene.sceneRect(), Qt.KeepAspectRatio)
+            self._trainer.mlDisplayNetworkDrawerUI(self._scene)
+            self._view.setScene(self._scene)
+            self._view.fitInView(self._scene.sceneRect(), Qt.KeepAspectRatio)

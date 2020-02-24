@@ -30,8 +30,6 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         self._shared['data_filepath']    = data_filepath
         self._shared['trainer_filepath'] = trainer_filepath
 
-        print("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>> on lance\n")
-
         # Launching the process
         self.start()
 
@@ -74,12 +72,14 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         MLProcess.mlKillProcess(self)
 
     def run(self):
+        # Load the given plugin in order to load correctly the trainer
+
         # Initialize the trainer with the associated plugin
         network_filepath = self._shared['network_filepath']
         data_filepath = self._shared['data_filepath']
         trainer_filepath = self._shared['trainer_filepath']
 
-        trainer = plugin.mlGetLoadedTrainer(network_filepath, data_filepath, trainer_filepath)
+        trainer = self._plugin.mlGetLoadedTrainer(network_filepath, data_filepath, trainer_filepath)
 
         # effectively start th process lifecycle
         while (not self._shared['exit']):
@@ -134,7 +134,7 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         self._shared['error']    = error
 
     def mlJSONEncoding(self, d):
-        username    = self.mlGetUserName()
+        username    = self._username
         running     = self.mlIsTrainerRunning() > 0
         exited      = self.mlIsTrainerExited() > 0
         error       = self.mlGetTrainerError()
