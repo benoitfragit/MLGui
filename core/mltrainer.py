@@ -4,8 +4,9 @@
 import sys
 import os
 
-from core.mlprocess import MLProcess
+from core.mlprocess         import MLProcess
 from core.mlnetworkprovider import MLNetworkProvider
+from core.mlpluginloader    import MLPluginLoader
 
 class MLTrainer(MLProcess, MLNetworkProvider):
     def __init__(self, username, manager, plugin, network_filepath, data_filepath, trainer_filepath):
@@ -29,12 +30,15 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         self._shared['network_filepath'] = network_filepath
         self._shared['data_filepath']    = data_filepath
         self._shared['trainer_filepath'] = trainer_filepath
+        self._shared['package']          = plugin.package
+        self._shared['module']           = plugin.module
+        self._shared['plugin_name']      = plugin.mlGetPluginName()
 
         # Launching the process
         self.start()
 
     def mlGetPluginName(self):
-        return self._plugin.mlGetPluginName()
+        return self._shared['plugin_name']
 
     def mlIsPluginActivated(self):
         return self._plugin.mlIsPluginActivated()
@@ -73,55 +77,57 @@ class MLTrainer(MLProcess, MLNetworkProvider):
 
     def run(self):
         # Load the given plugin in order to load correctly the trainer
+        plugin = MLPluginLoader.mlLoadPlugin(self._shared['module'], self._shared['package'])
 
-        # Initialize the trainer with the associated plugin
-        network_filepath = self._shared['network_filepath']
-        data_filepath = self._shared['data_filepath']
-        trainer_filepath = self._shared['trainer_filepath']
+        if plugin is not None:
+            # Initialize the trainer with the associated plugin
+            network_filepath = self._shared['network_filepath']
+            data_filepath = self._shared['data_filepath']
+            trainer_filepath = self._shared['trainer_filepath']
 
-        trainer = self._plugin.mlGetLoadedTrainer(network_filepath, data_filepath, trainer_filepath)
+            trainer = plugin.mlGetLoadedTrainer(network_filepath, data_filepath, trainer_filepath)
 
-        # effectively start th process lifecycle
-        while (not self._shared['exit']):
-            # Get configure file from configure queue
-            trainer_filepath = self._configure_queue.get()
-            if trainer_filepath is not None:
-                self._shared['trainer_filepath'] = trainer_filepath
-                self._plugin.mlConfigureTrainer(trainer, trainer_filepath)
+            # effectively start th process lifecycle
+            while (not self._shared['exit']):
+                # Get configure file from configure queue
+                trainer_filepath = self._configure_queue.get()
+                if trainer_filepath is not None:
+                    self._shared['trainer_filepath'] = trainer_filepath
+                    self._plugin.mlConfigureTrainer(trainer, trainer_filepath)
 
-            # Get restore file from restore queue
-            restore_filepath = self._restore_queue.get()
-            if restore_filepath is not None:
-                self._plugin.mlRestoreTrainerProgression(trainer, restore_filepath, self._shared['progress'], self._shared['error'])
+                # Get restore file from restore queue
+                restore_filepath = self._restore_queue.get()
+                if restore_filepath is not None:
+                    plugin.mlRestoreTrainerProgression(trainer, restore_filepath, self._shared['progress'], self._shared['error'])
 
+                save_filepath = self._save_queue.get()
+                if save_filepath is not None:
+                    plugin.mlSaveTrainerProgression(trainer, save_filepath)
+
+                # Start the training process if needed
+                if self._shared['running'] and not self._shared['finished']: 
+                    while (self._shared['running']):
+                        if self._shared['exit'] or self._shared['finished']:
+                            # Stop everything if we stop this process
+                            self._shared['running'] = False
+                        else:
+                            self._lock.acquire()
+                            plugin.mlTrainerRun(self._internal)
+
+                            self._shared['finished']  = plugin.mlIsTrainerRunning(trainer)
+                            self._shared['progress']  = plugin.mlGetTrainerProgress(trainer)
+                            self._shared['error']     = plugin.mlGetTrainerError(trainer)
+
+                            self.mlUpdateTrainerProvider(plugin, trainer)
+
+                            self._lock.release()
+        
+            # try to save the trainer if needed before leaving
             save_filepath = self._save_queue.get()
             if save_filepath is not None:
-                self._plugin.mlSaveTrainerProgression(trainer, save_filepath)
+                plugin.mlSaveTrainerProgression(trainer, save_filepath)
 
-            # Start the training process if needed
-            if self._shared['running'] and not self._shared['finished']: 
-                while (self._shared['running']):
-                    if self._shared['exit'] or self._shared['finished']:
-                        # Stop everything if we stop this process
-                        self._shared['running'] = False
-                    else:
-                        self._lock.acquire()
-                        self._plugin.mlTrainerRun(self._internal)
-
-                        self._shared['finished']  = self._plugin.mlIsTrainerRunning(trainer)
-                        self._shared['progress']  = self._plugin.mlGetTrainerProgress(trainer)
-                        self._shared['error']     = self._plugin.mlGetTrainerError(trainer)
-
-                        self.mlUpdateTrainerProvider()
-
-                        self._lock.release()
-        
-        # try to save the trainer if needed before leaving
-        save_filepath = self._save_queue.get()
-        if save_filepath is not None:
-            self._plugin.mlSaveTrainerProgression(trainer, save_filepath)
-
-        self._plugin.mlDeleteTrainer(traier)
+            plugin.mlDeleteTrainer(traier)
 
     def mlSaveTrainerProgression(self, directory):
         path = os.path.join(directory, self._username)
@@ -153,15 +159,14 @@ class MLTrainer(MLProcess, MLNetworkProvider):
     def mlGetSettingsFilePath(self):
         return self._shared['trainer_filepath']
 
-    def mlUpdateTrainerProvider(self):
+    def mlUpdateTrainerProvider(self, plugin, trainer):
         for i in self.arrays.keys():
             signal = None
             sizeOfSignal = len(self._arrays[i])
             if i == 0:
-                signal = self._plugin.mlGetTrainerInputSignal(self._internal, sizeOfSignal)
+                signal = plugin.mlGetTrainerInputSignal(trainer, sizeOfSignal)
             else:
-                signal = self._plugin.mlGetTrainerLayerOutputSignal(self._internal, i - 1, sizeOfSignal)
+                signal = plugin.mlGetTrainerLayerOutputSignal(trainer, i - 1, sizeOfSignal)
             if signal is not None:
                 self._arrays[i] = signal[:]
-                print (i, self._arrays[i])
 

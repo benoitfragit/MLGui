@@ -28,7 +28,7 @@ class MLNetworkViewerItemUI(QWidget):
         QWidget.__init__(self, parent)
 
         self._network = network
-        self._scene   = self._network.mlGetScene()
+        self._scene   = None
 
         vbox = QVBoxLayout()
 

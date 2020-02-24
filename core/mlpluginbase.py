@@ -12,6 +12,8 @@ class MLPluginBase( MLPluginIFace):
         self._version           = None
         self._author            = None
         self._description       = None
+        self._package           = None
+        self._module            = None
 
     def mlGetUniqId(self):
         return self._uuid
@@ -33,3 +35,19 @@ class MLPluginBase( MLPluginIFace):
 
     def mlGetPluginVersion(self):
         return self._version
+
+    @property
+    def package(self):
+        return self._package
+
+    @property
+    def module(self):
+        return self._module
+
+    @module.setter
+    def module(self, value):
+        self._module = value
+
+    @package.setter
+    def package(self, value):
+        self._package = value

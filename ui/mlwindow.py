@@ -129,7 +129,7 @@ class MLWindow(QMainWindow):
             """
             Populate the new trainer menu
             """
-            loadUI, editUI = plugin.mlGetTrainerUI()
+            loadUI, editUI, sceneUI = plugin.mlGetTrainerUI()
             
             """
             Populate the plugin viewer ui
@@ -147,6 +147,7 @@ class MLWindow(QMainWindow):
     def mlAddNewTrainer(self, plugin, trainer_name, network_filepath, data_filepath, trainer_filepath):
         if  plugin is not None:
             editUI = self._editUIs[plugin.mlGetUniqId()]
+            loadUI, otherEditUI, sceneUI = plugin.mlGetTrainerUI()
 
             trainer = MLTrainer(trainer_name,
                                 self._trainermanager,
@@ -156,7 +157,7 @@ class MLWindow(QMainWindow):
                                 trainer_filepath)
 
             self._trainermanager.mlAddProcess(trainer)
-            self._trainerviewer.mlOnNewTrainerAdded(trainer, editUI)
+            self._trainerviewer.mlOnNewTrainerAdded(trainer, editUI, sceneUI)
 
             self.mlOnDisplayTrainers()
 

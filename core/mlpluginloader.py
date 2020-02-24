@@ -23,19 +23,26 @@ class MLPluginLoader:
                     dirname = os.path.dirname(module_dir).split(os.path.sep)[-1]
                     dir = dir + '.' + dirname
 
-                    print(dir, base)
-                    module  = importlib.import_module(dir, package=base)
-                    print(module)
+                    plugin = MLPluginLoader.mlLoadPlugin(dir, base)
+                    if plugin is not None:
+                        self._plugins[dirname] = plugin
 
-                    if dirname not in self._plugins.keys():
-                        try:
-                            plugin = module.MLPlugin()
-                            if isinstance(plugin, MLPluginBase):
-                                self._plugins[dirname] = plugin
-                            else:
-                                sys.stderr.write( 'MLPlugin class is not  a valid MLPluginBase class')
-                        except:
-                            continue
+    @staticmethod
+    def mlLoadPlugin(module, package):
+        module  = importlib.import_module(module, package=package)
+
+        try:
+            plugin = module.MLPlugin()
+            if isinstance(plugin, MLPluginBase):
+                plugin.package = package
+                plugin.module  = module
+            else:
+                plugin = None
+                sys.stderr.write( 'MLPlugin class is not  a valid MLPluginBase class')
+        except:
+            plugin = None
+
+        return plugin
 
     def mlGetPluginByName(self, name):
         ret = None

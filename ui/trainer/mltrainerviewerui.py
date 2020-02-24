@@ -143,12 +143,12 @@ class MLTrainerViewerUI(QListWidget):
             self._items[id].mlOnRemoveTrainerClicked()
             self._manager.mlRemoveProcess(id)
 
-    def mlOnNewTrainerAdded(self, trainer, editUI):
+    def mlOnNewTrainerAdded(self, trainer, editUI, sceneUI):
         if trainer is not None:
             uid = trainer.mlGetUniqId()
 
             if uid not in self._items.keys():
-                self._items[uid] = MLTrainerViewerItemUI(trainer, editUI, self._overview.view)
+                self._items[uid] = MLTrainerViewerItemUI(trainer, editUI, sceneUI, self._overview.view)
                 item = self._items[uid].mlGetItem()
 
                 self._items[uid].removeTrainer.connect(self.mlOnRemoveTrainer)

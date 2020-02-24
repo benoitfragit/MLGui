@@ -28,7 +28,7 @@ class MLTrainerViewerItemUI(QWidget):
     graphUpdated = pyqtSignal()
     trainerLaunched = pyqtSignal()
 
-    def __init__(self, trainer, editui, view, parent = None):
+    def __init__(self, trainer, editui, sceneui, view, parent = None):
         QWidget.__init__(self, parent)
 
         self._graph = [[], []]
@@ -41,7 +41,7 @@ class MLTrainerViewerItemUI(QWidget):
         self._clearTimer = QTimer()
         self._clearTimer.timeout.connect(self.mlOnClearTrainerItemOnTimeout)
 
-        self._scene = self._trainer.mlGetScene()
+        self._scene = sceneui
 
         vbox = QVBoxLayout()
 

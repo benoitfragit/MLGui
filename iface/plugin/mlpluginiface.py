@@ -92,10 +92,6 @@ class MLPluginIFace:
         raise NotImplementedError
 
     @abstractmethod
-    def mlGetNetworkDrawerUI(self):
-        raise NotImplementedError
-
-    @abstractmethod
     def mlGetTrainerUI(self):
         raise NotImplementedError
 
