@@ -38,8 +38,6 @@ class MLTrainerViewerItemUI(QWidget):
         self._view    = view
         self._timer   = QTimer()
         self._timer.timeout.connect(self.mlUpdateTrainerItemOnTimeout)
-        self._clearTimer = QTimer()
-        self._clearTimer.timeout.connect(self.mlOnClearTrainerItemOnTimeout)
 
         self._scene = sceneui
 
@@ -62,8 +60,6 @@ class MLTrainerViewerItemUI(QWidget):
         self._item = QListWidgetItem()
         self._item.setSizeHint(self.sizeHint())
 
-        self._clearTimer.start(40)
-
     def mlGetUserName(self):
         return self._trainer.username
 
@@ -72,12 +68,6 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlTrainerItemGetGraph(self):
         return self._graph
-
-    def mlOnClearTrainerItemOnTimeout(self):
-        if self._clearTimer.isActive():
-            if not self._trainer.mlIsPluginActivated():
-                self._clearTimer.stop()
-                self.mlOnRemoveTrainerClicked()
 
     def mlUpdateTrainerItemOnTimeout(self):
         if self._timer.isActive():
@@ -156,7 +146,7 @@ class MLTrainerViewerItemUI(QWidget):
             run.setVisible(is_paused)
             pause.setVisible(not is_paused)
         else:
-            is_not_finished = not self._trainer.mlIsProcessFinish()
+            is_not_finished = not self._trainer.mlIsProcessFinished()
             run.setVisible(is_not_finished)
             configure.setVisible(is_not_finished)
             stop.setVisible(False)
@@ -205,3 +195,7 @@ class MLTrainerViewerItemUI(QWidget):
             self._trainer.mlDisplayNetworkDrawerUI(self._scene)
             self._view.setScene(self._scene)
             self._view.fitInView(self._scene.sceneRect(), Qt.KeepAspectRatio)
+
+    def mlOnPluginActivationChanged(self, id, activated):
+        if self._trainer is not None and not activated and id == self._trainer.mlGetPluginId():
+            self._trainer.mlOnRemoveTrainerClicked()

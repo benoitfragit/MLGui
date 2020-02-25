@@ -14,6 +14,8 @@ from PyQt5.QtCore    import Qt
 import uuid
 
 class MLPluginViewerItemUI(QWidget):
+    mlPluginActivationChanged   = pyqtSignal(uuid.UUID, bool)
+
     def __init__(self, plugin, trainerMenu, loadUI, parent = None):
         QWidget.__init__(self, parent)
 
@@ -91,6 +93,8 @@ class MLPluginViewerItemUI(QWidget):
         if self._check.isChecked():
             self._plugin.mlSetPluginActivated(True)
             self._trainerMenu.addAction(self._trainerAction)
+            self.mlPluginActivationChanged.emit(self._plugin.mlGetUniqId(), True)
         else:
             self._plugin.mlSetPluginActivated(False)
             self._trainerMenu.removeAction(self._trainerAction)
+            self.mlPluginActivationChanged.emit(self._plugin.mlGetUniqId(), False)

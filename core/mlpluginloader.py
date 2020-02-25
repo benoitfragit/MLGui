@@ -29,10 +29,10 @@ class MLPluginLoader:
 
     @staticmethod
     def mlLoadPlugin(module, package):
-        module  = importlib.import_module(module, package=package)
+        imported = importlib.import_module(module, package=package)
 
         try:
-            plugin = module.MLPlugin()
+            plugin = imported.MLPlugin()
             if isinstance(plugin, MLPluginBase):
                 plugin.package = package
                 plugin.module  = module

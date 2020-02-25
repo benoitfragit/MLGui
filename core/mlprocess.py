@@ -17,6 +17,7 @@ class MLProcess(Process):
 
         self._shared['exit']      = False
         self._shared['running']   = False
+        self._shared['finished']         = False
 
     def mlGetUniqId(self):
         return self._uuid
@@ -42,6 +43,9 @@ class MLProcess(Process):
         if 'exit' in self._shared.keys():
             ret = self._shared['exit']
         return ret
+
+    def mlIsProcessFinished(self):
+        return self._shared['finished']
 
     def mlKillProcess(self):
         self._shared['exit'] = True

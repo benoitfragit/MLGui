@@ -89,7 +89,6 @@ class MLWindow(QMainWindow):
         self.setCentralWidget(stackwidget)
 
         # Register all plugins
-        self._editUIs = {}
         self.mlRegisterAllPlugins(pluginloader)
 
     def mlGetSavingDirectory(self):
@@ -135,6 +134,7 @@ class MLWindow(QMainWindow):
             Populate the plugin viewer ui
             """
             self._pluginviewer.mlOnNewPluginAdded(plugin, self._newTrainerMenu, loadUI)
+            self._pluginviewer.mlPluginActivationChanged.connect(self._trainerviewer.mlOnPluginActivationChanged)
 
             if isinstance(loadUI, MLTrainerLoaderBaseUI):
                 self.addDockWidget(Qt.LeftDockWidgetArea, loadUI)
@@ -142,12 +142,10 @@ class MLWindow(QMainWindow):
 
             if isinstance(editUI, MLTrainerEditorBaseUI):
                 self.addDockWidget(Qt.LeftDockWidgetArea, editUI)
-                self._editUIs[plugin.mlGetUniqId()] = editUI
 
     def mlAddNewTrainer(self, plugin, trainer_name, network_filepath, data_filepath, trainer_filepath):
         if  plugin is not None:
-            editUI = self._editUIs[plugin.mlGetUniqId()]
-            loadUI, otherEditUI, sceneUI = plugin.mlGetTrainerUI()
+            loadUI, editUI, sceneUI = plugin.mlGetTrainerUI()
 
             trainer = MLTrainer(trainer_name,
                                 self._trainermanager,

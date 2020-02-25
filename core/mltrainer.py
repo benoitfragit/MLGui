@@ -33,15 +33,16 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         self._shared['package']          = plugin.package
         self._shared['module']           = plugin.module
         self._shared['plugin_name']      = plugin.mlGetPluginName()
+        self._shared['plugin_id']        = plugin.mlGetUniqId()
 
         # Launching the process
         self.start()
 
+    def mlGetPluginId(self):
+        return self._shared['plugin_id']
+
     def mlGetPluginName(self):
         return self._shared['plugin_name']
-
-    def mlIsPluginActivated(self):
-        return self._plugin.mlIsPluginActivated()
 
     def mlConfigureTrainer(self, path):
         self._configure_queue.put(path)
@@ -66,11 +67,11 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         self._shared['exit'] = exited
 
     def mlKillProcess(self):
-        self._configure_queue.close()
+        #self._configure_queue.close()
         self._configure_queue.join_thread()
-        self._restore_queue.close()
+        #self._restore_queue.close()
         self._restore_queue.join_thread()
-        self._save_queue.close()
+        #self._save_queue.close()
         self._save_queue.join_thread()
 
         MLProcess.mlKillProcess(self)

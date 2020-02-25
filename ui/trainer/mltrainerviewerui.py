@@ -53,6 +53,7 @@ class MLTrainerOverviewUI(QWidget):
 class MLTrainerViewerUI(QListWidget):
     mlShowTrainerPlotSignal = pyqtSignal()
     mlShowSelectedTrainerPlotSignal = pyqtSignal()
+    mlPluginActivationChanged = pyqtSignal(uuid.UUID, bool)
 
     def __init__(self, manager, parent = None):
         QListWidget.__init__(self, parent)
@@ -160,6 +161,8 @@ class MLTrainerViewerUI(QListWidget):
 
                 self._overview.plot.mlAddSubPlot(uid, self._items[uid])
 
+                self.mlPluginActivationChanged.connect(self._items[uid].mlOnPluginActivationChanged)
+
     def mlOnItemDoubleClicked(self, item):
         if item is not None:
             widget = self.itemWidget(item)
@@ -178,3 +181,7 @@ class MLTrainerViewerUI(QListWidget):
         for trainer in self._items.values():
             if trainer is not None:
                 trainer.mlJSONEncoding(d)
+
+    def mlOnPluginActivationChanged(self, id, activated):
+        self.mlPluginActivationChanged.emit(id, activated)
+                
