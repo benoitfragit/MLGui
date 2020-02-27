@@ -33,6 +33,7 @@ class MLPluginLoader:
 
         try:
             plugin = imported.MLPlugin()
+
             if isinstance(plugin, MLPluginBase):
                 plugin.package = package
                 plugin.module  = module

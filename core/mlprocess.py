@@ -17,17 +17,17 @@ class MLProcess(Process):
 
         self._shared['exit']      = False
         self._shared['running']   = False
-        self._shared['finished']         = False
+        self._shared['paused']    = False
+        self._shared['finished']  = False
 
     def mlGetUniqId(self):
         return self._uuid
 
     def mlPauseProcess(self):
-        self._shared['running'] = False
+        self._shared['paused'] = True
 
     def mlResumeProcess(self):
-        if not self._shared['exit']:
-            self._shared['running'] = True
+        self._shared['paused'] = False
 
     def mlIsProcessRunning(self):
         ret = False

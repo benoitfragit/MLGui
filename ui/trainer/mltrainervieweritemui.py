@@ -115,7 +115,6 @@ class MLTrainerViewerItemUI(QWidget):
         if self._trainer is not None:
             id = self._trainer.mlGetUniqId()
             self._trainer.mlKillProcess()
-            self._trainer.mlDeleteTrainer()
             self.removeTrainer.emit(id)
             self._timer.stop()
             self._trainer.scene.clear()
