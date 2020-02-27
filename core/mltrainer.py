@@ -106,14 +106,14 @@ class MLTrainer(MLProcess, MLNetworkProvider):
                         if self._shared['exit'] or self._shared['finished'] or self._shared['paused']:
                             # Stop everything if we stop this process
                             self._shared['running'] = False
-                            sys.stdout.write(">>>>>>>>>>>>>>>>>>>>>>>>>>>> finished\n")
                         else:
-                            sys.stdout.write(">>>>>>>>>>>>>>>>>>>>>>>>>>>> running\n")
-
                             self._lock.acquire()
                             plugin.mlTrainerRun(trainer)
 
-                            self._shared['finished']  = plugin.mlIsTrainerRunning(trainer)
+                            self._shared['finished']  = True
+                            if plugin.mlIsTrainerRunning(trainer):
+                                self._shared['finished']  = False
+
                             self._shared['progress']  = plugin.mlGetTrainerProgress(trainer)
                             self._shared['error']     = plugin.mlGetTrainerError(trainer)
 
@@ -122,14 +122,12 @@ class MLTrainer(MLProcess, MLNetworkProvider):
                             self._lock.release()
         
             # try to save the trainer if needed before leaving
-            save_filepath = self._save_queue.get()
-            if save_filepath is not None:
-                plugin.mlSaveTrainerProgression(trainer, save_filepath)
+            if not self._save_queue.empty():
+                save_filepath = self._save_queue.get()
+                if save_filepath is not None:
+                    plugin.mlSaveTrainerProgression(trainer, save_filepath)
 
             plugin.mlDeleteTrainer(trainer)
-
-            sys.stdout.write(">>>>>>>>>>>>>>>>>>>>>>>>>>>> out\n")
-
 
     def mlSaveTrainerProgression(self, directory):
         path = os.path.join(directory, self._username)

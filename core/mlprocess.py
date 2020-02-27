@@ -36,7 +36,7 @@ class MLProcess(Process):
         return ret
 
     def mlIsProcessPaused(self):
-        return not self.mlIsProcessRunning()
+        return self._shared['paused']
 
     def mlIsProcessExited(self):
         ret = False
