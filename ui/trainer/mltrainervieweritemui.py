@@ -97,7 +97,7 @@ class MLTrainerViewerItemUI(QWidget):
             elif not self._trainer.mlIsProcessRunning() :
                 self._trainer.mlTrainerRun()
                 self._item.setSizeHint(self.sizeHint())
-                self._timer.start(30)
+                self._timer.start(7)
                 self.mlOnDisplayTrainer()
                 self.trainerLaunched.emit()
 
@@ -111,10 +111,13 @@ class MLTrainerViewerItemUI(QWidget):
                 self._trainer.mlKillProcess()
                 self._timer.stop()
 
+    def mlKillTrainer(self):
+        self._trainer.mlKillProcess()
+
     def mlOnRemoveTrainerClicked(self):
         if self._trainer is not None:
             id = self._trainer.mlGetUniqId()
-            self._trainer.mlKillProcess()
+            self.mlKillTrainer()
             self.removeTrainer.emit(id)
             self._timer.stop()
 

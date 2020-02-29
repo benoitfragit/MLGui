@@ -141,8 +141,9 @@ class MLTrainerViewerUI(QListWidget):
     def mlRemoveAllTrainers(self):
         for id in self._items.keys():
             self._overview.plot.mlRemoveSubPlot(id)
-            self._items[id].mlOnRemoveTrainerClicked()
+            self._items[id].mlKillTrainer()
             self._manager.mlRemoveProcess(id)
+        self._items.clear()
 
     def mlOnNewTrainerAdded(self, trainer, editUI, sceneUI):
         if trainer is not None:

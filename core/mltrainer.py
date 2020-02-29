@@ -8,6 +8,9 @@ from core.mlprocess         import MLProcess
 from core.mlnetworkprovider import MLNetworkProvider
 from core.mlpluginloader    import MLPluginLoader
 
+import multiprocessing
+import logging
+
 class MLTrainer(MLProcess, MLNetworkProvider):
     def __init__(self, username, manager, plugin, network_filepath, data_filepath, trainer_filepath):
         MLProcess.__init__(self, manager)
