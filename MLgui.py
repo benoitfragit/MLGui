@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from PyQt5    import QtWidgets
+from PyQt5 import QtWidgets
 
 from core.mlpluginloader import MLPluginLoader
 from core.mltrainermanager import MLTrainerManager
 
-from ui.mlwindow   import MLWindow
+from ui.mlwindow import MLWindow
 
 import os
 import sys
 import signal
+
 
 def main():
     app = QtWidgets.QApplication.instance()
@@ -18,7 +19,7 @@ def main():
         app = QtWidgets.QApplication(sys.argv)
 
     manager = MLTrainerManager()
-    loader  = MLPluginLoader()
+    loader = MLPluginLoader()
 
     window = MLWindow(manager, loader)
 
@@ -26,6 +27,7 @@ def main():
 
     window.show()
     sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     main()

@@ -9,32 +9,33 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
-from PyQt5.QtGui     import QPixmap
+from PyQt5.QtGui import QPixmap
 
-from PyQt5.QtGui     import QIcon
-from PyQt5.QtCore    import Qt
-from PyQt5.QtCore    import QSize
-from PyQt5.QtCore    import pyqtSignal
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QSize
+from PyQt5.QtCore import pyqtSignal
 
 from importlib import resources
 from ui import data
 import uuid
 import os
 
+
 class MLNetworkViewerItemUI(QWidget):
     removeNetwork = pyqtSignal(uuid.UUID)
 
-    def __init__(self, network, parent = None):
+    def __init__(self, network, parent=None):
         QWidget.__init__(self, parent)
 
         self._network = network
-        self._scene   = None
+        self._scene = None
 
         vbox = QVBoxLayout()
 
-        label   = QLabel(network.username)
+        label = QLabel(network.username)
         label.setAlignment(Qt.AlignCenter)
-        pixLabel    = QLabel()
+        pixLabel = QLabel()
         with resources.path(data, 'network.png') as p:
             pixmap = QPixmap(str(p))
             pixmap = pixmap.scaledToWidth(120)
@@ -59,10 +60,10 @@ class MLNetworkViewerItemUI(QWidget):
         if not self._network.managed:
             menu = QMenu(self)
 
-            connect     = QAction(QIcon.fromTheme('media-playback-start'), '&Connect', self)
-            disconnect  = QAction(QIcon.fromTheme('media-playback-pause'), '&Disconnect', self)
-            remove      = QAction(QIcon.fromTheme('user-trash'),'&Remove', self)
-            configure   = QAction(QIcon.fromTheme('document-properties'), '&Configure', self)
+            connect = QAction(QIcon.fromTheme('media-playback-start'), '&Connect', self)
+            disconnect = QAction(QIcon.fromTheme('media-playback-pause'), '&Disconnect', self)
+            remove = QAction(QIcon.fromTheme('user-trash'), '&Remove', self)
+            configure = QAction(QIcon.fromTheme('document-properties'), '&Configure', self)
 
             connect.triggered.connect(self.mlOnConnectNetworkClicked)
             disconnect.triggered.connect(self.mlOnDisconnectNetworkClicked)
@@ -98,7 +99,7 @@ class MLNetworkViewerItemUI(QWidget):
         return self._network.mlGetUniqId()
 
     def mlOnUpdate(self):
-        if  self._network is not None:
+        if self._network is not None:
             self._network.mlUpdateNetworkDrawerUI(self._scene)
 
     def mlOnDisplayNetwork(self, viewer):

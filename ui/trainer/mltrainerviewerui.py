@@ -9,17 +9,18 @@ from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QGraphicsView
 
-from PyQt5.QtGui     import QIcon
-from PyQt5.QtCore    import Qt
-from PyQt5.QtCore    import pyqtSignal
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSignal
 
-from ui.trainer.mltrainervieweritemui  import MLTrainerViewerItemUI
-from ui.trainer.mlplotmanager          import MLPlotManager
+from ui.trainer.mltrainervieweritemui import MLTrainerViewerItemUI
+from ui.trainer.mlplotmanager import MLPlotManager
 
 import uuid
 
+
 class MLTrainerGraphicsViewUI(QGraphicsView):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QGraphicsView.__init__(self, parent)
 
     def resizeEvent(self, event):
@@ -28,9 +29,10 @@ class MLTrainerGraphicsViewUI(QGraphicsView):
         if scene is not None:
             self.fitInView(scene.sceneRect(), Qt.KeepAspectRatio)
 
+
 class MLTrainerOverviewUI(QWidget):
-    def __init__(self, parent = None):
-        QWidget.__init__(self, parent = parent)
+    def __init__(self, parent=None):
+        QWidget.__init__(self, parent=parent)
 
         self._plot = MLPlotManager()
         self._view = MLTrainerGraphicsViewUI()
@@ -50,12 +52,13 @@ class MLTrainerOverviewUI(QWidget):
     def view(self):
         return self._view
 
+
 class MLTrainerViewerUI(QListWidget):
     mlShowTrainerPlotSignal = pyqtSignal()
     mlShowSelectedTrainerPlotSignal = pyqtSignal()
     mlPluginActivationChanged = pyqtSignal(uuid.UUID, bool)
 
-    def __init__(self, manager, parent = None):
+    def __init__(self, manager, parent=None):
         QListWidget.__init__(self, parent)
 
         self._manager = manager
@@ -154,8 +157,8 @@ class MLTrainerViewerUI(QListWidget):
                 item = self._items[uid].mlGetItem()
 
                 self._items[uid].removeTrainer.connect(self.mlOnRemoveTrainer)
-                self._items[uid].graphUpdated.connect(lambda:self.mlOnGraphUpdated(uid))
-                self._items[uid].trainerLaunched.connect(lambda:self.mlShowPlot(uid))
+                self._items[uid].graphUpdated.connect(lambda: self.mlOnGraphUpdated(uid))
+                self._items[uid].trainerLaunched.connect(lambda: self.mlShowPlot(uid))
 
                 self.addItem(item)
                 self.setItemWidget(item, self._items[uid])
@@ -185,4 +188,3 @@ class MLTrainerViewerUI(QListWidget):
 
     def mlOnPluginActivationChanged(self, id, activated):
         self.mlPluginActivationChanged.emit(id, activated)
-                

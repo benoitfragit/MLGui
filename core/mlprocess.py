@@ -7,18 +7,19 @@ from multiprocessing import Process
 from multiprocessing import Event
 from multiprocessing import Lock
 
+
 class MLProcess(Process):
     def __init__(self, manager):
         Process.__init__(self)
 
-        self._uuid  = uuid.uuid4()
-        self._lock  = Lock()
-        self._shared= manager.dict()
+        self._uuid = uuid.uuid4()
+        self._lock = Lock()
+        self._shared = manager.dict()
 
-        self._shared['exit']      = False
-        self._shared['running']   = False
-        self._shared['paused']    = False
-        self._shared['finished']  = False
+        self._shared['exit'] = False
+        self._shared['running'] = False
+        self._shared['paused'] = False
+        self._shared['finished'] = False
 
     def mlGetUniqId(self):
         return self._uuid

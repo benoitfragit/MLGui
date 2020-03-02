@@ -9,6 +9,7 @@ from matplotlib.gridspec import GridSpec
 import matplotlib.pyplot as plt
 import math
 
+
 class MLPlotManager(FigureCanvas):
     def __init__(self):
         self._figure = plt.figure(frameon=False)
@@ -18,15 +19,15 @@ class MLPlotManager(FigureCanvas):
 
         self._handle = self._figure.canvas.mpl_connect('button_press_event', self.mlOnAxeClicked)
 
-        self._lines= {}
+        self._lines = {}
         self._annotations = {}
         self._axes = {}
 
     def mlReogarnizePlot(self, N):
         cols = 2
-        rows = int(math.ceil(float(N)/float(cols)))
+        rows = int(math.ceil(float(N) / float(cols)))
         grid = GridSpec(rows, cols)
-        grid.update(wspace=0.5,hspace=0.5)
+        grid.update(wspace=0.5, hspace=0.5)
 
         for gs, ax in zip(grid, self._axes.values()):
             ax.set_position(gs.get_position(self._figure))
@@ -79,18 +80,18 @@ class MLPlotManager(FigureCanvas):
             self._axes[uid].set_ylabel('Error')
             self._axes[uid].xaxis.label.set_size(8)
             self._axes[uid].yaxis.label.set_size(8)
-            self._axes[uid].xaxis.set_ticks(range(0,150, 50))
-            self._axes[uid].yaxis.set_ticks(range(0,150, 50))
+            self._axes[uid].xaxis.set_ticks(range(0, 150, 50))
+            self._axes[uid].yaxis.set_ticks(range(0, 150, 50))
 
             self._annotations[uid] = self._axes[uid].annotate('',
-                                                xy=(0.85, 0.84),
-                                                xycoords='axes fraction',
-                                                horizontalalignment='right',
-                                                verticalalignment='top',
-                                                clip_on=True,
-                                                size=10,
-                                                bbox=None)
-                                                #dict(boxstyle='round', ec=None)
+                                                              xy=(0.85, 0.84),
+                                                              xycoords='axes fraction',
+                                                              horizontalalignment='right',
+                                                              verticalalignment='top',
+                                                              clip_on=True,
+                                                              size=10,
+                                                              bbox=None)
+            # dict(boxstyle='round', ec=None)
 
             self._axes[uid].set_xlim(0.0, 100.0)
             self._axes[uid].set_ylim(0.0, 100.0)
@@ -121,7 +122,7 @@ class MLPlotManager(FigureCanvas):
 
             self._lines[uid].set_color(clr)
 
-            if len(graph[1]) > 0 :
+            if len(graph[1]) > 0:
                 self._annotations[uid].set_text('Error:{0:.2f} %'.format(graph[1][-1]))
 
             self._axes[uid].relim()
@@ -144,13 +145,13 @@ class MLPlotManager(FigureCanvas):
         if uid in self._axes.keys():
             self._axes[uid].set_visible(True)
 
-            if N > 0 and i >= 0 and i <= N:
+            if N > 0 and 0 <= i <= N:
                 cols = 1
                 if N > 1:
                     cols = 2
-                rows = int(math.ceil(float(N)/float(cols)))
+                rows = int(math.ceil(float(N) / float(cols)))
                 grid = GridSpec(rows, cols)
-                grid.update(wspace=0.5,hspace=0.5)
+                grid.update(wspace=0.5, hspace=0.5)
 
                 # move old axes to their new position
                 self._axes[uid].set_position(grid[i].get_position(self._figure))

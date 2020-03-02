@@ -8,6 +8,7 @@ import sys
 
 from core.mlpluginbase import MLPluginBase
 
+
 class MLPluginLoader:
     def __init__(self):
         self._plugins = {}
@@ -16,8 +17,8 @@ class MLPluginLoader:
         for directory in plugin_directories.split(';'):
             if os.path.exists(directory) and os.path.isdir(directory):
                 module_dirs = glob.glob(directory + os.path.sep + '*' + os.path.sep)
-                dir         = os.path.basename(directory)
-                base        = os.path.dirname(directory)
+                dir = os.path.basename(directory)
+                base = os.path.dirname(directory)
 
                 for module_dir in module_dirs:
                     dirname = os.path.dirname(module_dir).split(os.path.sep)[-1]
@@ -36,10 +37,10 @@ class MLPluginLoader:
 
             if isinstance(plugin, MLPluginBase):
                 plugin.package = package
-                plugin.module  = module
+                plugin.module = module
             else:
                 plugin = None
-                sys.stderr.write( 'MLPlugin class is not  a valid MLPluginBase class')
+                sys.stderr.write('MLPlugin class is not  a valid MLPluginBase class')
         except:
             plugin = None
 
@@ -50,11 +51,12 @@ class MLPluginLoader:
         if name in self._plugins.keys():
             ret = self._plugins[name]
         else:
-            sys.stderr.write( "No plugin with name: "+ name)
+            sys.stderr.write("No plugin with name: " + name)
         return ret
 
     def mlGetAllPlugins(self):
         return self._plugins
+
 
 if __name__ == '__main__':
     d = MLPluginLoader()

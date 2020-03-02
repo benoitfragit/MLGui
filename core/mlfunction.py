@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 import sys
 
+
 class MLFunction:
-    def __init__(self, loader, name, restype, argstype, livewrapping = False):
+    def __init__(self, loader, name, restype, argstype, livewrapping=False):
         self._name = name
         self._restype = restype
         self._argstype = argstype
@@ -55,8 +56,8 @@ class MLFunction:
                 else:
                     ret = self._func()
             else:
-                sys.stderr.write( 'Method ' + self._name + ': Invalid number of argument')
+                sys.stderr.write('Method ' + self._name + ': Invalid number of argument')
         else:
-            sys.stderr.write( 'Method:' + self._name + ' hasn t been loaded')
+            sys.stderr.write('Method:' + self._name + ' hasn t been loaded')
 
         return ret

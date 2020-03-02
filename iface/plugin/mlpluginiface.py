@@ -3,10 +3,12 @@
 
 from abc import abstractmethod
 
+
 class MLPluginIFace:
     """
     Define all methods that a plugin should overwrite
     """
+
     @abstractmethod
     def mlGetTrainer(self, net, data):
         raise NotImplementedError
@@ -94,5 +96,3 @@ class MLPluginIFace:
     @abstractmethod
     def mlGetTrainerUI(self):
         raise NotImplementedError
-
-

@@ -8,19 +8,20 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QCheckBox
 from PyQt5.QtWidgets import QPlainTextEdit
 from PyQt5.QtWidgets import QListWidgetItem
-from PyQt5.QtCore    import pyqtSignal
-from PyQt5.QtCore    import Qt
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import Qt
 
 import uuid
 
-class MLPluginViewerItemUI(QWidget):
-    mlPluginActivationChanged   = pyqtSignal(uuid.UUID, bool)
 
-    def __init__(self, plugin, trainerMenu, loadUI, parent = None):
+class MLPluginViewerItemUI(QWidget):
+    mlPluginActivationChanged = pyqtSignal(uuid.UUID, bool)
+
+    def __init__(self, plugin, trainerMenu, loadUI, parent=None):
         QWidget.__init__(self, parent)
 
-        self._trainerMenu   = trainerMenu
-        self._item   = QListWidgetItem()
+        self._trainerMenu = trainerMenu
+        self._item = QListWidgetItem()
         self._plugin = plugin
 
         hbox1 = QHBoxLayout()
@@ -70,7 +71,7 @@ class MLPluginViewerItemUI(QWidget):
         self.setLayout(vbox)
 
         self._item.setSizeHint(self.sizeHint())
-        self._item.setFlags(self._item.flags() &~ Qt.ItemIsSelectable)
+        self._item.setFlags(self._item.flags() & ~ Qt.ItemIsSelectable)
 
         self._trainerAction = loadUI.toggleViewAction()
 

@@ -3,20 +3,21 @@
 
 from multiprocessing import Array
 
+
 class MLNetworkProvider:
-    def __init__(self, plugin, manager, network, username, managed = False):
-        self._arrays    = manager.dict()
-        self._managed   = managed
-        self._username  = username
+    def __init__(self, plugin, manager, network, username, managed=False):
+        self._arrays = manager.dict()
+        self._managed = managed
+        self._username = username
 
         numberOfLayers = plugin.mlGetNetworkNumberOfLayer(network)
         numberOfInputs = plugin.mlGetNetworkNumberOfInput(network)
-        
+
         # pass a signal for the input and all layer
         self._arrays[0] = manager.list([0] * numberOfInputs)
         for i in range(numberOfLayers):
             numberOfNeurons = plugin.mlGetLayerNumberOfNeuron(network, i)
-            self._arrays[i+1] = manager.list([0] * numberOfNeurons)
+            self._arrays[i + 1] = manager.list([0] * numberOfNeurons)
 
     @property
     def arrays(self):

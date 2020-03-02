@@ -4,11 +4,12 @@
 from PyQt5.QtWidgets import QGraphicsScene
 from PyQt5.QtWidgets import QGraphicsItem
 
-from PyQt5.QtGui     import QPen
+from PyQt5.QtGui import QPen
 
-from PyQt5.QtCore    import Qt
+from PyQt5.QtCore import Qt
 
-from iface.network           import MLNetworkDrawerBaseIface
+from iface.network import MLNetworkDrawerBaseIface
+
 
 class MLNetworkDrawerBaseUI(QGraphicsScene, MLNetworkDrawerBaseIface):
     def __init__(self):
@@ -20,7 +21,7 @@ class MLNetworkDrawerBaseUI(QGraphicsScene, MLNetworkDrawerBaseIface):
         if len(args) >= 1:
             provider = args[0]
 
-            if provider is not None :
+            if provider is not None:
                 ncols = len(provider.arrays.keys())
 
                 for i in provider.arrays.keys():

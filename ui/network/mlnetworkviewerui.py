@@ -7,17 +7,18 @@ from PyQt5.QtWidgets import QSizePolicy
 from PyQt5.QtWidgets import QPushButton
 from PyQt5.QtWidgets import QGraphicsView
 
-from PyQt5.QtGui     import QIcon
-from PyQt5.QtCore    import QTimer
-from PyQt5.QtCore    import Qt
-from PyQt5.QtCore    import pyqtSignal
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import pyqtSignal
 
-from ui.network.mlnetworkvieweritemui  import MLNetworkViewerItemUI
+from ui.network.mlnetworkvieweritemui import MLNetworkViewerItemUI
 
 import uuid
 
+
 class MLNetworkGraphicsViewUI(QGraphicsView):
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QGraphicsView.__init__(self, parent)
 
     def resizeEvent(self, event):
@@ -30,14 +31,14 @@ class MLNetworkGraphicsViewUI(QGraphicsView):
 class MLNetworkViewerUI(QListWidget):
     mlShowNetworkSignal = pyqtSignal()
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         QListWidget.__init__(self, parent)
 
         self._items = {}
 
         self._timer = QTimer()
         self._timer.timeout.connect(self.mlOnUpdateGraphicsView)
-        self._displayed = None;
+        self._displayed = None
 
         self.setViewMode(QListWidget.IconMode)
         self.setResizeMode(QListWidget.Adjust)
@@ -91,7 +92,7 @@ class MLNetworkViewerUI(QListWidget):
                 self.mlShowNetworkSignal.emit()
 
     def mlGetNetworkViewer(self):
-        return self._viewer;
+        return self._viewer
 
     def mlJSONDecoding(self, d):
         pass

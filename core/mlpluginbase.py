@@ -4,16 +4,17 @@
 from iface.plugin import MLPluginIFace
 import uuid
 
-class MLPluginBase( MLPluginIFace):
+
+class MLPluginBase(MLPluginIFace):
     def __init__(self):
-        self._uuid      = uuid.uuid4()
-        self._activated         = False
-        self._name              = None
-        self._version           = None
-        self._author            = None
-        self._description       = None
-        self._package           = None
-        self._module            = None
+        self._uuid = uuid.uuid4()
+        self._activated = False
+        self._name = None
+        self._version = None
+        self._author = None
+        self._description = None
+        self._package = None
+        self._module = None
 
     def mlGetUniqId(self):
         return self._uuid

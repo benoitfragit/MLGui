@@ -7,8 +7,9 @@ from PyQt5.QtWidgets import QSizePolicy
 
 from iface.trainer.mltrainereditorbaseiface import MLTrainerEditorBaseIface
 
+
 class MLTrainerEditorBaseUI(QDockWidget, MLTrainerEditorBaseIface):
-    def __init__(self, plugin, parent = None):
+    def __init__(self, plugin, parent=None):
         QDockWidget.__init__(self, parent=parent)
 
         try:

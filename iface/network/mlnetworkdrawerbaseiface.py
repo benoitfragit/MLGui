@@ -3,10 +3,12 @@
 
 from abc import abstractmethod
 
+
 class MLNetworkDrawerBaseIface:
     """
     Define all requested methods that a drawer should implement
     """
+
     @abstractmethod
     def mlAddSignalRepresentation(self, ncols, j, M, title=''):
         raise NotImplementedError

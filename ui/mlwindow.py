@@ -5,17 +5,18 @@ from PyQt5.QtWidgets import QAction
 from PyQt5.QtWidgets import QActionGroup
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QStackedWidget
-from PyQt5.QtCore    import Qt
+from PyQt5.QtCore import Qt
 
-from ui.trainer         import MLTrainerViewerUI
-from ui.trainer         import MLTrainerLoaderBaseUI
-from ui.trainer         import MLTrainerEditorBaseUI
-from ui.network         import MLNetworkViewerUI
-from ui.plugin          import MLPluginViewerUI
-from core.mltrainer           import MLTrainer
+from ui.trainer import MLTrainerViewerUI
+from ui.trainer import MLTrainerLoaderBaseUI
+from ui.trainer import MLTrainerEditorBaseUI
+from ui.network import MLNetworkViewerUI
+from ui.plugin import MLPluginViewerUI
+from core.mltrainer import MLTrainer
 
 import os
 import json
+
 
 class MLWindow(QMainWindow):
     def __init__(self, trainermanager, pluginloader):
@@ -129,7 +130,7 @@ class MLWindow(QMainWindow):
             Populate the new trainer menu
             """
             loadUI, editUI, sceneUI = plugin.mlGetTrainerUI()
-            
+
             """
             Populate the plugin viewer ui
             """
@@ -138,13 +139,13 @@ class MLWindow(QMainWindow):
 
             if isinstance(loadUI, MLTrainerLoaderBaseUI):
                 self.addDockWidget(Qt.LeftDockWidgetArea, loadUI)
-                loadUI.mlValidateTrainerSignal.connect(lambda:self.onLoadTrainerValidateClicked(plugin, loadUI))
+                loadUI.mlValidateTrainerSignal.connect(lambda: self.onLoadTrainerValidateClicked(plugin, loadUI))
 
             if isinstance(editUI, MLTrainerEditorBaseUI):
                 self.addDockWidget(Qt.LeftDockWidgetArea, editUI)
 
     def mlAddNewTrainer(self, plugin, trainer_name, network_filepath, data_filepath, trainer_filepath):
-        if  plugin is not None:
+        if plugin is not None:
             loadUI, editUI, sceneUI = plugin.mlGetTrainerUI()
 
             trainer = MLTrainer(trainer_name,
@@ -161,10 +162,10 @@ class MLWindow(QMainWindow):
 
     def onLoadTrainerValidateClicked(self, plugin, loadui):
         if plugin is not None:
-            username            = loadui.mlGetTrainerName()
-            network_filepath    = loadui.mlGetNetworkFilePath()
-            data_filepath       = loadui.mlGetDataFilePath()
-            trainer_filepath    = loadui.mlGetTrainerFilePath()
+            username = loadui.mlGetTrainerName()
+            network_filepath = loadui.mlGetNetworkFilePath()
+            data_filepath = loadui.mlGetDataFilePath()
+            trainer_filepath = loadui.mlGetTrainerFilePath()
 
             self.mlAddNewTrainer(plugin, username, network_filepath, data_filepath, trainer_filepath)
 
@@ -175,7 +176,7 @@ class MLWindow(QMainWindow):
         if os.path.exists(json_file) and os.path.isfile(json_file):
             with open(json_file, 'r') as jf:
                 try:
-                    decoded  = json.load(jf)
+                    decoded = json.load(jf)
                 except ValueError:
                     pass
 
@@ -196,12 +197,12 @@ class MLWindow(QMainWindow):
                 if state is not None:
                     trainers = state['trainers']
                     for username in trainers.keys():
-                        buf              = trainers[username]
+                        buf = trainers[username]
 
-                        error            = buf['error']
-                        progress         = buf['progress']
+                        error = buf['error']
+                        progress = buf['progress']
                         network_filepath = buf['network_filepath']
-                        data_filepath    = buf['data_filepath']
+                        data_filepath = buf['data_filepath']
                         trainer_filepath = buf['trainer_filepath']
 
                         # Add a new trainer

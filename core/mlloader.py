@@ -3,6 +3,7 @@
 
 import ctypes
 
+
 class MLLoader:
     def __init__(self, lib):
         self._libc = ctypes.CDLL(lib)

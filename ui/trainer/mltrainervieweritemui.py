@@ -10,42 +10,43 @@ from PyQt5.QtWidgets import QProgressBar
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtWidgets import QAction
-from PyQt5.QtGui     import QPixmap
+from PyQt5.QtGui import QPixmap
 
-from PyQt5.QtGui     import QIcon
-from PyQt5.QtCore    import Qt
-from PyQt5.QtCore    import QSize
-from PyQt5.QtCore    import pyqtSignal
-from PyQt5.QtCore    import QTimer
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QSize
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import QTimer
 
 from importlib import resources
 from ui import data
 import uuid
 import os
 
+
 class MLTrainerViewerItemUI(QWidget):
     removeTrainer = pyqtSignal(uuid.UUID)
     graphUpdated = pyqtSignal()
     trainerLaunched = pyqtSignal()
 
-    def __init__(self, trainer, editui, sceneui, view, parent = None):
+    def __init__(self, trainer, editui, sceneui, view, parent=None):
         QWidget.__init__(self, parent)
 
         self._graph = [[], []]
 
         self._trainer = trainer
-        self._editui  = editui
-        self._view    = view
-        self._timer   = QTimer()
+        self._editui = editui
+        self._view = view
+        self._timer = QTimer()
         self._timer.timeout.connect(self.mlUpdateTrainerItemOnTimeout)
 
         self._scene = sceneui
 
         vbox = QVBoxLayout()
 
-        label   = QLabel(trainer.username)
+        label = QLabel(trainer.username)
         label.setAlignment(Qt.AlignCenter)
-        pixLabel    = QLabel()
+        pixLabel = QLabel()
         with resources.path(data, 'trainer.png') as p:
             pixmap = QPixmap(str(p))
             pixmap = pixmap.scaledToWidth(120)
@@ -71,10 +72,10 @@ class MLTrainerViewerItemUI(QWidget):
 
     def mlUpdateTrainerItemOnTimeout(self):
         if self._timer.isActive():
-            error       = 100.0 * self._trainer.mlGetTrainerError()
-            progress    = 100.0 * self._trainer.mlGetTrainerProgress()
+            error = 100.0 * self._trainer.mlGetTrainerError()
+            progress = 100.0 * self._trainer.mlGetTrainerProgress()
 
-            self.setToolTip('Progress:' + str(progress) + ' Error:' +str(error))
+            self.setToolTip('Progress:' + str(progress) + ' Error:' + str(error))
 
             val = -1.0
             if len(self._graph[0]) > 0:
@@ -94,7 +95,7 @@ class MLTrainerViewerItemUI(QWidget):
         if self._trainer is not None:
             if self._trainer.mlIsProcessPaused():
                 self._trainer.mlResumeProcess()
-            elif not self._trainer.mlIsProcessRunning() :
+            elif not self._trainer.mlIsProcessRunning():
                 self._trainer.mlTrainerRun()
                 self._item.setSizeHint(self.sizeHint())
                 self._timer.start(7)
@@ -127,10 +128,10 @@ class MLTrainerViewerItemUI(QWidget):
 
     def contextMenuEvent(self, event):
         menu = QMenu(self)
-        run    = QAction(QIcon.fromTheme('media-playback-start'), 'Run', self)
-        pause  = QAction(QIcon.fromTheme('media-playback-pause'), 'Pause', self)
-        stop   = QAction(QIcon.fromTheme('media-playback-stop'), '&Stop', self)
-        remove = QAction(QIcon.fromTheme('user-trash'),'&Remove', self)
+        run = QAction(QIcon.fromTheme('media-playback-start'), 'Run', self)
+        pause = QAction(QIcon.fromTheme('media-playback-pause'), 'Pause', self)
+        stop = QAction(QIcon.fromTheme('media-playback-stop'), '&Stop', self)
+        remove = QAction(QIcon.fromTheme('user-trash'), '&Remove', self)
         configure = QAction(QIcon.fromTheme('document-properties'), '&Configure', self)
 
         run.triggered.connect(self.mlOnTrainerRunClicked)
@@ -161,9 +162,9 @@ class MLTrainerViewerItemUI(QWidget):
         menu.exec_(self.mapToGlobal(event.pos()))
 
     def mlJSONEncoding(self, d):
-        pluginName  = self._trainer.mlGetPluginName()
+        pluginName = self._trainer.mlGetPluginName()
         if pluginName in d.keys() and 'trainers' in d[pluginName].keys():
-            username    = self.mlGetUserName()
+            username = self.mlGetUserName()
 
             self._trainer.mlJSONEncoding(d[pluginName]['trainers'])
 
@@ -173,8 +174,8 @@ class MLTrainerViewerItemUI(QWidget):
             d[pluginName]['trainers'][username]['graph_y'] = self._graph[1][:]
 
     def mlJSONDecoding(self, d):
-        pluginname  = self._trainer.mlGetPluginName()
-        username    = self._trainer.username
+        pluginname = self._trainer.mlGetPluginName()
+        username = self._trainer.username
 
         if pluginname in d.keys():
             if username in d[pluginname]['trainers'].keys():

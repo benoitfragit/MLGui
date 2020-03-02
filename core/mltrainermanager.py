@@ -5,6 +5,7 @@ from core.mlprocessmanager import MLProcessManager
 
 import os
 
+
 class MLTrainerManager(MLProcessManager):
     def __init__(self):
         MLProcessManager.__init__(self)
