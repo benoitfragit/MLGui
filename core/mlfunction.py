@@ -4,6 +4,9 @@ import sys
 
 
 class MLFunction:
+    """
+
+    """
     def __init__(self, loader, name, restype, argstype, livewrapping=False):
         self._name = name
         self._restype = restype
@@ -20,10 +23,18 @@ class MLFunction:
             sys.stderr.write('Method:' + self._name + ' hasn t been loaded')
 
     def setResType(self, value):
+        """
+
+        @param value:
+        """
         self._restype = value
 
     @property
     def restype(self):
+        """
+
+        @return:
+        """
         return self._restype
 
     @restype.setter
@@ -32,6 +43,10 @@ class MLFunction:
 
     @property
     def argstype(self):
+        """
+
+        @return:
+        """
         return self._argstype
 
     @argstype.setter
@@ -40,9 +55,17 @@ class MLFunction:
 
     @property
     def loaded(self):
+        """
+
+        @return:
+        """
         return self._loaded
 
     def load(self, loader):
+        """
+
+        @param loader:
+        """
         if loader is not None:
             self._func = loader.wrap(self._name, self._restype, self._argstype)
 

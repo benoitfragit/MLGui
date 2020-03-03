@@ -19,6 +19,9 @@ import json
 
 
 class MLWindow(QMainWindow):
+    """
+
+    """
     def __init__(self, trainermanager, pluginloader):
         # Building tha mainwindow
         QMainWindow.__init__(self)
@@ -93,6 +96,10 @@ class MLWindow(QMainWindow):
         self.mlRegisterAllPlugins(pluginloader)
 
     def mlGetSavingDirectory(self):
+        """
+
+        @return:
+        """
         saving = '.'
 
         if os.name == 'nt':
@@ -113,18 +120,34 @@ class MLWindow(QMainWindow):
         return mlgui
 
     def mlOnDisplayTrainers(self):
+        """
+
+        """
         self.centralWidget().setCurrentIndex(1)
 
     def mlOnShowSelectedTrainerPlots(self):
+        """
+
+        """
         self.centralWidget().setCurrentIndex(2)
 
     def mlOnDisplayNetworks(self):
+        """
+
+        """
         self.centralWidget().setCurrentIndex(3)
 
     def mlOnShowNetworkViewer(self):
+        """
+
+        """
         self.centralWidget().setCurrentIndex(4)
 
     def mlAddPlugin(self, plugin):
+        """
+
+        @param plugin:
+        """
         if plugin is not None:
             """
             Populate the new trainer menu
@@ -145,6 +168,14 @@ class MLWindow(QMainWindow):
                 self.addDockWidget(Qt.LeftDockWidgetArea, editUI)
 
     def mlAddNewTrainer(self, plugin, trainer_name, network_filepath, data_filepath, trainer_filepath):
+        """
+
+        @param plugin:
+        @param trainer_name:
+        @param network_filepath:
+        @param data_filepath:
+        @param trainer_filepath:
+        """
         if plugin is not None:
             loadUI, editUI, sceneUI = plugin.mlGetTrainerUI()
 
@@ -161,6 +192,11 @@ class MLWindow(QMainWindow):
             self.mlOnDisplayTrainers()
 
     def onLoadTrainerValidateClicked(self, plugin, loadui):
+        """
+
+        @param plugin:
+        @param loadui:
+        """
         if plugin is not None:
             username = loadui.mlGetTrainerName()
             network_filepath = loadui.mlGetNetworkFilePath()
@@ -170,6 +206,10 @@ class MLWindow(QMainWindow):
             self.mlAddNewTrainer(plugin, username, network_filepath, data_filepath, trainer_filepath)
 
     def mlRegisterAllPlugins(self, loader):
+        """
+
+        @param loader:
+        """
         json_file = os.path.join(self._mlgui_directory, 'mlgui.json')
 
         decoded = None
@@ -214,6 +254,9 @@ class MLWindow(QMainWindow):
         self._trainerviewer.mlJSONDecoding(decoded)
 
     def mlSave(self):
+        """
+
+        """
         json_file = os.path.join(self._mlgui_directory, 'mlgui.json')
 
         self._trainermanager.mlSaveProgression(self._mlgui_directory)
@@ -227,5 +270,8 @@ class MLWindow(QMainWindow):
             json.dump(encoded, jfile, indent=4)
 
     def mlLeave(self):
+        """
+
+        """
         self.mlSave()
         self._trainerviewer.mlRemoveAllTrainers()

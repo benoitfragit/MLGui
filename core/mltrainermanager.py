@@ -7,10 +7,17 @@ import os
 
 
 class MLTrainerManager(MLProcessManager):
+    """
+
+    """
     def __init__(self):
         MLProcessManager.__init__(self)
 
     def mlSaveProgression(self, directory):
+        """
+
+        @param directory:
+        """
         if os.path.exists(directory) and os.path.isdir(directory):
             trainer_directory = os.path.join(directory, 'trainers')
             if not os.path.exists(trainer_directory):
@@ -21,6 +28,13 @@ class MLTrainerManager(MLProcessManager):
                     process.mlSaveTrainerProgression(trainer_directory)
 
     def mlRestoreProgression(self, directory, name, progress, error):
+        """
+
+        @param directory:
+        @param name:
+        @param progress:
+        @param error:
+        """
         if os.path.exists(directory) and os.path.isdir(directory):
             trainer_directory = os.path.join(directory, 'trainers')
 

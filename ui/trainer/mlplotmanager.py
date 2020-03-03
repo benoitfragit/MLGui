@@ -11,6 +11,9 @@ import math
 
 
 class MLPlotManager(FigureCanvas):
+    """
+
+    """
     def __init__(self):
         self._figure = plt.figure(frameon=False)
         self._figure.patch.set_visible(False)
@@ -24,6 +27,11 @@ class MLPlotManager(FigureCanvas):
         self._axes = {}
 
     def mlReogarnizePlot(self, N):
+        """
+
+        @param N:
+        @return:
+        """
         cols = 2
         rows = int(math.ceil(float(N) / float(cols)))
         grid = GridSpec(rows, cols)
@@ -35,6 +43,10 @@ class MLPlotManager(FigureCanvas):
         return grid
 
     def mlOnAxeClicked(self, event):
+        """
+
+        @param event:
+        """
         if event.dblclick:
             self.mlToggleAllPlotsVisibility(True)
         else:
@@ -50,6 +62,10 @@ class MLPlotManager(FigureCanvas):
                     self.mlSetPlotVisible(visible_id, 0, 1)
 
     def mlRemoveSubPlot(self, uid):
+        """
+
+        @param uid:
+        """
         if uid in self._lines.keys():
             self._lines.pop(uid)
             self._annotations.pop(uid)
@@ -63,6 +79,11 @@ class MLPlotManager(FigureCanvas):
             self._figure.canvas.draw_idle()
 
     def mlAddSubPlot(self, uid, item):
+        """
+
+        @param uid:
+        @param item:
+        """
         if item is not None:
             # new number of axes
             N = len(self._axes.keys()) + 1
@@ -106,6 +127,12 @@ class MLPlotManager(FigureCanvas):
             self._figure.canvas.draw_idle()
 
     def mlUpdate(self, uid, graph, clr='blue'):
+        """
+
+        @param uid:
+        @param graph:
+        @param clr:
+        """
         if uid in self._axes.keys():
             self._lines[uid].set_xdata(graph[0])
             self._lines[uid].set_ydata(graph[1])
@@ -131,6 +158,10 @@ class MLPlotManager(FigureCanvas):
             self._figure.canvas.draw_idle()
 
     def mlToggleAllPlotsVisibility(self, visible):
+        """
+
+        @param visible:
+        """
         for uid in self._axes.keys():
             self._axes[uid].set_visible(visible)
 
@@ -142,6 +173,12 @@ class MLPlotManager(FigureCanvas):
         self._figure.canvas.draw_idle()
 
     def mlSetPlotVisible(self, uid, i, N):
+        """
+
+        @param uid:
+        @param i:
+        @param N:
+        """
         if uid in self._axes.keys():
             self._axes[uid].set_visible(True)
 

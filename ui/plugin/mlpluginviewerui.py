@@ -17,6 +17,9 @@ import uuid
 
 
 class MLPluginViewerUI(QDockWidget):
+    """
+
+    """
     mlPluginActivationChanged = pyqtSignal(uuid.UUID, bool)
 
     def __init__(self, parent=None):
@@ -33,6 +36,12 @@ class MLPluginViewerUI(QDockWidget):
         self.setVisible(False)
 
     def mlOnNewPluginAdded(self, plugin, menu, loadUI):
+        """
+
+        @param plugin:
+        @param menu:
+        @param loadUI:
+        """
         if plugin is not None:
             uid = plugin.mlGetUniqId()
 
@@ -43,9 +52,18 @@ class MLPluginViewerUI(QDockWidget):
                 self._items[uid].mlPluginActivationChanged.connect(self.mlOnPluginActivationChanged)
 
     def mlOnPluginActivationChanged(self, id, activated):
+        """
+
+        @param id:
+        @param activated:
+        """
         self.mlPluginActivationChanged(id, activated)
 
     def mlJSONEncoding(self, d):
+        """
+
+        @param d:
+        """
         for item in self._items.values():
             if item is not None:
                 item.mlJSONEncoding(d)

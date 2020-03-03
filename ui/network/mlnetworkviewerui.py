@@ -18,10 +18,17 @@ import uuid
 
 
 class MLNetworkGraphicsViewUI(QGraphicsView):
+    """
+
+    """
     def __init__(self, parent=None):
         QGraphicsView.__init__(self, parent)
 
     def resizeEvent(self, event):
+        """
+
+        @param event:
+        """
         QGraphicsView.resizeEvent(self, event)
         scene = self.scene()
         if scene is not None:
@@ -29,6 +36,9 @@ class MLNetworkGraphicsViewUI(QGraphicsView):
 
 
 class MLNetworkViewerUI(QListWidget):
+    """
+
+    """
     mlShowNetworkSignal = pyqtSignal()
 
     def __init__(self, parent=None):
@@ -53,10 +63,17 @@ class MLNetworkViewerUI(QListWidget):
         self._viewer = MLNetworkGraphicsViewUI()
 
     def mlOnUpdateGraphicsView(self):
+        """
+
+        """
         if self._displayed is not None:
             self._displayed.mlOnUpdate()
 
     def mlOnNetworkProviderAdded(self, network):
+        """
+
+        @param network:
+        """
         if network is not None:
             uid = network.mlGetUniqId()
 
@@ -70,9 +87,17 @@ class MLNetworkViewerUI(QListWidget):
                 self.setItemWidget(item, self._items[uid])
 
     def mlOnRemoveProvider(self, id):
+        """
+
+        @param id:
+        """
         self.mlOnRemoveNetwork(id)
 
     def mlOnRemoveNetwork(self, uid):
+        """
+
+        @param uid:
+        """
         if uid is not None and uid in self._items.keys():
             if self._items[uid] == self._displayed:
                 self._timer.stop()
@@ -82,6 +107,10 @@ class MLNetworkViewerUI(QListWidget):
             self._items.pop(uid)
 
     def mlOnItemDoubleClicked(self, widget):
+        """
+
+        @param widget:
+        """
         if widget is not None:
             item = self.itemWidget(widget)
             if item is not None:
@@ -92,10 +121,22 @@ class MLNetworkViewerUI(QListWidget):
                 self.mlShowNetworkSignal.emit()
 
     def mlGetNetworkViewer(self):
+        """
+
+        @return:
+        """
         return self._viewer
 
     def mlJSONDecoding(self, d):
+        """
+
+        @param d:
+        """
         pass
 
     def mlJSONEncoding(self, d):
+        """
+
+        @param d:
+        """
         pass

@@ -10,6 +10,9 @@ from core.mlpluginbase import MLPluginBase
 
 
 class MLPluginLoader:
+    """
+
+    """
     def __init__(self):
         self._plugins = {}
 
@@ -30,6 +33,12 @@ class MLPluginLoader:
 
     @staticmethod
     def mlLoadPlugin(module, package):
+        """
+
+        @param module:
+        @param package:
+        @return:
+        """
         imported = importlib.import_module(module, package=package)
 
         try:
@@ -47,6 +56,11 @@ class MLPluginLoader:
         return plugin
 
     def mlGetPluginByName(self, name):
+        """
+
+        @param name:
+        @return:
+        """
         ret = None
         if name in self._plugins.keys():
             ret = self._plugins[name]
@@ -55,6 +69,10 @@ class MLPluginLoader:
         return ret
 
     def mlGetAllPlugins(self):
+        """
+
+        @return:
+        """
         return self._plugins
 
 

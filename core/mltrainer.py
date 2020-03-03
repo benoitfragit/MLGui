@@ -13,6 +13,9 @@ import logging
 
 
 class MLTrainer(MLProcess, MLNetworkProvider):
+    """
+
+    """
     def __init__(self, username, manager, plugin, network_filepath, data_filepath, trainer_filepath):
         MLProcess.__init__(self, manager)
         # Get the structure of this network without keeping the reference because it will leave in an other process
@@ -45,34 +48,72 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         self.start()
 
     def mlGetPluginId(self):
+        """
+
+        @return:
+        """
         return self._shared['plugin_id']
 
     def mlGetPluginName(self):
+        """
+
+        @return:
+        """
         return self._shared['plugin_name']
 
     def mlConfigureTrainer(self, path):
+        """
+
+        @param path:
+        """
         self._configure_queue.put(path)
 
     def mlIsTrainerRunning(self):
+        """
+
+        @return:
+        """
         return self._shared['running']
 
     def mlIsTrainerExited(self):
+        """
+
+        @return:
+        """
         return self._shared['exit']
 
     def mlGetTrainerProgress(self):
+        """
+
+        @return:
+        """
         return self._shared['progress']
 
     def mlTrainerRun(self):
+        """
+
+        """
         if not self._shared['exit']:
             self._shared['running'] = True
 
     def mlGetTrainerError(self):
+        """
+
+        @return:
+        """
         return self._shared['error']
 
     def mlSetTrainerExited(self, exited):
+        """
+
+        @param exited:
+        """
         self._shared['exit'] = exited
 
     def run(self):
+        """
+
+        """
         # Load the given plugin in order to load correctly the trainer
         plugin = MLPluginLoader.mlLoadPlugin(self._shared['module'], self._shared['package'])
 
@@ -135,16 +176,30 @@ class MLTrainer(MLProcess, MLNetworkProvider):
             plugin.mlDeleteTrainer(trainer)
 
     def mlSaveTrainerProgression(self, directory):
+        """
+
+        @param directory:
+        """
         path = os.path.join(directory, self._username)
         self._save_queue.put(path)
 
     def mlRestoreTrainerProgression(self, directory, progress, error):
+        """
+
+        @param directory:
+        @param progress:
+        @param error:
+        """
         path = os.path.join(directory, self._username)
         self._restore_queue.put(path)
         self._shared['progress'] = progress
         self._shared['error'] = error
 
     def mlJSONEncoding(self, d):
+        """
+
+        @param d:
+        """
         username = self._username
         running = self.mlIsTrainerRunning() > 0
         exited = self.mlIsTrainerExited() > 0
@@ -162,9 +217,18 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         d[username]['progress'] = progress
 
     def mlGetSettingsFilePath(self):
+        """
+
+        @return:
+        """
         return self._shared['trainer_filepath']
 
     def mlUpdateTrainerProvider(self, plugin, trainer):
+        """
+
+        @param plugin:
+        @param trainer:
+        """
         for i in self.arrays.keys():
             signal = None
             sizeOfSignal = len(self._arrays[i])

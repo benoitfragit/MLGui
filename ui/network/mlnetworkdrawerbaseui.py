@@ -12,12 +12,20 @@ from iface.network import MLNetworkDrawerBaseIface
 
 
 class MLNetworkDrawerBaseUI(QGraphicsScene, MLNetworkDrawerBaseIface):
+    """
+
+    """
     def __init__(self):
         QGraphicsScene.__init__(self)
         self._pen = QPen(Qt.black)
         self._pen.setWidth(5)
 
     def mlOnDisplayNetwork(self, *args, **kwargs):
+        """
+
+        @param args:
+        @param kwargs:
+        """
         if len(args) >= 1:
             provider = args[0]
 
@@ -31,6 +39,11 @@ class MLNetworkDrawerBaseUI(QGraphicsScene, MLNetworkDrawerBaseIface):
                     self.mlAddSignalRepresentation(ncols, i, len(provider.arrays[i]), title)
 
     def mlOnUpdateNetwork(self, *args, **kwargs):
+        """
+
+        @param args:
+        @param kwargs:
+        """
         if len(args) >= 1:
             provider = args[0]
 

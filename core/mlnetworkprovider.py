@@ -5,6 +5,9 @@ from multiprocessing import Array
 
 
 class MLNetworkProvider:
+    """
+
+    """
     def __init__(self, plugin, manager, network, username, managed=False):
         self._arrays = manager.dict()
         self._managed = managed
@@ -21,9 +24,18 @@ class MLNetworkProvider:
 
     @property
     def arrays(self):
+        """
+
+        @return:
+        """
         return self._arrays
 
     def mlUpdateNetworkProvider(self, plugin, network):
+        """
+
+        @param plugin:
+        @param network:
+        """
         if network is not None:
             for i in self.arrays.keys():
                 signal = None
@@ -36,15 +48,31 @@ class MLNetworkProvider:
 
     @property
     def username(self):
+        """
+
+        @return:
+        """
         return self._username
 
     @property
     def managed(self):
+        """
+
+        @return:
+        """
         return self._managed
 
     def mlDisplayNetworkDrawerUI(self, scene):
+        """
+
+        @param scene:
+        """
         scene.clear()
         scene.mlOnDisplayNetwork(self)
 
     def mlUpdateNetworkDrawerUI(self, scene):
+        """
+
+        @param scene:
+        """
         scene.mlOnUpdateNetwork(self)

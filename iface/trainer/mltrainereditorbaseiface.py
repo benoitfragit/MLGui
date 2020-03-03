@@ -11,8 +11,16 @@ class MLTrainerEditorBaseIface:
 
     @abstractmethod
     def mlBuildTrainerEditorMainWidget(self):
+        """
+
+        """
         raise NotImplementedError
 
     @abstractmethod
     def fromTrainer(self, *args, **kwargs):
+        """
+
+        @param args:
+        @param kwargs:
+        """
         raise NotImplementedError

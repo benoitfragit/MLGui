@@ -14,6 +14,9 @@ import signal
 
 
 def main():
+    """
+
+    """
     app = QtWidgets.QApplication.instance()
     if not app:
         app = QtWidgets.QApplication(sys.argv)

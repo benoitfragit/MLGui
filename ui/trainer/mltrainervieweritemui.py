@@ -25,6 +25,9 @@ import os
 
 
 class MLTrainerViewerItemUI(QWidget):
+    """
+
+    """
     removeTrainer = pyqtSignal(uuid.UUID)
     graphUpdated = pyqtSignal()
     trainerLaunched = pyqtSignal()
@@ -62,15 +65,30 @@ class MLTrainerViewerItemUI(QWidget):
         self._item.setSizeHint(self.sizeHint())
 
     def mlGetUserName(self):
+        """
+
+        @return:
+        """
         return self._trainer.username
 
     def mlGetItem(self):
+        """
+
+        @return:
+        """
         return self._item
 
     def mlTrainerItemGetGraph(self):
+        """
+
+        @return:
+        """
         return self._graph
 
     def mlUpdateTrainerItemOnTimeout(self):
+        """
+
+        """
         if self._timer.isActive():
             error = 100.0 * self._trainer.mlGetTrainerError()
             progress = 100.0 * self._trainer.mlGetTrainerProgress()
@@ -92,6 +110,9 @@ class MLTrainerViewerItemUI(QWidget):
                 self._timer.stop()
 
     def mlOnTrainerRunClicked(self):
+        """
+
+        """
         if self._trainer is not None:
             if self._trainer.mlIsProcessPaused():
                 self._trainer.mlResumeProcess()
@@ -103,19 +124,31 @@ class MLTrainerViewerItemUI(QWidget):
                 self.trainerLaunched.emit()
 
     def mlOnTrainerPauseClicked(self):
+        """
+
+        """
         if self._trainer is not None:
             self._trainer.mlPauseProcess()
 
     def mlOnTrainerStopClicked(self):
+        """
+
+        """
         if self._trainer is not None:
             if self._trainer.mlIsProcessRunning():
                 self._trainer.mlKillProcess()
                 self._timer.stop()
 
     def mlKillTrainer(self):
+        """
+
+        """
         self._trainer.mlKillProcess()
 
     def mlOnRemoveTrainerClicked(self):
+        """
+
+        """
         if self._trainer is not None:
             id = self._trainer.mlGetUniqId()
             self.mlKillTrainer()
@@ -123,10 +156,17 @@ class MLTrainerViewerItemUI(QWidget):
             self._timer.stop()
 
     def mlOnConfigureTrainedClicked(self):
+        """
+
+        """
         if self._trainer is not None:
             self._editui.fromTrainer(self._trainer)
 
     def contextMenuEvent(self, event):
+        """
+
+        @param event:
+        """
         menu = QMenu(self)
         run = QAction(QIcon.fromTheme('media-playback-start'), 'Run', self)
         pause = QAction(QIcon.fromTheme('media-playback-pause'), 'Pause', self)
@@ -162,6 +202,10 @@ class MLTrainerViewerItemUI(QWidget):
         menu.exec_(self.mapToGlobal(event.pos()))
 
     def mlJSONEncoding(self, d):
+        """
+
+        @param d:
+        """
         pluginName = self._trainer.mlGetPluginName()
         if pluginName in d.keys() and 'trainers' in d[pluginName].keys():
             username = self.mlGetUserName()
@@ -174,6 +218,10 @@ class MLTrainerViewerItemUI(QWidget):
             d[pluginName]['trainers'][username]['graph_y'] = self._graph[1][:]
 
     def mlJSONDecoding(self, d):
+        """
+
+        @param d:
+        """
         pluginname = self._trainer.mlGetPluginName()
         username = self._trainer.username
 
@@ -189,9 +237,16 @@ class MLTrainerViewerItemUI(QWidget):
                 self.graphUpdated.emit()
 
     def mlGetUniqId(self):
+        """
+
+        @return:
+        """
         return self._trainer.mlGetUniqId()
 
     def mlOnDisplayTrainer(self):
+        """
+
+        """
         if self._view is not None:
             # Initially create the scene
             self._trainer.mlDisplayNetworkDrawerUI(self._scene)
@@ -199,5 +254,10 @@ class MLTrainerViewerItemUI(QWidget):
             self._view.fitInView(self._scene.sceneRect(), Qt.KeepAspectRatio)
 
     def mlOnPluginActivationChanged(self, id, activated):
+        """
+
+        @param id:
+        @param activated:
+        """
         if self._trainer is not None and not activated and id == self._trainer.mlGetPluginId():
             self._trainer.mlOnRemoveTrainerClicked()

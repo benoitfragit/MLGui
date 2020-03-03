@@ -20,10 +20,17 @@ import uuid
 
 
 class MLTrainerGraphicsViewUI(QGraphicsView):
+    """
+
+    """
     def __init__(self, parent=None):
         QGraphicsView.__init__(self, parent)
 
     def resizeEvent(self, event):
+        """
+
+        @param event:
+        """
         QGraphicsView.resizeEvent(self, event)
         scene = self.scene()
         if scene is not None:
@@ -31,6 +38,9 @@ class MLTrainerGraphicsViewUI(QGraphicsView):
 
 
 class MLTrainerOverviewUI(QWidget):
+    """
+
+    """
     def __init__(self, parent=None):
         QWidget.__init__(self, parent=parent)
 
@@ -46,14 +56,25 @@ class MLTrainerOverviewUI(QWidget):
 
     @property
     def plot(self):
+        """
+
+        @return:
+        """
         return self._plot
 
     @property
     def view(self):
+        """
+
+        @return:
+        """
         return self._view
 
 
 class MLTrainerViewerUI(QListWidget):
+    """
+
+    """
     mlShowTrainerPlotSignal = pyqtSignal()
     mlShowSelectedTrainerPlotSignal = pyqtSignal()
     mlPluginActivationChanged = pyqtSignal(uuid.UUID, bool)
@@ -80,12 +101,19 @@ class MLTrainerViewerUI(QListWidget):
         self._mouseSelection = False
 
     def mlOnItemSelected(self):
+        """
+
+        """
         items = self.selectedItems()
 
         if len(items) >= 2:
             self._mouseSelection = True
 
     def mouseReleaseEvent(self, event):
+        """
+
+        @param event:
+        """
         if event.button() == Qt.LeftButton and self._mouseSelection:
             self._mouseSelection = False
 
@@ -108,12 +136,24 @@ class MLTrainerViewerUI(QListWidget):
         QListWidget.mouseReleaseEvent(self, event)
 
     def mlGetTrainerOverview(self):
+        """
+
+        @return:
+        """
         return self._overview
 
     def mlGetItems(self):
+        """
+
+        @return:
+        """
         return self._items
 
     def mlShowPlot(self, id):
+        """
+
+        @param id:
+        """
         if id in self._items.keys():
             self._overview.plot.setVisible(True)
             self._overview.view.setVisible(True)
@@ -125,6 +165,10 @@ class MLTrainerViewerUI(QListWidget):
             self.mlShowSelectedTrainerPlotSignal.emit()
 
     def mlOnGraphUpdated(self, id):
+        """
+
+        @param id:
+        """
         item = None
 
         if id in self._items.keys():
@@ -133,6 +177,10 @@ class MLTrainerViewerUI(QListWidget):
             self._overview.plot.mlUpdate(id, graph)
 
     def mlOnRemoveTrainer(self, id):
+        """
+
+        @param id:
+        """
         if id is not None and id in self._items.keys():
             item = self._items[id].mlGetItem()
 
@@ -142,6 +190,9 @@ class MLTrainerViewerUI(QListWidget):
             self._overview.plot.mlRemoveSubPlot(id)
 
     def mlRemoveAllTrainers(self):
+        """
+
+        """
         for id in self._items.keys():
             self._overview.plot.mlRemoveSubPlot(id)
             self._items[id].mlKillTrainer()
@@ -149,6 +200,12 @@ class MLTrainerViewerUI(QListWidget):
         self._items.clear()
 
     def mlOnNewTrainerAdded(self, trainer, editUI, sceneUI):
+        """
+
+        @param trainer:
+        @param editUI:
+        @param sceneUI:
+        """
         if trainer is not None:
             uid = trainer.mlGetUniqId()
 
@@ -168,6 +225,10 @@ class MLTrainerViewerUI(QListWidget):
                 self.mlPluginActivationChanged.connect(self._items[uid].mlOnPluginActivationChanged)
 
     def mlOnItemDoubleClicked(self, item):
+        """
+
+        @param item:
+        """
         if item is not None:
             widget = self.itemWidget(item)
 
@@ -177,14 +238,27 @@ class MLTrainerViewerUI(QListWidget):
                 self.mlShowPlot(id)
 
     def mlJSONDecoding(self, d):
+        """
+
+        @param d:
+        """
         for trainer in self._items.values():
             if trainer is not None:
                 trainer.mlJSONDecoding(d)
 
     def mlJSONEncoding(self, d):
+        """
+
+        @param d:
+        """
         for trainer in self._items.values():
             if trainer is not None:
                 trainer.mlJSONEncoding(d)
 
     def mlOnPluginActivationChanged(self, id, activated):
+        """
+
+        @param id:
+        @param activated:
+        """
         self.mlPluginActivationChanged.emit(id, activated)

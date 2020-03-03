@@ -12,6 +12,9 @@ import sys
 
 
 class MLTrainerLoaderBaseUI(QDockWidget, MLTrainerLoaderBaseIface):
+    """
+
+    """
     mlValidateTrainerSignal = pyqtSignal()
 
     def __init__(self, plugin, parent=None):
@@ -42,15 +45,26 @@ class MLTrainerLoaderBaseUI(QDockWidget, MLTrainerLoaderBaseIface):
         self._exclusiveUI = None
 
     def mlResetUI(self):
+        """
+
+        """
         self._network_filepath = None
         self._trainer_filepath = None
         self._data_filepath = None
         self._trainer_name = None
 
     def setExclusiveUI(self, exclusive):
+        """
+
+        @param exclusive:
+        """
         self._exclusiveUI = exclusive
 
     def mlOnVisibilityChanged(self, visible):
+        """
+
+        @param visible:
+        """
         if visible:
             if self._exclusiveUI is not None:
                 self._exclusiveUI.setVisible(not visible)
@@ -58,13 +72,29 @@ class MLTrainerLoaderBaseUI(QDockWidget, MLTrainerLoaderBaseIface):
             self.mlResetUI()
 
     def mlGetNetworkFilePath(self):
+        """
+
+        @return:
+        """
         return self._network_filepath
 
     def mlGetDataFilePath(self):
+        """
+
+        @return:
+        """
         return self._data_filepath
 
     def mlGetTrainerFilePath(self):
+        """
+
+        @return:
+        """
         return self._trainer_filepath
 
     def mlGetTrainerName(self):
+        """
+
+        @return:
+        """
         return self._trainer_name

@@ -23,6 +23,9 @@ import os
 
 
 class MLNetworkViewerItemUI(QWidget):
+    """
+
+    """
     removeNetwork = pyqtSignal(uuid.UUID)
 
     def __init__(self, network, parent=None):
@@ -51,12 +54,24 @@ class MLNetworkViewerItemUI(QWidget):
         self._item.setSizeHint(self.sizeHint())
 
     def mlGetUserName(self):
+        """
+
+        @return:
+        """
         return self._network.username
 
     def mlGetItem(self):
+        """
+
+        @return:
+        """
         return self._item
 
     def contextMenuEvent(self, event):
+        """
+
+        @param event:
+        """
         if not self._network.managed:
             menu = QMenu(self)
 
@@ -78,31 +93,62 @@ class MLNetworkViewerItemUI(QWidget):
             menu.exec_(self.mapToGlobal(event.pos()))
 
     def mlOnConnectNetworkClicked(self):
+        """
+
+        """
         pass
 
     def mlOnDisconnectNetworkClicked(self):
+        """
+
+        """
         pass
 
     def mlOnConfigureNetworkClicked(self):
+        """
+
+        """
         pass
 
     def mlOnRemoveNetworkClicked(self):
+        """
+
+        """
         self.removeNetwork.emit(self._network.mlGetUniqId())
 
     def mlJSONEncoding(self, d):
+        """
+
+        @param d:
+        """
         pass
 
     def mlJSONDecoding(self, d):
+        """
+
+        @param d:
+        """
         pass
 
     def mlGetUniqId(self):
+        """
+
+        @return:
+        """
         return self._network.mlGetUniqId()
 
     def mlOnUpdate(self):
+        """
+
+        """
         if self._network is not None:
             self._network.mlUpdateNetworkDrawerUI(self._scene)
 
     def mlOnDisplayNetwork(self, viewer):
+        """
+
+        @param viewer:
+        """
         if viewer is not None:
             # Initially create the scene
             self._network.mlDisplayNetworkDrawerUI(self._scene)

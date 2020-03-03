@@ -9,6 +9,9 @@ from iface.trainer.mltrainereditorbaseiface import MLTrainerEditorBaseIface
 
 
 class MLTrainerEditorBaseUI(QDockWidget, MLTrainerEditorBaseIface):
+    """
+
+    """
     def __init__(self, plugin, parent=None):
         QDockWidget.__init__(self, parent=parent)
 
@@ -33,12 +36,23 @@ class MLTrainerEditorBaseUI(QDockWidget, MLTrainerEditorBaseIface):
         self._exclusiveUI = None
 
     def setExclusiveUI(self, exclusive):
+        """
+
+        @param exclusive:
+        """
         self._exclusiveUI = exclusive
 
     def mlResetUI(self):
+        """
+
+        """
         pass
 
     def mlOnVisibilityChanged(self, visible):
+        """
+
+        @param visible:
+        """
         if visible:
             if self._exclusiveUI is not None:
                 self._exclusiveUI.setVisible(not visible)

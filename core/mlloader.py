@@ -5,10 +5,20 @@ import ctypes
 
 
 class MLLoader:
+    """
+
+    """
     def __init__(self, lib):
         self._libc = ctypes.CDLL(lib)
 
     def wrap(self, funcname, restype, argtypes):
+        """
+
+        @param funcname:
+        @param restype:
+        @param argtypes:
+        @return:
+        """
         func = self._libc.__getattr__(funcname)
         func.restype = restype
         func.argtypes = argtypes

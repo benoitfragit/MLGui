@@ -15,6 +15,9 @@ import uuid
 
 
 class MLPluginViewerItemUI(QWidget):
+    """
+
+    """
     mlPluginActivationChanged = pyqtSignal(uuid.UUID, bool)
 
     def __init__(self, plugin, trainerMenu, loadUI, parent=None):
@@ -79,9 +82,17 @@ class MLPluginViewerItemUI(QWidget):
             self._trainerMenu.addAction(self._trainerAction)
 
     def mlGetItem(self):
+        """
+
+        @return:
+        """
         return self._item
 
     def mlJSONEncoding(self, d):
+        """
+
+        @param d:
+        """
         if self._plugin is not None:
             pluginName = self._plugin.mlGetPluginName()
 
@@ -91,6 +102,9 @@ class MLPluginViewerItemUI(QWidget):
             d[pluginName]['networks'] = {}
 
     def mlOnPluginActivationToggled(self):
+        """
+
+        """
         if self._check.isChecked():
             self._plugin.mlSetPluginActivated(True)
             self._trainerMenu.addAction(self._trainerAction)
