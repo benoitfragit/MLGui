@@ -9,6 +9,7 @@ from core.mlnetworkprovider import MLNetworkProvider
 from core.mlpluginloader import MLPluginLoader
 
 import multiprocessing
+import threading
 import logging
 
 
@@ -124,6 +125,15 @@ class MLTrainer(MLProcess, MLNetworkProvider):
             trainer_filepath = self._shared['trainer_filepath']
 
             trainer = plugin.mlGetLoadedTrainer(network_filepath, data_filepath, trainer_filepath)
+            
+            # Store pointer to the input and output signals
+            pointers = {}
+            for i in self._arrays.keys():
+                sizeOfSignal = len(self._arrays[i])
+                if i == 0:
+                    pointers[i] = plugin.mlGetTrainerInputSignal(trainer, sizeOfSignal)
+                else:
+                    pointers[i] = plugin.mlGetTrainerLayerOutputSignal(trainer, i - 1, sizeOfSignal)
 
             # effectively start th process lifecycle
             while not self._shared['exit']:
@@ -148,6 +158,12 @@ class MLTrainer(MLProcess, MLNetworkProvider):
 
                 # Start the training process if needed
                 if self._shared['running'] and not self._shared['finished']:
+                    
+                    # Starting the input and output drawing update
+                    thread = threading.Thread(target=self.mlUpdateTrainerProvider, args=(pointers,))
+                    thread.start()
+
+                    # Starting the main loop
                     while self._shared['running']:
                         if self._shared['exit'] or self._shared['finished'] or self._shared['paused']:
                             # Stop everything if we stop this process
@@ -156,14 +172,9 @@ class MLTrainer(MLProcess, MLNetworkProvider):
                             self._lock.acquire()
                             plugin.mlTrainerRun(trainer)
 
-                            self._shared['finished'] = True
-                            if plugin.mlIsTrainerRunning(trainer):
-                                self._shared['finished'] = False
-
+                            self._shared['finished'] = not plugin.mlIsTrainerRunning(trainer)
                             self._shared['progress'] = plugin.mlGetTrainerProgress(trainer)
                             self._shared['error'] = plugin.mlGetTrainerError(trainer)
-
-                            self.mlUpdateTrainerProvider(plugin, trainer)
 
                             self._lock.release()
 
@@ -173,6 +184,11 @@ class MLTrainer(MLProcess, MLNetworkProvider):
                 if save_filepath is not None:
                     plugin.mlSaveTrainerProgression(trainer, save_filepath)
 
+            # Wait for thread stopping
+            if thread.is_alive:
+                thread.join()
+
+            # Delete the trainer memory
             plugin.mlDeleteTrainer(trainer)
 
     def mlSaveTrainerProgression(self, directory):
@@ -183,7 +199,7 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         path = os.path.join(directory, self._username)
         self._save_queue.put(path)
 
-    def mlRestoreTrainerProgression(self, directory, progress, error):
+    def mlRestoreTrainerProgression(self, directory, progress, error, exit, running, finished):
         """
 
         @param directory:
@@ -191,9 +207,12 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         @param error:
         """
         path = os.path.join(directory, self._username)
-        self._restore_queue.put(path)
         self._shared['progress'] = progress
         self._shared['error'] = error
+        self._shared['exit'] = exit
+        self._shared['running'] = running
+        self._shared['finished'] = finished
+        self._restore_queue.put(path)
 
     def mlJSONEncoding(self, d):
         """
@@ -212,6 +231,7 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         d[username]['data_filepath'] = self._shared['data_filepath']
         d[username]['trainer_filepath'] = self._shared['trainer_filepath']
         d[username]['running'] = running
+        d[username]['finished'] = self._shared['finished']
         d[username]['exit'] = exited
         d[username]['error'] = error
         d[username]['progress'] = progress
@@ -223,18 +243,12 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         """
         return self._shared['trainer_filepath']
 
-    def mlUpdateTrainerProvider(self, plugin, trainer):
+    def mlUpdateTrainerProvider(self, pointers):
         """
 
-        @param plugin:
-        @param trainer:
+        @param pointers:
         """
-        for i in self.arrays.keys():
-            signal = None
-            sizeOfSignal = len(self._arrays[i])
-            if i == 0:
-                signal = plugin.mlGetTrainerInputSignal(trainer, sizeOfSignal)
-            else:
-                signal = plugin.mlGetTrainerLayerOutputSignal(trainer, i - 1, sizeOfSignal)
-            if signal is not None:
-                self._arrays[i] = signal[:]
+        while self._shared['running'] and not self._shared['exit'] and not self._shared['finished']:
+            for i in self._arrays.keys():
+                self._arrays[i] = (pointers[i].contents)[:]
+                

@@ -29,7 +29,7 @@ class MLWindow(QMainWindow):
         self._trainermanager = trainermanager
 
         self.setWindowTitle('ML Gui')
-        self.resize(500, 300)
+        self.resize(900, 600)
 
         self._mlgui_directory = self.mlGetSavingDirectory()
 
@@ -38,12 +38,10 @@ class MLWindow(QMainWindow):
 
         # Building the Manage menu
         manageMenu = mainMenu.addMenu('&Manage')
-        trainerMenu = manageMenu.addMenu('&Trainer')
-        self._newTrainerMenu = trainerMenu.addMenu('&New trainer')
-        networkMenu = manageMenu.addMenu('&Network')
-        quit = QAction('Quit', self)
-        quit.triggered.connect(self.close)
-        manageMenu.addAction(quit)
+        self._newTrainerMenu = mainMenu.addMenu('&Trainer')
+        """
+        networkMenu = mainMenu.addMenu('&Network')
+        """
 
         # Building the DIsplay Menu
         displayMenu = mainMenu.addMenu('&Displays')
@@ -53,14 +51,6 @@ class MLWindow(QMainWindow):
         displayNetworks = QAction('&Networks', self)
         displayNetworks.triggered.connect(self.mlOnDisplayNetworks)
         displayMenu.addAction(displayNetworks)
-
-        # Building the Plugin Menu
-        pluginMenu = mainMenu.addMenu('&Plugins')
-
-        # Build the Help Menu
-        helpMenu = mainMenu.addMenu('&Help')
-        help = QAction('&Help', self)
-        helpMenu.addAction(help)
 
         # Build the trainer viewer
         self._trainerviewer = MLTrainerViewerUI(self._trainermanager)
@@ -76,7 +66,15 @@ class MLWindow(QMainWindow):
         self.addDockWidget(Qt.RightDockWidgetArea, self._pluginviewer)
         pluginViewerAction = self._pluginviewer.toggleViewAction()
         pluginViewerAction.setCheckable(True)
-        pluginMenu.addAction(pluginViewerAction)
+        manageMenu.addAction(pluginViewerAction)
+
+        # Build the Help Menu
+        help = QAction('&Help', self)
+        manageMenu.addAction(help)
+
+        quit = QAction('Quit', self)
+        quit.triggered.connect(self.close)
+        manageMenu.addAction(quit)
 
         # Build the default label
         self._mainLabel = QLabel()
@@ -244,12 +242,19 @@ class MLWindow(QMainWindow):
                         network_filepath = buf['network_filepath']
                         data_filepath = buf['data_filepath']
                         trainer_filepath = buf['trainer_filepath']
+                        exit, running, finished = False, False, False
+                        if 'exit' in buf.keys():
+                            exit = buf['exit']
+                        if 'running' in buf.keys():
+                            running = buf['running']
+                        if 'finished' in buf.keys():
+                           finished = buf['finished']
 
                         # Add a new trainer
                         self.mlAddNewTrainer(plugin, username, network_filepath, data_filepath, trainer_filepath)
 
                         # Finally restore its progression
-                        self._trainermanager.mlRestoreProgression(self._mlgui_directory, username, progress, error)
+                        self._trainermanager.mlRestoreProgression(self._mlgui_directory, username, progress, error, exit, running, finished)
 
         self._trainerviewer.mlJSONDecoding(decoded)
 

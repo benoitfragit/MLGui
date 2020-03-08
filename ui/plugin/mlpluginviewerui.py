@@ -24,7 +24,7 @@ class MLPluginViewerUI(QDockWidget):
 
     def __init__(self, parent=None):
         QDockWidget.__init__(self, parent=parent)
-        self.setWindowTitle('Available plugins')
+        self.setWindowTitle('Plugins')
         self._items = {}
 
         self._mainWidget = QListWidget()
@@ -57,7 +57,7 @@ class MLPluginViewerUI(QDockWidget):
         @param id:
         @param activated:
         """
-        self.mlPluginActivationChanged(id, activated)
+        self.mlPluginActivationChanged.emit(id, activated)
 
     def mlJSONEncoding(self, d):
         """

@@ -20,6 +20,8 @@ from PyQt5.QtCore import QTimer
 
 from importlib import resources
 from ui import data
+
+import random
 import uuid
 import os
 
@@ -119,7 +121,7 @@ class MLTrainerViewerItemUI(QWidget):
             elif not self._trainer.mlIsProcessRunning():
                 self._trainer.mlTrainerRun()
                 self._item.setSizeHint(self.sizeHint())
-                self._timer.start(7)
+                self._timer.start(1)
                 self.mlOnDisplayTrainer()
                 self.trainerLaunched.emit()
 
@@ -260,4 +262,4 @@ class MLTrainerViewerItemUI(QWidget):
         @param activated:
         """
         if self._trainer is not None and not activated and id == self._trainer.mlGetPluginId():
-            self._trainer.mlOnRemoveTrainerClicked()
+            self.mlOnRemoveTrainerClicked()

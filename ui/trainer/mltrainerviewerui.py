@@ -95,6 +95,8 @@ class MLTrainerViewerUI(QListWidget):
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.setSelectionMode(QListWidget.ExtendedSelection)
 
+        self.setStyleSheet("QListWidget::item:selected {background:transparent;}" + "QListWidget::item {background:transparent;}")
+
         self.itemDoubleClicked.connect(self.mlOnItemDoubleClicked)
         self.itemSelectionChanged.connect(self.mlOnItemSelected)
 
@@ -132,6 +134,11 @@ class MLTrainerViewerUI(QListWidget):
                     i = i + 1
 
             self.mlShowSelectedTrainerPlotSignal.emit()
+        #elif event.button() == Qt.RightButton: 
+        #   for widget in self._items.values():
+        #        if widget.underMouse():
+        #           print("Sous la souris")
+        #            break
 
         QListWidget.mouseReleaseEvent(self, event)
 

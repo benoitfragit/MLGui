@@ -3,6 +3,7 @@
 
 from core.mlprocessmanager import MLProcessManager
 
+import shutil
 import os
 
 
@@ -20,6 +21,9 @@ class MLTrainerManager(MLProcessManager):
         """
         if os.path.exists(directory) and os.path.isdir(directory):
             trainer_directory = os.path.join(directory, 'trainers')
+            if os.path.isdir(trainer_directory):
+                shutil.rmtree(trainer_directory)
+
             if not os.path.exists(trainer_directory):
                 os.mkdir(trainer_directory)
 
@@ -27,7 +31,7 @@ class MLTrainerManager(MLProcessManager):
                 if not process.mlIsProcessExited():
                     process.mlSaveTrainerProgression(trainer_directory)
 
-    def mlRestoreProgression(self, directory, name, progress, error):
+    def mlRestoreProgression(self, directory, name, progress, error, exit, running, finished):
         """
 
         @param directory:
@@ -41,5 +45,5 @@ class MLTrainerManager(MLProcessManager):
             if os.path.exists(trainer_directory) and os.path.isdir(trainer_directory):
                 for process in self._processes.values():
                     if process.username == name and not process.mlIsProcessExited():
-                        process.mlRestoreTrainerProgression(trainer_directory, progress, error)
+                        process.mlRestoreTrainerProgression(trainer_directory, progress, error, exit, running, finished)
                         break

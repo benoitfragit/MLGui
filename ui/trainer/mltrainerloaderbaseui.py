@@ -20,7 +20,7 @@ class MLTrainerLoaderBaseUI(QDockWidget, MLTrainerLoaderBaseIface):
     def __init__(self, plugin, parent=None):
         QDockWidget.__init__(self, parent=parent)
         try:
-            self.setWindowTitle(plugin.mlGetPluginName() + ' trainer loader')
+            self.setWindowTitle('Load a ' + plugin.mlGetPluginName() + ' trainer')
         except:
             self.setWindowTitle('Plugin trainer loader')
         self._mainWidget = QWidget()
