@@ -70,7 +70,6 @@ class MLTrainerOverviewUI(QWidget):
         """
         return self._view
 
-
 class MLTrainerViewerUI(QListWidget):
     """
 

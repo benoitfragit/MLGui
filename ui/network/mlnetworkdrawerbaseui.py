@@ -10,7 +10,6 @@ from PyQt5.QtCore import Qt
 
 from iface.network import MLNetworkDrawerBaseIface
 
-
 class MLNetworkDrawerBaseUI(QGraphicsScene, MLNetworkDrawerBaseIface):
     """
 
