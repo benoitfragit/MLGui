@@ -3,14 +3,15 @@
 
 import sys
 import os
+import multiprocessing
+import threading
+import logging
+
+from timeit import default_timer as timer
 
 from core.mlprocess import MLProcess
 from core.mlnetworkprovider import MLNetworkProvider
 from core.mlpluginloader import MLPluginLoader
-
-import multiprocessing
-import threading
-import logging
 
 
 class MLTrainer(MLProcess, MLNetworkProvider):
@@ -44,6 +45,7 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         self._shared['module'] = plugin.module
         self._shared['plugin_name'] = plugin.mlGetPluginName()
         self._shared['plugin_id'] = plugin.mlGetUniqId()
+        self._shared['update_rate'] = 0.0
 
         # Launching the process
         self.start()
@@ -104,6 +106,9 @@ class MLTrainer(MLProcess, MLNetworkProvider):
         """
         return self._shared['error']
 
+    def mlGetUpdateRate(self):
+        return self._shared['update_rate']
+
     def mlSetTrainerExited(self, exited):
         """
 
@@ -132,8 +137,10 @@ class MLTrainer(MLProcess, MLNetworkProvider):
                 sizeOfSignal = len(self._arrays[i])
                 if i == 0:
                     pointers[i] = plugin.mlGetTrainerInputSignal(trainer, sizeOfSignal)
-                else:
+                elif i < len(self._arrays.keys()) - 1:
                     pointers[i] = plugin.mlGetTrainerLayerOutputSignal(trainer, i - 1, sizeOfSignal)
+                else:
+                    pointers[i] = plugin.mlGetTrainerTargetSignal(trainer, sizeOfSignal)
 
             # effectively start th process lifecycle
             while not self._shared['exit']:
@@ -170,8 +177,13 @@ class MLTrainer(MLProcess, MLNetworkProvider):
                             self._shared['running'] = False
                         else:
                             self._lock.acquire()
+                            start = timer()
+
                             plugin.mlTrainerRun(trainer)
 
+                            end = timer()
+
+                            self._shared['update_rate'] = 1.0/(end - start)
                             self._shared['finished'] = not plugin.mlIsTrainerRunning(trainer)
                             self._shared['progress'] = plugin.mlGetTrainerProgress(trainer)
                             self._shared['error'] = plugin.mlGetTrainerError(trainer)

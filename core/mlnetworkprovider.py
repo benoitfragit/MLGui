@@ -18,9 +18,12 @@ class MLNetworkProvider:
 
         # pass a signal for the input and all layer
         self._arrays[0] = manager.list([0] * numberOfInputs)
+        numberOfNeurons = 0
         for i in range(numberOfLayers):
             numberOfNeurons = plugin.mlGetLayerNumberOfNeuron(network, i)
             self._arrays[i + 1] = manager.list([0] * numberOfNeurons)
+        # pass a signal for the target signal
+        self._arrays[numberOfLayers+1] = manager.list([0] * numberOfNeurons)
 
     @property
     def arrays(self):

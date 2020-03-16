@@ -80,12 +80,15 @@ class MLTrainerViewerItemUI(QWidget):
         """
         return self._item
 
-    def mlTrainerItemGetGraph(self):
+    def mlTrainerItemGetData(self):
         """
 
         @return:
         """
-        return self._graph
+        error   = 100.0 * self._trainer.mlGetTrainerError()
+        progress= 100.0 * self._trainer.mlGetTrainerProgress()
+        fps     = self._trainer.mlGetUpdateRate()
+        return self._graph, error, progress, fps
 
     def mlUpdateTrainerItemOnTimeout(self):
         """

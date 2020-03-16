@@ -32,9 +32,13 @@ class MLNetworkDrawerBaseUI(QGraphicsScene, MLNetworkDrawerBaseIface):
                 ncols = len(provider.arrays.keys())
 
                 for i in provider.arrays.keys():
-                    title = 'Layer ' + str(i)
+                    title = 'LAYER ' + str(i)
                     if i == 0:
-                        title = 'in'
+                        title = 'INPUT'
+                    elif i == ncols - 2:
+                        title = 'OUTPUT'
+                    elif i == ncols - 1:
+                        title = 'TARGET'
                     self.mlAddSignalRepresentation(ncols, i, len(provider.arrays[i]), title)
 
     def mlOnUpdateNetwork(self, *args, **kwargs):

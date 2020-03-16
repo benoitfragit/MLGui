@@ -179,8 +179,8 @@ class MLTrainerViewerUI(QListWidget):
 
         if id in self._items.keys():
             item = self._items[id]
-            graph = item.mlTrainerItemGetGraph()
-            self._overview.plot.mlUpdate(id, graph)
+            graph, error, progress, fps = item.mlTrainerItemGetData()
+            self._overview.plot.mlUpdate(id, graph, error, progress, fps)
 
     def mlOnRemoveTrainer(self, id):
         """

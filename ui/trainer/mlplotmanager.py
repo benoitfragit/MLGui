@@ -104,8 +104,25 @@ class MLPlotManager(FigureCanvas):
             self._axes[uid].xaxis.set_ticks(range(0, 150, 50))
             self._axes[uid].yaxis.set_ticks(range(0, 150, 50))
 
-            self._annotations[uid] = self._axes[uid].annotate('',
-                                                              xy=(0.85, 0.84),
+            self._annotations[uid] = {}
+            self._annotations[uid]['progress'] = self._axes[uid].annotate('',
+                                                              xy=(0, 1),
+                                                              xycoords='axes fraction',
+                                                              horizontalalignment='left',
+                                                              verticalalignment='top',
+                                                              clip_on=True,
+                                                              size=10,
+                                                              bbox=None)
+            self._annotations[uid]['error'] = self._axes[uid].annotate('',
+                                                              xy=(0.5, 1),
+                                                              xycoords='axes fraction',
+                                                              horizontalalignment='center',
+                                                              verticalalignment='top',
+                                                              clip_on=True,
+                                                              size=10,
+                                                              bbox=None)
+            self._annotations[uid]['fps'] = self._axes[uid].annotate('',
+                                                              xy=(1, 1),
                                                               xycoords='axes fraction',
                                                               horizontalalignment='right',
                                                               verticalalignment='top',
@@ -120,13 +137,13 @@ class MLPlotManager(FigureCanvas):
             self._axes[uid].yaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
             self._axes[uid].xaxis.set_major_formatter(FormatStrFormatter('%.0f %%'))
 
-            graph = item.mlTrainerItemGetGraph()
+            graph, error, progress, fps = item.mlTrainerItemGetData()
 
-            self.mlUpdate(uid, graph)
+            self.mlUpdate(uid, graph, error, progress, fps)
 
             self._figure.canvas.draw_idle()
 
-    def mlUpdate(self, uid, graph, clr='blue'):
+    def mlUpdate(self, uid, graph, error, progress, fps, clr='blue'):
         """
 
         @param uid:
@@ -150,7 +167,9 @@ class MLPlotManager(FigureCanvas):
             self._lines[uid].set_color(clr)
 
             if len(graph[1]) > 0:
-                self._annotations[uid].set_text('Error:{0:.2f} %'.format(graph[1][-1]))
+                self._annotations[uid]['progress'].set_text('Progress:{0:.2f} %'.format(progress))
+                self._annotations[uid]['error'].set_text('Error:{0:.2f} %'.format(error))
+                self._annotations[uid]['fps'].set_text('FPS:{0:.2f}'.format(fps))
 
             self._axes[uid].relim()
             self._axes[uid].autoscale()
